@@ -1,0 +1,44 @@
+/* Estilos para la barra superior (TopBar) */
+.top-bar {
+  background-color: #469597; /* Cambia el color de fondo según tus preferencias */
+  color: #fff; /* Cambia el color del texto según tus preferencias */
+  padding: 10px; /* Añade espacio alrededor del contenido */
+  display: flex;
+  justify-content: space-between; /* Alinear elementos horizontalmente */
+  align-items: center; /* Alinear elementos verticalmente */
+}
+
+.top-bar h1 {
+  margin: 0; /* Elimina el margen predeterminado del título */
+  font-size: 24px; /* Cambia el tamaño de fuente según tus preferencias */
+}
+
+.top-bar button {
+  background-color: #61dafb; /* Cambia el color de fondo del botón */
+  color: #fff; /* Cambia el color del texto del botón */
+  border: none; /* Elimina el borde del botón */
+  padding: 10px 20px; /* Añade espacio alrededor del botón */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+}
+
+.top-bar button:hover {
+  background-color: #469597; /* Cambia el color de fondo al pasar el cursor */
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-around;
+  background-color: #ADCACB;
+  padding: 10px;
+}
+
+.top-bar-icon {
+  cursor: pointer;
+  margin: 0 10px;
+  transition: color 0.3s ease;
+  color: #f3f3f3;
+}
+
+.top-bar-icon.active {
+  color: #F3C301; /* Cambia al color deseado al hacer clic */
+}
