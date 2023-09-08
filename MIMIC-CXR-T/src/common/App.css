@@ -1,6 +1,4 @@
 
-
-/* Estilos generales para la página */
 .landing-page {
   font-family: Arial, sans-serif;
   background-color: #f0f0f0;
@@ -11,8 +9,6 @@
   text-align: center;
   padding: 20px;
 }
-
-/* Estilos para la barra de navegación */
 
 nav ul {
   list-style: none;
@@ -43,9 +39,6 @@ nav a {
   justify-content: space-evenly;
 }
 
-/* Puedes agregar más estilos según tus necesidades, como estilos para los enlaces, logo, etc. */
-
-/* Estilos para las secciones izquierda y derecha */
 main {
   display: flex;
   justify-content: space-between;
@@ -59,8 +52,6 @@ main {
   padding: 20px;
 }
 
-
-/* Estilos para el pie de página */
 footer {
   background-color: #333;
   color: #fff;

@@ -22,7 +22,7 @@ function App() {
         <section className="left-section">
           <h1>Proyecto MIMIC-CXR-Translation</h1>
           <p>m ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis ullamcorper velit sed ullamcorper. Et odio pellentesque diam volutpat commodo sed. Justo nec ultrices dui sapien eget mi proin sed. Ipsum suspendisse ultrices gravida dictum fusce. Sit amet massa vitae tortor condimentum lacinia quis vel eros. Et malesuada f</p>
-          <p>Más texto descriptivo aquí.</p>
+          <p>Información del proyecto</p>
         </section>
 
 
@@ -32,7 +32,7 @@ function App() {
       </main>
 
       <footer>
-        <p>© 2023 Tu Empresa. Todos los derechos reservados.</p>
+        <p>© 2023 Todos los derechos reservados.</p>
       </footer>
     </div>
   );
