@@ -1,18 +1,17 @@
-import {BrowserRouter, Routes, Route} from 'react-router-dom' 
-import UserWelcome from '..profile/UserWelcome'
-import Translator from '..translator/Translator'
-import OtherFeature from '../other_feature'
-import App from './App'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import App from '../common/App'
+import Translator from '../common/Translator'
 
+import Home from '../common/Home'
 function Routing() {
+    return(
     <BrowserRouter>
         <Routes>
+            <Route path={"/"} element={<App />}/>
+            <Route path={"/home"} element={<Home />}/>
             <Route path={'/translator'} element={<Translator/>}/>
-            <Route path={'/otherfeature'} element={<OtherFeature/>}/>
-            <Route path={'/welcome'} element={<UserWelcome/>}/>
-            <Route path={'/'} element={<App/>}/>
         </Routes>
-    </BrowserRouter>
+    </BrowserRouter>)
 }
 
-export default Routing
+export default Routing;

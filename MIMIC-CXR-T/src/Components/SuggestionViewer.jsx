@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../common/translator.css';
 
 function SuggestionViewer({ suggestionText, onAccept, onReject }) {
   const [showButtons, setShowButtons] = useState(false);

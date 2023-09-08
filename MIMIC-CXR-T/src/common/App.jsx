@@ -1,100 +1,39 @@
 import React, { useState } from 'react';
-import './App.css';
-import TopBar from './TopBar';
-import LeftViewer from './LeftViewer';
-import RightViewer from './RightViewer';
-import SuggestionViewer from './SuggestionViewer';
+import './App.css'
 
 function App() {
-  const [activeButton1, setActiveButton1] = useState(null);
-  const [activeButton2, setActiveButton2] = useState(null);
-  const [searchText, setSearchText] = useState('');
-  const [activeButton3, setActiveButton3] = useState(null);
-  const [activeButton4, setActiveButton4] = useState(null);
-  const [filterText, setFilterText] = useState('');
-
-  const [fileText, setFileText] = useState('');
-  const [translation, setTranslation] = useState('sdfghj');
-  const [suggestions, setSuggestions] = useState([
-    { text: 'Sugerencia 1' },
-    { text: 'Sugerencia 2' },
-    { text: 'Sugerencia 3' },
-    { text: 'Sugerencia 4' },
-    { text: 'Sugerencia 5' },
-  ]);
-
-  const handleFileUpload = (file) => {
-    // Código para leer el archivo y establecer el estado 'fileText'
-  };
-
-  const handleAcceptSuggestion = (suggestionText) => {
-    // Código para aplicar la sugerencia al estado 'translation'
-    // Puedes filtrar las sugerencias para quitar la que se acepta
-    const updatedSuggestions = suggestions.filter(
-      (suggestion) => suggestion.text !== suggestionText
-    );
-    setSuggestions(updatedSuggestions);
-    // Luego, aplicar la sugerencia a 'translation'
-    setTranslation((prevTranslation) => `${prevTranslation} ${suggestionText}`);
-  };
-
-  const handleRejectSuggestion = (suggestionText) => {
-    // Código para mantener el estado 'translation' sin cambios
-    // Puedes filtrar las sugerencias para quitar la que se rechaza
-    const updatedSuggestions = suggestions.filter(
-      (suggestion) => suggestion.text !== suggestionText
-    );
-    setSuggestions(updatedSuggestions);
-  };
-
   return (
-    <div>
-       <TopBar
-        type="profile"
-        activeButton={activeButton4}
-        handleButtonClick={setActiveButton4}
-      />
-    <div>
+    <div className="App-page">
+      <header>
+        <nav>
+          <ul>
+          <a href='/home'>Ir a User Welcome</a>
+      <a href='/translator'>Ir a translator</a>
+       </ul>
+        </nav>
+      </header>
+    
+      <main>
+        <section className="left-section">
+          <h1>Título Grande</h1>
+          <p>Texto explicativo sobre tu proyecto.</p>
+          <p>Más texto descriptivo aquí.</p>
+        </section>
 
-    </div>
-    <div className="app-container">
-        <TopBar
-          type="file"
-          activeButton={activeButton1}
-          handleButtonClick={setActiveButton1}
-        />
-        <TopBar
-          type="textSearch"
-          activeButton={activeButton2}
-          handleSearchChange={setSearchText}
-        />
-        <TopBar
-          type="filterCards"
-          activeButton={activeButton3}
-          handleButtonClick={setActiveButton3}
-          handleSearchChange={setFilterText}
-        />
-      <div className="leftviewer-container">
-        <LeftViewer text={fileText} />
-        </div>
-        <div className="rightviewer-container">
-        <RightViewer text={translation} />
-        </div>
-        <div className="sugviewer-container">
-        {suggestions.map((suggestion, index) => (
-          <SuggestionViewer
-            key={index}
-            suggestionText={suggestion.text}
-            onAccept={handleAcceptSuggestion}
-            onReject={handleRejectSuggestion}
-          />
-          
-        ))}
-        </div>
-    </div>
+        <section className="right-section">
+          <h2>Registro de Usuarios</h2>
+          <form>
+            {/* Agrega tus campos de registro aquí */}
+          </form>
+        </section>
+      </main>
+      <footer>
+        <p>© 2023 Tu Empresa. Todos los derechos reservados.</p>
+      </footer>
     </div>
   );
 }
 
 export default App;
+
 

@@ -81,7 +81,7 @@ function TopBar({ type, activeButton, handleButtonClick, handleSearchChange }) {
             <FontAwesomeIcon icon={faUser} />
           </div>
           <div className="top-bar-icon" onClick={() => handleButtonClick('logout')}>
-            <FontAwesomeIcon icon={faSignOutAlt} />
+            <FontAwesomeIcon icon={faSignOutAlt}/>
           </div>
         </>
         </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import '../common/translator.css';
 
 function RightViewer({ text }) {
   return (

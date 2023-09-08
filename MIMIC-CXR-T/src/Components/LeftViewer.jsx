@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import '../common/translator.css';
 
 function LeftViewer({ text }) {
   return (
