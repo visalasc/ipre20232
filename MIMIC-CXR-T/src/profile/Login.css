@@ -1,12 +1,15 @@
+.container-login{
+  margin-left: 20px;
+}
+
 .Login {
-    width: 500px;
-    margin: 0 auto;
+    width: 350px;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 5px;
     box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.1);
     background-color: #f0faff;
-
+    
   }
   
   .Login form label {
@@ -60,3 +63,7 @@
     background-color: #e9ffe6; /* light green */
     text-align: center;
   }
+
+ h3{
+  color: #6e6f70;
+ }

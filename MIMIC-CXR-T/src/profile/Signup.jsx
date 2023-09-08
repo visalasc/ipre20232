@@ -28,11 +28,13 @@ function Signup() {
     }
 
   return (
+    <div className="container-login">
+    <h3 >Regístrate aquí:</h3>
     <div className="Login">
       {msg.length > 0 && <div className="successMsg"> {msg} </div>}
 
       {error && <div className="error">Hubo un error con el Registro, por favor trata nuevamente.</div>}
-
+      
       <form onSubmit={handleSubmit}>
         <label>
           Username:
@@ -66,6 +68,7 @@ function Signup() {
         </label>
         <input type="submit" value="Submit" />
       </form>
+    </div>
     </div>
   );
 }

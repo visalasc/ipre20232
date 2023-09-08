@@ -1,9 +1,4 @@
 
-/* Reset de estilos para quitar márgenes y rellenos predeterminados */
-body, h1, p, ul, li, form {
-  margin: 0;
-  padding: 0;
-}
 
 /* Estilos generales para la página */
 .landing-page {
@@ -18,10 +13,6 @@ body, h1, p, ul, li, form {
 }
 
 /* Estilos para la barra de navegación */
-header {
-  background-color: #333;
-  padding: 10px 0;
-}
 
 nav ul {
   list-style: none;
@@ -48,6 +39,8 @@ nav a {
   z-index: 1000; /* Asegura que esté en la parte superior de otros elementos */
   padding: 10px 20px; /* Añade relleno (padding) para espaciar el contenido interno */
   box-sizing: border-box; /* Incluye el relleno en el ancho total */
+  display: flex;
+  justify-content: space-evenly;
 }
 
 /* Puedes agregar más estilos según tus necesidades, como estilos para los enlaces, logo, etc. */
@@ -56,29 +49,16 @@ nav a {
 main {
   display: flex;
   justify-content: space-between;
-  width: 80%;
-  margin: 20px 0;
+  width: 95%;
+  margin: 60px 0;
 }
 
 .left-section {
-  width: 60%;
+  width: 70%;
   text-align: left;
   padding: 20px;
 }
 
-.right-section {
-  width: 35%;
-  text-align: left;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Estilos para el formulario de registro */
-.right-section h2 {
-  margin-bottom: 20px;
-}
 
 /* Estilos para el pie de página */
 footer {
