@@ -4,11 +4,11 @@ import './App.css'
 function App() {
   return (
     <div className="App-page">
-      <header>
-        <nav>
+      <header >
+        <nav className="navbar">
           <ul>
           <a href='/home'>Ir a User Welcome</a>
-      <a href='/translator'>Ir a translator</a>
+          <a href='/translator'>Ir a translator</a>
        </ul>
         </nav>
       </header>

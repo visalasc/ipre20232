@@ -38,6 +38,20 @@ nav a {
   color: #fff;
 }
 
+.navbar {
+  width: 100%;
+  background-color: #333; /* Puedes cambiar el color de fondo según tus preferencias */
+  color: #fff; /* Cambia el color del texto según tus preferencias */
+  position: fixed; /* Para que la barra de navegación quede fija en la parte superior */
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Asegura que esté en la parte superior de otros elementos */
+  padding: 10px 20px; /* Añade relleno (padding) para espaciar el contenido interno */
+  box-sizing: border-box; /* Incluye el relleno en el ancho total */
+}
+
+/* Puedes agregar más estilos según tus necesidades, como estilos para los enlaces, logo, etc. */
+
 /* Estilos para las secciones izquierda y derecha */
 main {
   display: flex;
