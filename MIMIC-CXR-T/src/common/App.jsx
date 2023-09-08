@@ -6,7 +6,14 @@ import RightViewer from './RightViewer';
 import SuggestionViewer from './SuggestionViewer';
 
 function App() {
-   const [fileText, setFileText] = useState('');
+  const [activeButton1, setActiveButton1] = useState(null);
+  const [activeButton2, setActiveButton2] = useState(null);
+  const [searchText, setSearchText] = useState('');
+  const [activeButton3, setActiveButton3] = useState(null);
+  const [activeButton4, setActiveButton4] = useState(null);
+  const [filterText, setFilterText] = useState('');
+
+  const [fileText, setFileText] = useState('');
   const [translation, setTranslation] = useState('sdfghj');
   const [suggestions, setSuggestions] = useState([
     { text: 'Sugerencia 1' },
@@ -41,10 +48,32 @@ function App() {
   };
 
   return (
+    <div>
+       <TopBar
+        type="profile"
+        activeButton={activeButton4}
+        handleButtonClick={setActiveButton4}
+      />
+    <div>
+
+    </div>
     <div className="app-container">
-      
-      <TopBar onFileUpload={handleFileUpload} />
-      
+        <TopBar
+          type="file"
+          activeButton={activeButton1}
+          handleButtonClick={setActiveButton1}
+        />
+        <TopBar
+          type="textSearch"
+          activeButton={activeButton2}
+          handleSearchChange={setSearchText}
+        />
+        <TopBar
+          type="filterCards"
+          activeButton={activeButton3}
+          handleButtonClick={setActiveButton3}
+          handleSearchChange={setFilterText}
+        />
       <div className="leftviewer-container">
         <LeftViewer text={fileText} />
         </div>
@@ -61,12 +90,8 @@ function App() {
           />
           
         ))}
-
-
-
         </div>
-        
-      
+    </div>
     </div>
   );
 }

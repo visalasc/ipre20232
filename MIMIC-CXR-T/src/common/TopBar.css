@@ -1,11 +1,11 @@
 /* Estilos para la barra superior (TopBar) */
 .top-bar {
-  background-color: #469597; /* Cambia el color de fondo según tus preferencias */
+  background-color: #ADCACB; /* Cambia el color de fondo según tus preferencias */
   color: #fff; /* Cambia el color del texto según tus preferencias */
   padding: 10px; /* Añade espacio alrededor del contenido */
   display: flex;
-  justify-content: space-between; /* Alinear elementos horizontalmente */
   align-items: center; /* Alinear elementos verticalmente */
+  margin: 5px;
 }
 
 .top-bar h1 {
@@ -25,13 +25,6 @@
   background-color: #469597; /* Cambia el color de fondo al pasar el cursor */
 }
 
-.top-bar {
-  display: flex;
-  justify-content: space-around;
-  background-color: #ADCACB;
-  padding: 10px;
-}
-
 .top-bar-icon {
   cursor: pointer;
   margin: 0 10px;
@@ -41,4 +34,14 @@
 
 .top-bar-icon.active {
   color: #F3C301; /* Cambia al color deseado al hacer clic */
+}
+
+.top-bar-filter {
+  display: flex;
+  justify-content: space-around; 
+}
+
+.top-bar-text-search{
+  display: flex;
+  justify-content: space-around; 
 }

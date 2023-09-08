@@ -1,6 +1,6 @@
 #root {
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   text-align: center;
 }
 
@@ -40,15 +40,14 @@
   color: #888;
 }
 
-/* ... Otros estilos ... */
-
 .app-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   height: 500px;
   background-color: #c1e3e4;
-  padding: 30px;
+  padding: 15px;
   overflow: hidden;
+  margin: 5px;
 }
 
 .rightviewer-container {
@@ -66,10 +65,10 @@
 }
 
 .leftviewer-container {
-  grid-column: 1; /* Ocupa todas las tres columnas disponibles */
+  grid-column: 1;
   display: flex;
   justify-content: space-between;
-  align-items: normal; /* Ajusta según tus necesidades */
+  align-items: normal; 
   background-color: #f8f8f8;
   overflow-y: scroll;
   margin: 10px;
@@ -82,7 +81,7 @@
   grid-column: 3; /* Ocupa todas las tres columnas disponibles */
   display: column;
   justify-content: space-between;
-  align-items: normal; /* Ajusta según tus necesidades */
+  align-items: normal;
   background-color: #c6dcdd;
   overflow-y: scroll;
 }
@@ -91,34 +90,21 @@
   background-color:  #f6f7fa;
 }
 
-
-/* Estilos para la barra superior (TopBar) */
-.top-bar {
-  background-color: #333;
-  color: #fff;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 50px;
-}
-
-/* Estilos para las tarjetas de sugerencias */
 .suggestion-card {
   background-color: #FFFFFF;
   border: 1px solid #CCCCCC;
   padding: 10px;
-  margin: 10px; /* Espaciado entre las tarjetas */
+  margin: 10px; 
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: transform 0.2s ease-in-out; /* Transición suave al pasar el ratón */
+  transition: transform 0.2s ease-in-out; 
   cursor: pointer;
   border-radius: .5em;
 }
 
 .suggestion-card:hover {
-  transform: scale(1.05); /* Efecto de escala al pasar el ratón */
+  transform: scale(1.05); 
 }
 
 .suggestion-card-text {
