@@ -29,27 +29,27 @@ function ModalLogin() {
         <Modal.Body>
          <Form>
       <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
-        <Form.Label column sm="2">
-          Email
+        <Form.Label column sm="3">
+          Email: 
         </Form.Label>
-        <Col sm="10">
-          <Form.Control plaintext readOnly defaultValue="email@example.com" />
+        <Col sm="8">
+          <Form.Control tyoe="email" placeholder="email@example.com" />
         </Col>
       </Form.Group>
 
       <Form.Group as={Row} className="mb-3" controlId="formPlaintextPassword">
-        <Form.Label column sm="2">
-          Password
+        <Form.Label column sm="3">
+          Contraseña: 
         </Form.Label>
-        <Col sm="10">
-          <Form.Control type="password" placeholder="Password" />
+        <Col sm="8">
+          <Form.Control type="password" placeholder="Contraseña" />
         </Col>
       </Form.Group>
     </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Close
+            Cancelar
           </Button>
           <Button variant="primary">Enviar</Button>
           
