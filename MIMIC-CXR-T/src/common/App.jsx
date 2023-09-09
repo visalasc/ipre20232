@@ -1,23 +1,13 @@
 import React, { useState } from 'react';
 import './App.css'
 import Signup from '../profile/Signup';
-
+import MyNavBar from '../Components/Nav'
 function App() {
-  const [mostrarRegistro, setMostrarRegistro] = useState(true);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  const toggleFormulario = () => {
-    setMostrarRegistro(!mostrarRegistro);
-  };
   return (
     <div className="App-page">
-      <header >
-        <nav className="navbar">
-            <a href='/home'>Acerca de</a>
-            <a href='/home'>Login</a>
-            <a href='/translator'>Ir a traductor</a>
-        </nav>
-      </header>
-    
+      <MyNavBar/>
       <main>
         <section className="left-section">
           <h1>Proyecto MIMIC-CXR-Translation</h1>
