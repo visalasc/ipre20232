@@ -24,7 +24,7 @@ function ModalLogin() {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Modal title</Modal.Title>
+          <Modal.Title>Iniciar Sesión</Modal.Title>
         </Modal.Header>
         <Modal.Body>
          <Form>
@@ -52,6 +52,7 @@ function ModalLogin() {
             Close
           </Button>
           <Button variant="primary">Enviar</Button>
+          
         </Modal.Footer>
       </Modal>
     </>

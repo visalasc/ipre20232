@@ -28,7 +28,7 @@ function MyNavBar() {
           </NavDropdown>
         </Nav>
         <Nav>
-          <ModalLogin />
+          Cerrar sesión
         </Nav>
       </Navbar.Collapse>
     </Container>

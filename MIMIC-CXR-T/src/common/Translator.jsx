@@ -1,6 +1,6 @@
 import React , { useState }from 'react';
 import { createBrowserRouter, RouterProvider, Link } from "react-router-dom";
-import Nav from '../Components/Nav';
+import MyNavBar from '../Components/NavApp';
 import TopBar from '../Components/TopBar';
 import LeftViewer from '../Components/LeftViewer';
 import RightViewer from '../Components/RightViewer';
@@ -52,12 +52,7 @@ function Translator() {
 
   return (
     <div>
-       <TopBar
-        type="profile"
-        activeButton={activeButton4}
-        handleButtonClick={setActiveButton4}
-        
-      />
+      <MyNavBar/>
     <div>
 
     </div>
