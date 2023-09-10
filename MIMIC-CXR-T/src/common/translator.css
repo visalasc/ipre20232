@@ -43,37 +43,33 @@
 .app-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  height: 500px;
+  margin-top: 20px;
   background-color: #c1e3e4;
-  padding: 15px;
-  overflow: hidden;
-  margin: 5px;
 }
 
 .rightviewer-container {
   grid-column: 2; 
   display: flex;
   justify-content: space-between;
-  align-items: normal; /* Ajusta según tus necesidades */
-  background-color: #f8f8f8;
-  overflow-y: scroll;
-  margin: 10px;
+  align-items: normal;
   border-radius: .5em;
-  padding: 10px;
+  margin-top: 10px;
+  padding-top: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
   text-align: justify;
-  overflow-x: auto;
 }
 
 .leftviewer-container {
   grid-column: 1;
   display: flex;
   justify-content: space-between;
-  align-items: normal; 
-  background-color: #f8f8f8;
-  overflow-y: scroll;
-  margin: 10px;
   border-radius: .5em;
-  padding: 10px;
+  align-items: normal; 
+  margin-top: 10px;
+  padding-top: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
   text-align: justify;
 }
 
@@ -83,7 +79,6 @@
   justify-content: space-between;
   align-items: normal;
   background-color: #c6dcdd;
-  overflow-y: scroll;
 }
 
 .viewer {
