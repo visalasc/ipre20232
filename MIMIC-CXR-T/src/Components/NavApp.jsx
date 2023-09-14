@@ -2,8 +2,8 @@ import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import ModalLogin from '../Components/ModalLogin'
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import LogoutButton from '../profile/Logout';
 
 function MyNavBar() {
   return (
@@ -28,7 +28,7 @@ function MyNavBar() {
           </NavDropdown>
         </Nav>
         <Nav>
-          Cerrar sesión
+          <LogoutButton/>
         </Nav>
       </Navbar.Collapse>
     </Container>

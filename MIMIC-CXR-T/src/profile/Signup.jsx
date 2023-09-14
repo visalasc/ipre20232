@@ -3,8 +3,10 @@ import axios from 'axios';
 import './Login.css'; 
 
 function Signup() {
-  const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState("");
@@ -14,8 +16,10 @@ function Signup() {
     event.preventDefault();
 
     axios.post(`${import.meta.env.VITE_BACKEND_URL}/signup`, {
-        username: username,
+        firstName: firstName,
+        lastName: lastName,
         email: email,
+        role: role,
         password: password
       }).then((response) => {
         console.log('Registro exitoso! Ahora puedes volver y loguearte');
@@ -36,16 +40,29 @@ function Signup() {
       {error && <div className="error">Hubo un error con el Registro, por favor trata nuevamente.</div>}
       
       <form onSubmit={handleSubmit}>
+
         <label>
-          Username:
+          Nombre:
           <input 
             type="text" 
-            name="username"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
+            name="firstName"
+            value={firstName}
+            onChange={e => setFirstName(e.target.value)}
             required
           />
         </label>
+
+        <label>
+          Apellido:
+          <input 
+            type="text" 
+            name="lastName"
+            value={lastName}
+            onChange={e => setLastName(e.target.value)}
+            required
+          />
+        </label>
+
         <label>
           Email:
           <input 
@@ -56,8 +73,19 @@ function Signup() {
             required
           />
         </label>
+
         <label>
-          Password:
+          Rol:
+          <input 
+            type="text" 
+            name="role"
+            value={role}
+            onChange={e => setRole(e.target.value)}
+            required
+          />
+        </label>
+        <label>
+          Contraseña:
           <input 
             type="password" 
             name="password"
