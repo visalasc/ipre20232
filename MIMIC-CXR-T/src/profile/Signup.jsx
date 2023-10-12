@@ -18,8 +18,8 @@ function Signup() {
     axios.post(`${import.meta.env.VITE_BACKEND_URL}/signup`, {
         firstName: firstName,
         lastName: lastName,
-        email: email,
         role: role,
+        email: email,
         password: password
       }).then((response) => {
         console.log('Registro exitoso! Ahora puedes volver y loguearte');
