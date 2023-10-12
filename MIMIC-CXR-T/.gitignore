@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 # Environment
 .env
+
+#cache
+.yarn/cache
+.yarn/local
+.pnp.*
