@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import './App.css'
 import Signup from '../profile/Signup';
-import MyNavBar from '../Components/Nav'
+import MyNavBar from '../Components/Nav';
+import AuthProvider from '../auth/AuthProvider';
+
+
 function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   return (
+    <AuthProvider>
     <div className="App-page">
       <MyNavBar/>
       <main>
@@ -25,6 +29,7 @@ function App() {
         <p>© 2023 Todos los derechos reservados.</p>
       </footer>
     </div>
+    </AuthProvider>
   );
 }
 

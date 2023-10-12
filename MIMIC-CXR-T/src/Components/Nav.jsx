@@ -2,7 +2,7 @@ import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import ModalLogin from '../profile/ModalLogin'
+import ModalLogin from '../profile/ModalLogin';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
 function MyNavBar() {
@@ -28,7 +28,7 @@ function MyNavBar() {
           </NavDropdown>
         </Nav>
         <Nav>
-          <ModalLogin />
+          <ModalLogin/>
         </Nav>
       </Navbar.Collapse>
     </Container>
