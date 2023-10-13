@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import NavBarReportSelection from '../Components/NavBarReportSelect';
 import ProgressBar from 'react-bootstrap/ProgressBar';
+import { useNavigate } from 'react-router-dom'; // Importa Redirect
 
 const ReportGroupSelection = () => {
   const datasetDetails = [
@@ -56,6 +57,7 @@ const ReportGroupSelection = () => {
                     </Col>
                     <Col> 
                         <Button variant="primary">Seleccionar</Button>
+                        
                     </Col>
                 </Row>
               </Card>
