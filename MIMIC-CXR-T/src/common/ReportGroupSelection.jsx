@@ -12,9 +12,9 @@ const ReportGroupSelection = () => {
     <div>
       <h2>Selecciona un Grupo de Informes</h2>
       <Container>
-        <Row>
-          {datasetDetails.map((dataset, index) => (
-            <Col key={index} sm={12} md={6} lg={4}>
+        {datasetDetails.map((dataset, index) => (
+          <Row key={index}>
+            <Col>
               <Card>
                 <Card.Body>
                   <Card.Title>{dataset.title}</Card.Title>
@@ -22,8 +22,8 @@ const ReportGroupSelection = () => {
                 </Card.Body>
               </Card>
             </Col>
-          ))}
-        </Row>
+          </Row>
+        ))}
       </Container>
     </div>
   );
