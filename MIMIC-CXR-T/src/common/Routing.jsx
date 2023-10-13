@@ -6,8 +6,9 @@ import ModalLogin from '../profile/ModalLogin'
 import Signup from '../profile/Signup'
 import AdminCheck from '../protected/AdminCheck'
 import UserCheck from '../protected/UserCheck'
-
+import ReportGroupSelection from '../common/ReportGroupSelection'; 
 import Home from '../common/Home'
+
 function Routing() {
     return(
     <BrowserRouter>
@@ -20,6 +21,8 @@ function Routing() {
             <Route path={"/signup"} element={<Signup />}/>
             <Route path={"/admincheck"} element={<AdminCheck />}/>
             <Route path={"/usercheck"} element={<UserCheck />}/>
+            <Route path={"/reportselection"} element={<ReportGroupSelection />}/>
+
         </Routes>
     </BrowserRouter>)
 }

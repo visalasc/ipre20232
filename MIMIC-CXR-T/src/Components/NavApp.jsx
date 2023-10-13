@@ -27,9 +27,6 @@ function MyNavBar() {
             </NavDropdown.Item>
           </NavDropdown>
         </Nav>
-        <Nav>
-          <LogoutButton/>
-        </Nav>
       </Navbar.Collapse>
     </Container>
   </Navbar>

@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { AuthContext } from '../auth/AuthContext';
-import { Redirect } from 'react-router-dom'; // Importa Redirect
+import { useNavigate } from 'react-router-dom'; // Importa Redirect
 
 
 function ModalLogin() {
@@ -20,10 +20,7 @@ function ModalLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
-  const [redirectToTranslator, setRedirectToTranslator] = useState(false);
-
-
-
+  const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -44,7 +41,10 @@ function ModalLogin() {
 
         // Cerrar el modal después del login exitoso
         handleClose();
-        setRedirectToTranslator(true);
+
+        // Redirige a la vista para seleccionar reportes a traducir 
+        // después del inicio de sesión
+        navigate('/reportselection');
       })
       .catch((error) => {
         console.error('An error occurred while trying to login:', error);
@@ -52,17 +52,19 @@ function ModalLogin() {
       });
   };
 
-  if (redirectToTranslator) {
-    return <Redirect to="/translator" />;
-  }
-  
+
   return (
     <>
       <Button variant="info" onClick={handleShow}>
         Iniciar sesión
       </Button>
 
-      <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
+      <Modal 
+        show={show} 
+        onHide={handleClose} 
+        backdrop="static" 
+        keyboard={false}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Iniciar Sesión</Modal.Title>
         </Modal.Header>

@@ -6,8 +6,6 @@ import AuthProvider from '../auth/AuthProvider';
 
 
 function App() {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
   return (
     <AuthProvider>
     <div className="App-page">

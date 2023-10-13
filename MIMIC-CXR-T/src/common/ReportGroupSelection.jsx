@@ -1,0 +1,32 @@
+import React from 'react';
+import { Container, Row, Col, Card } from 'react-bootstrap';
+
+const ReportGroupSelection = () => {
+  const datasetDetails = [
+    { title: 'Dataset 1', description: 'Descripción del Dataset 1' },
+    { title: 'Dataset 2', description: 'Descripción del Dataset 2' },
+    // ... Puedes agregar más datasets
+  ];
+
+  return (
+    <div>
+      <h2>Selecciona un Grupo de Informes</h2>
+      <Container>
+        <Row>
+          {datasetDetails.map((dataset, index) => (
+            <Col key={index} sm={12} md={6} lg={4}>
+              <Card>
+                <Card.Body>
+                  <Card.Title>{dataset.title}</Card.Title>
+                  <Card.Text>{dataset.description}</Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </Container>
+    </div>
+  );
+};
+
+export default ReportGroupSelection;
