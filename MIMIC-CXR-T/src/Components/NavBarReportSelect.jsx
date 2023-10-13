@@ -17,20 +17,20 @@ const NavBarReportSelection = () => {
   };
 
   return (
-    <Navbar bg="light" expand="lg">
-      <Navbar.Brand href="/">My App</Navbar.Brand>
+    <Navbar bg="dark" data-bs-theme="dark" expand="lg">
+      <Navbar.Brand href="/">MIMIC-CXR</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Link onClick={handleShowModal}>Abrir Modal</Nav.Link>
+          <Nav.Link onClick={handleShowModal}>Diccionario</Nav.Link>
         </Nav>
         <Button variant="primary" onClick={handleLoadFile}>
-          Cargar Archivo
+          Cargar Reporte
         </Button>
       </Navbar.Collapse>
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal Title</Modal.Title>
+          <Modal.Title>Diccionario</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {/* Contenido del Modal */}

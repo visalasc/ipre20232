@@ -1,25 +1,48 @@
 import React from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import NavBarReportSelection from '../Components/NavBarReportSelect';
+import ProgressBar from 'react-bootstrap/ProgressBar';
 
 const ReportGroupSelection = () => {
   const datasetDetails = [
-    { title: 'Dataset 1', description: 'Descripción del Dataset 1' },
-    { title: 'Dataset 2', description: 'Descripción del Dataset 2' },
-    // ... Puedes agregar más datasets
+    { creator: 'nombre creador',
+    numberOfReportsToTranslate: 100,
+    numberOfReportsTranslated: 50,
+    createdAt: '2021-01-01',
+     },
+    { creator: 'nombre creador',
+    numberOfReportsToTranslate: 120,
+    numberOfReportsTranslated: 90,
+    createdAt: '2021-01-01',
+    }
   ];
 
   return (
     <div>
-      <h2>Selecciona un Grupo de Informes</h2>
+        <NavBarReportSelection />
+      <h2>Selecciona un grupo de reportes a traducir:</h2>
       <Container>
         {datasetDetails.map((dataset, index) => (
           <Row key={index}>
             <Col>
               <Card>
-                <Card.Body>
-                  <Card.Title>{dataset.title}</Card.Title>
-                  <Card.Text>{dataset.description}</Card.Text>
-                </Card.Body>
+                <Row>
+                    <Col> <Card.Text>{dataset.creator}</Card.Text></Col>
+                    <Col> <Card.Text>{dataset.numberOfReportsToTranslate}</Card.Text></Col>
+                    <Col> <Card.Text>{dataset.numberOfReportsTranslated}</Card.Text></Col>
+                    <Col> <Card.Text>{dataset.createdAt}</Card.Text></Col>
+                    <Col> <Card.Text>{dataset.createdAt}</Card.Text></Col>
+                    <Col> 
+                        <ProgressBar 
+                        variant="success" 
+                        now={dataset.numberOfReportsTranslated/dataset.numberOfReportsToTranslate * 100} 
+                        label={`${Math.round((dataset.numberOfReportsTranslated / dataset.numberOfReportsToTranslate) * 100)}%`}
+                        />
+                    </Col>
+                    <Col> 
+                        <Button variant="primary">Seleccionar</Button>
+                    </Col>
+                </Row>
               </Card>
             </Col>
           </Row>
