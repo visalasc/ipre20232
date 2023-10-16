@@ -7,8 +7,7 @@ import AuthProvider from '../auth/AuthProvider';
 
 function App() {
   return (
-    <AuthProvider>
-    <div className="App-page">
+     <div className="App-page">
       <MyNavBar/>
       <main>
         <section className="left-section">
@@ -27,7 +26,6 @@ function App() {
         <p>© 2023 Todos los derechos reservados.</p>
       </footer>
     </div>
-    </AuthProvider>
   );
 }
 

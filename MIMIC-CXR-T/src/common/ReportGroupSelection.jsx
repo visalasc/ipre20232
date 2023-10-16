@@ -1,71 +1,80 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import NavBarReportSelection from '../Components/NavBarReportSelect';
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import { useNavigate } from 'react-router-dom'; // Importa Redirect
+import axios from 'axios';
+import { AuthContext } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import AuthProvider from '../auth/AuthProvider';
 
 const ReportGroupSelection = () => {
-  const datasetDetails = [
-    { creator: 'nombre creador',
-    numberOfReportsToTranslate: 100,
-    numberOfReportsTranslated: 50,
-    createdAt: '2021-01-01',
-     },
-    { creator: 'nombre creador',
-    numberOfReportsToTranslate: 120,
-    numberOfReportsTranslated: 90,
-    createdAt: '2021-01-01',
-    }
-  ];
+  const { token } = useContext(AuthContext);
+
+  const [reportGroups, setReportGroups] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserReportGroups = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const reportGroupsResponse = await axios.get(`/api/reportgroups/user/${userId}/reportgroups`, { 
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+        setReportGroups(reportGroupsResponse.data);
+      } catch (error) {
+        console.error('Error al obtener grupos de reportes:', error);
+      }
+    };
+
+    fetchUserReportGroups();
+  }, [token]); // Se ejecuta cuando el token cambia
 
   return (
+    <AuthProvider>
     <div>
         <NavBarReportSelection />
       <h3>Selecciona un grupo de reportes a traducir:</h3>
       <Container>
         <Row>
-            <Col>
+        <Col>
             <Card>
-                <Row>
-                    <Col> <Card.Text>Usuario Creador</Card.Text></Col>
-                    <Col> <Card.Text>Fecha de creación</Card.Text></Col>
-                    <Col> <Card.Text>Reportes por traducir</Card.Text></Col>
-                    <Col> <Card.Text>Reportes traducidos</Card.Text></Col>
-                    <Col> <Card.Text>Progreso</Card.Text></Col>
-                    <Col> <Card.Text>Seleccionar</Card.Text></Col>
-                </Row>
+              <Row>
+                <Col><Card.Text>Fecha de creación</Card.Text></Col>
+                <Col><Card.Text>Reportes por traducir</Card.Text></Col>
+                <Col><Card.Text>Reportes traducidos</Card.Text></Col>
+                <Col><Card.Text>Progreso</Card.Text></Col>
+                <Col><Card.Text>Seleccionar</Card.Text></Col>
+              </Row>
             </Card>
-            </Col>
-           
+          </Col>
         </Row>
-        {datasetDetails.map((dataset, index) => (
-       
-          <Row key={index}>
-            <Col>
-              <Card>
-                <Row>
-                    <Col> <Card.Text>{dataset.creator}</Card.Text></Col>
-                    <Col> <Card.Text>{dataset.createdAt}</Card.Text></Col>
-                    <Col> <Card.Text>{dataset.numberOfReportsToTranslate}</Card.Text></Col>
-                    <Col> <Card.Text>{dataset.numberOfReportsTranslated}</Card.Text></Col>
-                     <Col> 
-                        <ProgressBar 
-                        variant="success" 
-                        now={dataset.numberOfReportsTranslated/dataset.numberOfReportsToTranslate * 100} 
-                        label={`${Math.round((dataset.numberOfReportsTranslated / dataset.numberOfReportsToTranslate) * 100)}%`}
-                        />
-                    </Col>
-                    <Col> 
-                        <Button variant="primary">Seleccionar</Button>
-                        
-                    </Col>
-                </Row>
-              </Card>
-            </Col>
-          </Row>
+        {reportGroups.map((group, index) => (
+     
+       <Row key={index}>
+          <Col>
+            <Card>
+              <Row>
+                <Col><Card.Text>{group.createdAt}</Card.Text></Col>
+                <Col><Card.Text>{group.numberOfReportsToTranslate}</Card.Text></Col>
+                <Col><Card.Text>{group.numberOfReportsTranslated}</Card.Text></Col>
+                <Col>
+                  <ProgressBar
+                    variant="success"
+                    now={(group.numberOfReportsTranslated / group.numberOfReportsToTranslate) * 100}
+                    label={`${Math.round((group.numberOfReportsTranslated / group.numberOfReportsToTranslate) * 100)}%`}
+                  />
+                </Col>
+                <Col>
+                  <Button variant="primary">Seleccionar</Button>
+                </Col>
+              </Row>
+            </Card>
+          </Col>
+        </Row>
         ))}
       </Container>
     </div>
+    </AuthProvider>
   );
 };
 
