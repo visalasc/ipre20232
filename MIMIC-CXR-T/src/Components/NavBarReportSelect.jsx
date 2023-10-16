@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Navbar, Nav, Button, Modal, Card } from 'react-bootstrap';
+import LogoutButton from '../profile/Logout';
 
 const NavBarReportSelection = () => {
   const [showModal, setShowModal] = useState(false);
@@ -36,6 +37,7 @@ const NavBarReportSelection = () => {
           {/* Contenido del Modal */}
         </Modal.Body>
       </Modal>
+      <LogoutButton />
     </Navbar>
   );
 };
