@@ -49,7 +49,11 @@ function Translator() {
       </div>
       <div className="app-container">
         <div className="leftviewer-container">
-          <LeftViewer reports={reports} />
+        {reports !== null ? (
+            <LeftViewer reports={reports} />
+          ) : (
+            <p>Loading reports...</p>
+          )}
         </div>
         <div className="rightviewer-container">
           <RightViewer />
