@@ -5,39 +5,45 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import axios from 'axios';
 import { AuthContext } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import AuthProvider from '../auth/AuthProvider';
 
 const ReportGroupSelection = () => {
   const { token } = useContext(AuthContext);
-
   const [reportGroups, setReportGroups] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserReportGroups = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const reportGroupsResponse = await axios.get(`/api/reportgroups/user/${userId}/reportgroups`, { 
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-        setReportGroups(reportGroupsResponse.data);
+        if (!token) {
+          console.error('Token not available.');
+          return;
+        }
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        };
+
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/reportgroups/user/${token}`, config);
+       
+        setReportGroups(response.data);
       } catch (error) {
-        console.error('Error al obtener grupos de reportes:', error);
+        console.error('Error fetching report groups:', error);
       }
     };
 
     fetchUserReportGroups();
-  }, [token]); // Se ejecuta cuando el token cambia
+  }, [token]);
 
   return (
-    <AuthProvider>
     <div>
-        <NavBarReportSelection />
+      <NavBarReportSelection />
       <h3>Selecciona un grupo de reportes a traducir:</h3>
       <Container>
         <Row>
-        <Col>
-            <Card>
+          <Col>
+          <Card>
               <Row>
                 <Col><Card.Text>Fecha de creación</Card.Text></Col>
                 <Col><Card.Text>Reportes por traducir</Card.Text></Col>
@@ -49,9 +55,8 @@ const ReportGroupSelection = () => {
           </Col>
         </Row>
         {reportGroups.map((group, index) => (
-     
-       <Row key={index}>
-          <Col>
+          <Row key={index}>
+            <Col>
             <Card>
               <Row>
                 <Col><Card.Text>{group.createdAt}</Card.Text></Col>
@@ -69,12 +74,11 @@ const ReportGroupSelection = () => {
                 </Col>
               </Row>
             </Card>
-          </Col>
-        </Row>
+            </Col>
+          </Row>
         ))}
       </Container>
     </div>
-    </AuthProvider>
   );
 };
 
