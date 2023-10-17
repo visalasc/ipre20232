@@ -15,7 +15,7 @@ function Routing() {
         <Routes>
             <Route path={"/"} element={<App />}/>
             <Route path={"/home"} element={<Home />}/>
-            <Route path={'/translator'} element={<Translator/>}/>
+            <Route path={'/translator/:groupId'} element={<Translator/>}/>
             <Route path={"/welcome"} element={<UserWelcome />}/>
             <Route path={"/login"} element={<ModalLogin />}/>
             <Route path={"/signup"} element={<Signup />}/>

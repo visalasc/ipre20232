@@ -1,29 +1,46 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext} from 'react';
 import MyNavBar from '../Components/NavApp';
 import LeftViewer from '../Components/LeftViewer';
 import RightViewer from '../Components/RightViewer';
 import './translator.css';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { AuthContext } from '../auth/AuthContext';
 
-function Translator({ match }) {
-  const { groupId } = match.params; // Extract groupId from the URL
-  const [groupData, setGroupData] = useState(null);
+function Translator() {
+  const { token } = useContext(AuthContext);
+  const { groupId } = useParams();  
+  console.log('groupId:', groupId);
+  const [reports, setReports] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchReportsForGroup = async () => {
       try {
+          if (!token) {
+            console.error('Token not available.');
+            return;
+          }
+  
+          const config = {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/data/${groupId}`
-        );
-        setGroupData(response.data); // Assuming response.data contains the group data
+          `${import.meta.env.VITE_BACKEND_URL}/reportgroupreports/${groupId}`, config);
+       
+        setReports(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
-    fetchData();
-  }, [groupId]);
+    if (groupId) {
+      fetchReportsForGroup();
+    }
 
+  }, [groupId]);
+  console.log('reports:', reports);
   return (
     <>
       <div>
@@ -31,7 +48,7 @@ function Translator({ match }) {
       </div>
       <div className="app-container">
         <div className="leftviewer-container">
-          <LeftViewer groupData={groupData} />
+          <LeftViewer reports={reports} />
         </div>
         <div className="rightviewer-container">
           <RightViewer />

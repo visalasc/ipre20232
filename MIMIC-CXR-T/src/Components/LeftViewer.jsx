@@ -9,9 +9,10 @@ function LeftViewer({ groupData }) {
           <Card.Header>Reporte original:</Card.Header>
           {groupData &&
             groupData.sentences.map((sentence, index) => (
-              <Card.Text key={index} id={sentence.id}>
-                {sentence.text}
-              </Card.Text>
+              <div key={report.id}>
+                <Card.Text>ID: {report.id}</Card.Text>
+                <Card.Text>{report.text}</Card.Text>
+              </div>
             ))}
         </Card.Body>
       </Card>

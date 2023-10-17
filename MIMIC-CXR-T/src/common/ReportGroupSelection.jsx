@@ -29,7 +29,8 @@ const ReportGroupSelection = () => {
           }
         };
 
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/reportgroups/user/${token}`, config);
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/reportgroups/user/${token}`, config);
        
         setReportGroups(response.data);
       } catch (error) {
@@ -49,10 +50,10 @@ const ReportGroupSelection = () => {
           <Col>
           <Card>
               <Row>
+                <Col><Card.Text>Id</Card.Text></Col>
                 <Col><Card.Text>Fecha de creación</Card.Text></Col>
                 <Col><Card.Text>Reportes por traducir</Card.Text></Col>
-                <Col><Card.Text>Reportes traducidos</Card.Text></Col>
-                <Col><Card.Text>Progreso</Card.Text></Col>
+                 <Col><Card.Text>Progreso</Card.Text></Col>
                 <Col><Card.Text>Seleccionar</Card.Text></Col>
               </Row>
             </Card>
@@ -63,10 +64,11 @@ const ReportGroupSelection = () => {
             <Col>
             <Card>
               <Row>
+                <Col><Card.Text>{group.id}</Card.Text></Col>
                 <Col><Card.Text>{group.createdAt}</Card.Text></Col>
+                <Col><Card.Text>X</Card.Text></Col>
                 <Col><Card.Text>{group.numberOfReportsToTranslate}</Card.Text></Col>
-                <Col><Card.Text>{group.numberOfReportsTranslated}</Card.Text></Col>
-                <Col>
+                  <Col>
                   <ProgressBar
                     variant="success"
                     now={(group.numberOfReportsTranslated / group.numberOfReportsToTranslate) * 100}
@@ -74,6 +76,7 @@ const ReportGroupSelection = () => {
                   />
                 </Col>
                 <Col>
+                  
                   <Button variant="primary" onClick={() => handleSelectButtonClick(group.id)}>Seleccionar</Button>
                 </Col>
               </Row>
