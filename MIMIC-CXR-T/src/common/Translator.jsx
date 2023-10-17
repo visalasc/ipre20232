@@ -38,9 +38,10 @@ function Translator() {
     if (groupId) {
       fetchReportsForGroup();
     }
+    console.log('translator reports:', reports);
 
   }, [groupId]);
-  console.log('reports:', reports);
+  
   return (
     <>
       <div>

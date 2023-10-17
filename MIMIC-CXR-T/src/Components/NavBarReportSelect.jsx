@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navbar, Nav, Button, Modal, Card } from 'react-bootstrap';
+import { Navbar, Nav, Button, Modal} from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
 
 const NavBarReportSelection = () => {
