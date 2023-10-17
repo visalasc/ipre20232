@@ -11,6 +11,10 @@ const ReportGroupSelection = () => {
   const [reportGroups, setReportGroups] = useState([]);
   const navigate = useNavigate();
 
+  const handleSelectButtonClick = (groupId) => {
+    navigate(`/translator/${groupId}`);
+  };
+  
   useEffect(() => {
     const fetchUserReportGroups = async () => {
       try {
@@ -70,7 +74,7 @@ const ReportGroupSelection = () => {
                   />
                 </Col>
                 <Col>
-                  <Button variant="primary">Seleccionar</Button>
+                  <Button variant="primary" onClick={() => handleSelectButtonClick(group.id)}>Seleccionar</Button>
                 </Col>
               </Row>
             </Card>
