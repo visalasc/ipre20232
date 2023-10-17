@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext} from 'react';
-import MyNavBar from '../Components/NavApp';
+import NavBarReportSelection from '../Components/NavBarReportSelect';
 import LeftViewer from '../Components/LeftViewer';
 import RightViewer from '../Components/RightViewer';
 import './translator.css';
@@ -44,7 +44,7 @@ function Translator() {
   return (
     <>
       <div>
-        <MyNavBar />
+        <NavBarReportSelection />
       </div>
       <div className="app-container">
         <div className="leftviewer-container">
