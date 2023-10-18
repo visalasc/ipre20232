@@ -17,7 +17,7 @@ const ModalDictionary = () => {
   
   return (
     <>
-    <Button variant="primary" onClick={handleShowModalDictionary}>
+    <Button variant="info" onClick={handleShowModalDictionary}>
           Abrir diccionario
         </Button>
 

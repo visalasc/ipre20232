@@ -6,6 +6,7 @@ import './translator.css';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../auth/AuthContext';
+import { Button, Card, Container, Col, Row, ButtonGroup } from 'react-bootstrap';
 
 function Translator() {
   const { token } = useContext(AuthContext);
@@ -44,21 +45,27 @@ function Translator() {
   
   return (
     <>
-      <div>
-        <NavBarReportSelection />
-      </div>
-      <div className="app-container">
-        <div className="leftviewer-container">
-        {reports !== null ? (
-            <LeftViewer reports={reports} />
-          ) : (
-            <p>Loading reports...</p>
-          )}
-        </div>
-        <div className="rightviewer-container">
-          <RightViewer />
-        </div>
-      </div>
+      <NavBarReportSelection />
+      <Container >
+        <Row>
+          <Col>
+        <Card bg= "secondary" border="light"
+        style={{ marginTop: '4%'}} >
+          <Row>
+            <Col sm>
+            {reports !== null ? (
+              <LeftViewer reports={reports} />
+            ) : (
+              <p>Loading reports...</p>
+            )}
+            </Col>
+            <RightViewer />
+          </Row>
+        </Card>
+        </Col>
+        </Row>
+      </Container>
+     
     </>
   );
 }

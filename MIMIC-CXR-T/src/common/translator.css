@@ -43,7 +43,7 @@
 .app-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  margin-top: 20px;
+  margin-top: 3%;
   background-color: #c1e3e4;
 }
 

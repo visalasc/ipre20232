@@ -18,9 +18,7 @@ function LeftViewer({ reports }) {
   }, [reports]);
 
   return (
-    <div className="container mt-4">
-      <Container className="mb-2">
-        <Row>
+    <>
           <ButtonGroup size="lg" className="mb-2">
             <Button variant="primary" onClick={goToPreviousReport}
           disabled={reports.length <= 1}>
@@ -32,11 +30,10 @@ function LeftViewer({ reports }) {
             Siguiente
           </Button>
           </ButtonGroup>
-        </Row>
-      </Container>
+         
       <Card text="dark" 
       bg="light" border="secondary" 
-      style={{ width: '23rem' , height: '80%' , overflow: 'scroll'}}>
+      style={{ width: '23rem' , height: 'auto' , overflow: 'scroll'}}>
         <Card.Body>
           <Card.Header>Reporte original:</Card.Header>
             <Card.Text>ID: {reports[currentIndex].id}</Card.Text>
@@ -44,7 +41,7 @@ function LeftViewer({ reports }) {
             <Card.Text>Contenido: {reports[currentIndex].text}</Card.Text>
         </Card.Body>
       </Card>
-    </div>
+      </>
   );
 }
 

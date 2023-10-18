@@ -66,8 +66,8 @@ function RightViewer() {
 
   return (
   <>
-    <div className="container mt-4">
-      <Card border="secondary" style={{ width: '25rem' }}>
+    <Col>
+      <Card border="info" style={{ width: '25rem' ,height:'100%'}}>
         <Card.Header>Pre-traducción:</Card.Header>
         <Card.Body>
           <Card.Title>Warning Card Title</Card.Title>
@@ -141,10 +141,9 @@ function RightViewer() {
           </Button>
         </Modal.Footer>
       </Modal>
-  </div>
-  <div>
-      <Col md={12} style={{ marginLeft: '15px'}}> {/* Ajusta el tamaño de la columna según tus necesidades */}
-          <Row style={{ marginTop: '15px'}}>
+
+</Col>
+  
             <Col>
               {/* Aquí mapea las sugerencias en Toasts */}
               {toasts.map((toast) => (
@@ -164,9 +163,6 @@ function RightViewer() {
                 </Toast>
               ))}
             </Col>
-          </Row>
-        </Col>
-    </div>
     </>
   );
 }

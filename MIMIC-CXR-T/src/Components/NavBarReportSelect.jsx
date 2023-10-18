@@ -11,10 +11,22 @@ const NavBarReportSelection = () => {
   return (
     <Navbar bg="dark" data-bs-theme="dark" expand="lg">
       <Navbar.Brand >MIMIC-CXR</Navbar.Brand>
-      <Nav.Link href="/reportselection">Seleccionar Reportes</Nav.Link>
-      <ModalUploadReport/>
-      <ModalDictionary/>
-      <LogoutButton />
+      <Nav className="ml-auto"> 
+        <Nav.Link href="/reportselection">
+          <Button variant="success">
+            Seleccionar Reportes
+          </Button>
+        </Nav.Link>
+        <Nav.Link>
+          <ModalUploadReport/>
+        </Nav.Link>
+        <Nav.Link>
+          <ModalDictionary/>
+        </Nav.Link>
+        <Nav.Link>
+        <LogoutButton />
+        </Nav.Link>
+      </Nav>
     </Navbar>
   );
 };
