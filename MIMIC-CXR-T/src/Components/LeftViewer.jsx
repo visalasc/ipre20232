@@ -1,5 +1,5 @@
 import React , { useState, useEffect } from 'react';
-import { Button, Card, Container, Col, Row } from 'react-bootstrap';
+import { Button, Card, Container, Col, Row, ButtonGroup } from 'react-bootstrap';
 
 function LeftViewer({ reports }) {
 
@@ -19,23 +19,24 @@ function LeftViewer({ reports }) {
 
   return (
     <div className="container mt-4">
-      <Container>
+      <Container className="mb-2">
         <Row>
-          <Col>
+          <ButtonGroup size="lg" className="mb-2">
             <Button variant="primary" onClick={goToPreviousReport}
           disabled={reports.length <= 1}>
             Anterior
           </Button>
-          </Col>
-          <Col>
+      
             <Button variant="primary" onClick={goToNextReport} 
           disabled={reports.length <= 1}>
             Siguiente
           </Button>
-          </Col>
+          </ButtonGroup>
         </Row>
       </Container>
-      <Card border="secondary" style={{ width: '25rem' }}>
+      <Card text="dark" 
+      bg="light" border="secondary" 
+      style={{ width: '23rem' , height: '80%' , overflow: 'scroll'}}>
         <Card.Body>
           <Card.Header>Reporte original:</Card.Header>
             <Card.Text>ID: {reports[currentIndex].id}</Card.Text>
