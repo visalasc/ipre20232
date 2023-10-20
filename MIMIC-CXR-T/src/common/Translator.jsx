@@ -11,8 +11,10 @@ import { Button, Card, Container, Col, Row, ButtonGroup } from 'react-bootstrap'
 function Translator() {
   const { token } = useContext(AuthContext);
   const { groupId } = useParams();  
-  console.log('groupId:', groupId);
   const [reports, setReports] = useState(null);
+  const [translatedreports, setTranslatedReports] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [highlightedPhraseIndex, setHighlightedPhraseIndex] = useState(null);
 
   useEffect(() => {
     const fetchReportsForGroup = async () => {
@@ -30,7 +32,8 @@ function Translator() {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/reportgroupreports/${groupId}`, config);
        
-        setReports(response.data);
+        setReports(response.data.reportData);
+        setTranslatedReports(response.data.translatedreportData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -39,27 +42,66 @@ function Translator() {
     if (groupId) {
       fetchReportsForGroup();
     }
-    console.log('translator reports:', reports);
-
   }, [groupId]);
-  
+
+  const goToNextReport = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % reports.length);
+  };
+
+  const goToPreviousReport = () => {
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + reports.length) % reports.length);
+  };
+
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [reports]);
+
+
   return (
     <>
       <NavBarReportSelection />
       <Container >
         <Row>
           <Col>
+
         <Card bg= "secondary" border="light"
         style={{ marginTop: '4%'}} >
           <Row>
             <Col sm>
+            <ButtonGroup size="lg" className="mb-2">
+              <Button variant="primary" onClick={goToPreviousReport} disabled={reports === null || currentIndex === 0}>
+                Anterior
+              </Button>
+
+              <Button variant="primary" onClick={goToNextReport} disabled={reports === null || currentIndex === reports.length - 1}>
+                Siguiente
+              </Button>
+            </ButtonGroup>
+
+
             {reports !== null ? (
-              <LeftViewer reports={reports} />
+              <LeftViewer reports={reports} 
+              currentIndex={currentIndex} 
+              highlightedPhraseIndex={highlightedPhraseIndex}
+              setHighlightedPhraseIndex={setHighlightedPhraseIndex}
+   
+              />
             ) : (
               <p>Loading reports...</p>
             )}
             </Col>
-            <RightViewer />
+            {translatedreports !== null ? (
+               <RightViewer translatedreports={translatedreports} 
+               currentIndex={currentIndex}
+               highlightedPhraseIndex={highlightedPhraseIndex}
+               setHighlightedPhraseIndex={setHighlightedPhraseIndex}
+    
+               />
+         
+            ) : (
+              <p>Loading translatedreports...</p>
+            )}
+          
           </Row>
         </Card>
         </Col>
