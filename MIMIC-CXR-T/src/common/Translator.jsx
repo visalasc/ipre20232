@@ -16,6 +16,12 @@ function Translator() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [highlightedPhraseIndex, setHighlightedPhraseIndex] = useState(null);
 
+  const [buttonResetCounter, setButtonResetCounter] = useState(0);
+
+  const resetButtons = () => {
+    setButtonResetCounter((prevCounter) => prevCounter + 1);
+  };
+  
   useEffect(() => {
     const fetchReportsForGroup = async () => {
       try {
@@ -46,11 +52,16 @@ function Translator() {
 
   const goToNextReport = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % reports.length);
+    resetButtons(); // Llama a la función para reiniciar botones
+
   };
 
   const goToPreviousReport = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + reports.length) % reports.length);
+    resetButtons(); // Llama a la función para reiniciar botones
+
   };
+
 
   useEffect(() => {
     setCurrentIndex(0);

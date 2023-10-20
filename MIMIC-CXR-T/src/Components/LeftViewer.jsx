@@ -3,7 +3,6 @@ import { Button, Card, Container, Col, Row, ButtonGroup } from 'react-bootstrap'
 import './leftviewer.css'
 function LeftViewer({ reports , currentIndex, highlightedPhraseIndex, setHighlightedPhraseIndex}) {
   const currentReport = reports[currentIndex];
-  console.log(currentReport);
   return (
     <>
       <Card text="dark" 
