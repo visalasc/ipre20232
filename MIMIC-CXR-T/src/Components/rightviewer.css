@@ -1,4 +1,12 @@
   /* Estilo para resaltar frases traducidas */
   .highlighted-right {
-    background-color: #bbdb7b; 
+    background-color: #bfe6e6; 
+  }
+
+  .selected{
+    background-color:#b6e7be;
+  }
+
+  .selected-times{
+    background-color:#e7b6b6;
   }

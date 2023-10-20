@@ -68,7 +68,14 @@ function RightViewer2({ translatedreports, currentIndex,
           {currentTranslatedReport.translatedphrases.map((translatedphrase, index) => (
             <Card.Text
               key={translatedphrase.id}
-              className={highlightedPhraseIndex === index ? 'highlighted-right' : ''}
+              className={`${
+                highlightedPhraseIndex === index ? 'highlighted-right' : ''
+              } ${
+                buttonStates[index].check ? 'selected' : ''
+              }
+                ${
+                buttonStates[index].times ? 'selected-times' : ''
+              }`}
               onMouseEnter={() => setHighlightedPhraseIndex(index)}
               onMouseLeave={() => setHighlightedPhraseIndex(null)}
             >
