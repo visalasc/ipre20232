@@ -10,3 +10,28 @@
   .selected-times{
     background-color:#e7b6b6;
   }
+
+  /* En tu archivo CSS o en línea en tu componente */
+.disabled {
+  background-color: lightgray; /* Cambia el color de fondo a tu preferencia */
+  pointer-events: none; /* Desactiva la interacción con el botón */
+}
+
+.mi-toast {
+  max-width: auto; 
+  overflow: scroll;/* Puedes ajustar el valor a tu preferencia */
+}
+
+.translated-phrase {
+  display: flex; /* Hace que los elementos dentro de este div se alineen en una fila */
+  align-items: center; /* Centra verticalmente los elementos */
+  justify-content: space-between; /* Espaciado uniforme entre los elementos */
+  margin-bottom: 10px; /* Agrega espacio entre cada frase traducida */
+}
+
+.button-row {
+  display: flex; /* Alinea los botones en una fila */
+  gap: 5px; /* Agrega un pequeño espacio entre los botones */
+  align-items: center; /* Centra verticalmente los botones con respecto al texto */
+}
+
