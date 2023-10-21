@@ -1,7 +1,10 @@
-import React, { useState , useEffect} from 'react';
+import React, { useState , useEffect, useContext} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { Row, Col, Card, ToggleButton, Modal, Button, Form } from 'react-bootstrap';
+import { Row, Col, Card, ToggleButton, Modal, Button, Form , ProgressBar} from 'react-bootstrap';
+import axios from 'axios';
+import { AuthContext } from '../auth/AuthContext';
+import SuggestionToast from './SuggestionToast';
 import './rightviewer.css';
 
 function RightViewer2({ translatedreports, currentIndex, 
@@ -12,6 +15,10 @@ function RightViewer2({ translatedreports, currentIndex,
     check: false,
     times: false,
   })));
+  const [translatedphraseId, setTranslatedPhraseId] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [suggestion, setSuggestion] = useState(''); // Una única sugerencia a la vez
+  const [suggestions, setSuggestions] = useState([]); // Almacena las sugerencias
 
   const calculatePercentageClicked = () => {
     const clickedCount = buttonStates.filter((state) => state.check || state.times).length;
@@ -29,12 +36,11 @@ function RightViewer2({ translatedreports, currentIndex,
     setButtonStates(updatedStates);
   };
 
-  const handleTimesButtonClick = (index) => {
+  const handleTimesButtonClick = (index, translatedphraseId) => {
     const updatedStates = [...buttonStates];
     updatedStates[index] = { check: false, times: true };
     setButtonStates(updatedStates);
-
-    // Show the modal for "Times" and set the modalText
+    setTranslatedPhraseId(translatedphraseId);
     setShowModal(true);
     setModalText('');
   };
@@ -43,12 +49,29 @@ function RightViewer2({ translatedreports, currentIndex,
     setShowModal(false);
   };
 
-  const handleModalSave = () => {
-    // Handle saving modalText, you can send it to the server or update state as needed
-    console.log('Saved Text:', modalText);
+  const { token } = useContext(AuthContext);
+  const handleModalSave = (event) => {
+    // Hacer una solicitud para guardar el contenido en la base de datos
+    event.preventDefault();
+    console.log('Datos a enviar al servidor:', { text: modalText, translatedphraseId });
 
-    // Close the modal
-    setShowModal(false);
+    axios.post(`${import.meta.env.VITE_BACKEND_URL}/suggestions`, 
+    { text: modalText , translatedphraseId}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then((response) => {
+        console.log('Sugerencia guardada exitosamente');
+        const newSuggestion = modalText; // Nueva sugerencia
+        setSuggestion(newSuggestion); // Establecer la sugerencia actual
+        setSuggestions([...suggestions, newSuggestion]); // Agregar la sugerencia a la lista de sugerencias
+        setShowToast(true); // Mostrar la Toast
+        handleModalClose();
+         })
+      .catch((error) => {
+        console.error('Error al guardar la sugerencia:', error);
+      });
   };
 
   useEffect(() => {
@@ -65,53 +88,59 @@ function RightViewer2({ translatedreports, currentIndex,
         <Card.Body>
           <Card.Header>Reporte Pre-traducido:</Card.Header>
           <Card.Text>TranslatedReportID: {currentTranslatedReport.id}</Card.Text>
-          {currentTranslatedReport.translatedphrases.map((translatedphrase, index) => (
-            <Card.Text
-              key={translatedphrase.id}
-              className={`${
-                highlightedPhraseIndex === index ? 'highlighted-right' : ''
-              } ${
-                buttonStates[index].check ? 'selected' : ''
-              }
-                ${
-                buttonStates[index].times ? 'selected-times' : ''
-              }`}
-              onMouseEnter={() => setHighlightedPhraseIndex(index)}
-              onMouseLeave={() => setHighlightedPhraseIndex(null)}
-            >
-              <Row>
-                <Col>{translatedphrase.text}</Col>
-                <Col>
-                  <ToggleButton
-                    type="checkbox"
-                    variant={buttonStates[index].check ? 'success' : 'light'}
-                    onClick={() => handleCheckButtonClick(index)}
+          <Row>
+            <Col>
+              {currentTranslatedReport.translatedphrases.map((translatedphrase, index) => (
+                <div key={translatedphrase.id} className="translated-phrase">
+                  <Card.Text
+                    className={`${
+                      highlightedPhraseIndex === index ? 'highlighted-right' : ''
+                    } ${
+                      buttonStates[index].check ? 'selected' : ''
+                    }
+                    ${
+                      buttonStates[index].times ? 'selected-times' : ''
+                    }`}
+                    onMouseEnter={() => setHighlightedPhraseIndex(index)}
+                    onMouseLeave={() => setHighlightedPhraseIndex(null)}
                   >
-                    <FontAwesomeIcon icon={faCheck} />
-                  </ToggleButton>
-                  <ToggleButton
-                    type="checkbox"
-                    variant={buttonStates[index].times ? 'danger' : 'light'}
-                    onClick={() => handleTimesButtonClick(index)}
-                  >
-                    <FontAwesomeIcon icon={faTimes} />
-                  </ToggleButton>
-                </Col>
-              </Row>
-            </Card.Text>
-          ))}
+                    {translatedphrase.text}
+                  </Card.Text>
+                  <div className='button-row'>
+                    <ToggleButton
+                      type="checkbox"
+                      variant={buttonStates[index].check ? 'success' : 'light'}
+                      onClick={() => handleCheckButtonClick(index)}
+                    >
+                      <FontAwesomeIcon icon={faCheck} />
+                    </ToggleButton>
+                    <ToggleButton
+                      type="checkbox"
+                      variant={buttonStates[index].times ? 'danger' : 'light'}
+                      onClick={() => handleTimesButtonClick(index, translatedphrase.id)}
+                    >
+                      <FontAwesomeIcon icon={faTimes} />
+                    </ToggleButton>
+                  </div>
+                </div>
+              ))}
+            </Col>
+            <Col xs={3}>
+              {showToast && <SuggestionToast suggestions={suggestions} onClose={() => setShowToast(false)} />}
+            </Col>
+          </Row>
         </Card.Body>
       </Card>
-
+    
       {/* Modal for "Times" */}
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Editar Texto</Modal.Title>
+          <Modal.Title>Agregar Sugerencia:</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group>
-              <Form.Label>Texto</Form.Label>
+              <Form.Label>Contenido:</Form.Label>
               <Form.Control
                 type="text"
                 value={modalText}
@@ -129,6 +158,8 @@ function RightViewer2({ translatedreports, currentIndex,
           </Button>
         </Modal.Footer>
       </Modal>
+
+    
     </>
   );
 }
