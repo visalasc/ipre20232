@@ -29,6 +29,12 @@ function RightViewer2({ translatedreports, currentIndex,
   // Modal state
   const [showModal, setShowModal] = useState(false);
   const [modalText, setModalText] = useState('');
+  const [selectedOption, setSelectedOption] = useState('');
+  
+  const handleOptionClick = (option) => {
+    setSelectedOption(option);
+  };
+  
 
   const handleCheckButtonClick = (index) => {
     const updatedStates = [...buttonStates];
@@ -50,29 +56,36 @@ function RightViewer2({ translatedreports, currentIndex,
   };
 
   const { token } = useContext(AuthContext);
-  const handleModalSave = (event) => {
+  const handleModalSave = async (event) => {
     // Hacer una solicitud para guardar el contenido en la base de datos
     event.preventDefault();
-    console.log('Datos a enviar al servidor:', { text: modalText, translatedphraseId });
-
-    axios.post(`${import.meta.env.VITE_BACKEND_URL}/suggestions`, 
-    { text: modalText , translatedphraseId}, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then((response) => {
-        console.log('Sugerencia guardada exitosamente');
-        const newSuggestion = modalText; // Nueva sugerencia
-        setSuggestion(newSuggestion); // Establecer la sugerencia actual
-        setSuggestions([...suggestions, newSuggestion]); // Agregar la sugerencia a la lista de sugerencias
-        setShowToast(true); // Mostrar la Toast
-        handleModalClose();
-         })
-      .catch((error) => {
-        console.error('Error al guardar la sugerencia:', error);
-      });
+    if (!modalText && !selectedOption) {
+      // mostrar un mensaje de error si no se proporciona un texto ni se selecciona una opción.
+      return;
+    }
+  
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/suggestions`,
+        { text: modalText, translatedphraseId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log('Sugerencia guardada exitosamente');
+      const newSuggestion = modalText; // Nueva sugerencia
+      setSuggestion(newSuggestion); // Establecer la sugerencia actual
+      setSuggestions([...suggestions, newSuggestion]); // Agregar la sugerencia a la lista de sugerencias
+      setShowToast(true); // Mostrar la Toast
+      handleModalClose();
+    } catch (error) {
+      console.error('Error al guardar la sugerencia:', error);
+      // Aquí puedes manejar el error, por ejemplo, mostrando un mensaje de error al usuario.
+    }
   };
+  
 
   useEffect(() => {
     // Reset button states when currentIndex changes
@@ -88,7 +101,11 @@ function RightViewer2({ translatedreports, currentIndex,
         <Card.Body>
           <Card.Header>Reporte Pre-traducido:</Card.Header>
           <Card.Text>TranslatedReportID: {currentTranslatedReport.id}</Card.Text>
-          <Row>
+          
+          <ProgressBar animated variant="success"
+          now={calculatePercentageClicked()} 
+          label={`${calculatePercentageClicked()}%`} />
+          <Row style={{marginTop: '20px'}}>
             <Col>
               {currentTranslatedReport.translatedphrases.map((translatedphrase, index) => (
                 <div key={translatedphrase.id} className="translated-phrase">
@@ -135,7 +152,7 @@ function RightViewer2({ translatedreports, currentIndex,
       {/* Modal for "Times" */}
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Agregar Sugerencia:</Modal.Title>
+          <Modal.Title>Agregar sugerencia o corrección:</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -147,17 +164,47 @@ function RightViewer2({ translatedreports, currentIndex,
                 onChange={(e) => setModalText(e.target.value)}
               />
             </Form.Group>
+            <Form.Group>
+              <Form.Label>Seleccione una opción:</Form.Label>
+              <div>
+                <ToggleButton
+                  type="checkbox"
+                  variant={selectedOption === 'option1' ? 'success' : 'light'}
+                  onClick={() => handleOptionClick('option1')}
+                >
+                  Terminological
+                </ToggleButton>
+                <ToggleButton
+                  type="checkbox"
+                  variant={selectedOption === 'option2' ? 'success' : 'light'}
+                  onClick={() => handleOptionClick('option2')}
+                >
+                  Gramatical
+                </ToggleButton>
+                <ToggleButton
+                  type="checkbox"
+                  variant={selectedOption === 'option3' ? 'success' : 'light'}
+                  onClick={() => handleOptionClick('option3')}
+                >
+                  Functional
+                </ToggleButton>
+              </div>
+            </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleModalClose}>
             Cerrar
           </Button>
-          <Button variant="primary" onClick={handleModalSave}>
+          <Button 
+          variant="primary" onClick={handleModalSave}
+          disabled={!modalText && !selectedOption}>
             Guardar
           </Button>
         </Modal.Footer>
       </Modal>
+
+      
 
     
     </>

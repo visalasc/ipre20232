@@ -51,16 +51,21 @@ function Translator() {
   }, [groupId]);
 
   const goToNextReport = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % reports.length);
-    resetButtons(); // Llama a la función para reiniciar botones
-
+    setCurrentIndex((prevIndex) => {
+      const nextIndex = (prevIndex + 1) % reports.length;
+      return nextIndex;
+    });
+    resetButtons();
   };
-
+  
   const goToPreviousReport = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + reports.length) % reports.length);
-    resetButtons(); // Llama a la función para reiniciar botones
-
+    setCurrentIndex((prevIndex) => {
+      const previousIndex = (prevIndex - 1 + reports.length) % reports.length;
+      return previousIndex;
+    });
+    resetButtons();
   };
+  
 
 
   useEffect(() => {
