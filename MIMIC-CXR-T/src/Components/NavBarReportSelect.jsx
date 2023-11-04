@@ -1,5 +1,4 @@
-import React, { useState, useContext } from 'react';
-import { Navbar, Nav, Button, Modal, NavLink } from 'react-bootstrap';
+import { Navbar, Nav, Button } from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
 import ModalDictionary  from '../Components/ModalDictionary';
 import ModalUploadReport from '../Components/ModalUploadReport';

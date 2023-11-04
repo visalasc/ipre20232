@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import NavBarReportSelection from '../Components/NavBarReportSelect';
 import ProgressBar from 'react-bootstrap/ProgressBar';

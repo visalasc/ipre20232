@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import '../common/translator.css';
 
 function SuggestionViewer({ suggestionText, onAccept, onReject }) {

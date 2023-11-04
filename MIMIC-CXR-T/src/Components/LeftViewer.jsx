@@ -1,13 +1,11 @@
-import React , { useState, useEffect } from 'react';
-import { Button, Card, Container, Col, Row, ButtonGroup } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import './leftviewer.css'
 function LeftViewer({ reports , currentIndex, highlightedPhraseIndex, setHighlightedPhraseIndex}) {
   const currentReport = reports[currentIndex];
   return (
     <>
       <Card text="dark" 
-      bg="light" border="secondary" 
-      style={{ width: '23rem' , height: 'auto' , overflow: 'scroll'}}>
+      bg="light" border="secondary">
         <Card.Body>
           <Card.Header>Reporte original:</Card.Header>
             <Card.Text>ReportID: {currentReport.id}</Card.Text>
@@ -26,5 +24,4 @@ function LeftViewer({ reports , currentIndex, highlightedPhraseIndex, setHighlig
       </>
   );
 }
-
 export default LeftViewer;

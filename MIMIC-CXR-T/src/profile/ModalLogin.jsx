@@ -1,5 +1,5 @@
 
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -37,7 +37,7 @@ function ModalLogin() {
         const access_token = response.data.access_token;
         localStorage.setItem('token', access_token);
         setToken(access_token);
-        console.log('Se seteo el token: ', token);
+        console.log('Se seteo el token: ', token, access_token);
 
         // Cerrar el modal después del login exitoso
         handleClose();

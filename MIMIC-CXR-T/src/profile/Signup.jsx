@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import './Login.css'; 
 
@@ -22,7 +22,7 @@ function Signup() {
         email: email,
         password: password
       }).then((response) => {
-        console.log('Registro exitoso! Ahora puedes volver y loguearte');
+        console.log(response, 'Registro exitoso! Ahora puedes volver y loguearte');
         setError(false);
         setMsg('Registro exitoso! Ahora puedes volver y loguearte');
       }).catch((error) => {      

@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
 import './App.css'
 import Signup from '../profile/Signup';
 import MyNavBar from '../Components/Nav';
-import AuthProvider from '../auth/AuthProvider';
 
 
 function App() {
