@@ -7,6 +7,10 @@
     background-color:#b6e7be;
   }
 
+  .selected-word{
+    background-color:#d0d0d0;
+  }
+
   .selected-times{
     background-color:#e7b6b6;
   }
