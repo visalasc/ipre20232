@@ -15,7 +15,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
 
   const { token } = useContext(AuthContext);
 
-  const loadPreviousData = async (selectedTranslatedPhraseId) => {
+  const loadPreviousSuggestionData = async (selectedTranslatedPhraseId) => {
     try {
       const previousSuggestionResponse = await getPreviousSuggestion(selectedTranslatedPhraseId, token);
       if (previousSuggestionResponse) {
@@ -25,6 +25,15 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
         setModalText(''); 
       }
 
+    } catch (error) {
+      console.error('Error al cargar datos previos:', error);
+      setModalText(''); 
+      
+    }
+  };
+
+  const loadPreviousCorrectionData = async (selectedTranslatedPhraseId) => {
+    try {
       const previousCorrectionResponse = await getPreviousCorrection(selectedTranslatedPhraseId, token);
       if (previousCorrectionResponse){
         setPreviousCorrection(previousCorrectionResponse.text);
@@ -34,7 +43,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
       }
     } catch (error) {
       console.error('Error al cargar datos previos:', error);
-      setModalText(''); 
+      setSelectedOptions([]);
     }
   };
 
@@ -69,7 +78,11 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
       } else {
         await createSuggestion(selectedTranslatedPhraseId, modalText, token);
       }
-  
+      if (previousCorrection.id === selectedTranslatedPhraseId) {
+        await updateCorrection(selectedTranslatedPhraseId, selectedOptions, token);
+      } else {
+        await createCorrection(selectedTranslatedPhraseId, selectedOptions, token);
+      }
       onHide();
     } catch (error) {
       console.error('Error al guardar la sugerencia:', error);
@@ -79,8 +92,9 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
 return (
     <>
       <Modal show={show} onShow={() => {
-        loadPreviousData(selectedTranslatedPhraseId);
         loadTranslatedPhrase(selectedTranslatedPhraseId);
+        loadPreviousCorrectionData(selectedTranslatedPhraseId);
+        loadPreviousSuggestionData(selectedTranslatedPhraseId);
         }} onHide={onHide} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Agregar sugerencia o corrección:</Modal.Title>
