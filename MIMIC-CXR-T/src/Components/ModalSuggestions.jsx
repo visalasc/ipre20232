@@ -12,7 +12,6 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
   const [previousCorrection, setPreviousCorrection] = useState(null);
   const [translatedPhrase, setTranslatedPhrase] = useState('');
   const [editedTranslatedPhrase, setEditedTranslatedPhrase] = useState(''); 
-
   const { token } = useContext(AuthContext);
 
   const loadPreviousSuggestionData = async (selectedTranslatedPhraseId) => {
@@ -21,10 +20,10 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
       if (previousSuggestionResponse) {
         setPreviousSuggestion(previousSuggestionResponse);
         setModalText(previousSuggestionResponse.text);
+        console.log("previousSuggestion",previousSuggestion);
       } else {
         setModalText(''); 
       }
-
     } catch (error) {
       console.error('Error al cargar datos previos:', error);
       setModalText(''); 
@@ -36,8 +35,9 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
     try {
       const previousCorrectionResponse = await getPreviousCorrection(selectedTranslatedPhraseId, token);
       if (previousCorrectionResponse){
-        setPreviousCorrection(previousCorrectionResponse.text);
-        setSelectedOptions(previousCorrection)
+        setPreviousCorrection(previousCorrectionResponse);
+        setSelectedOptions(previousCorrection.text)
+        console.log("previousCorrection",previousCorrection);
       } else {
         setSelectedOptions([]);
       }
@@ -73,12 +73,15 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
   const handleModalSave = async (event) => {
     event.preventDefault();
     try {
-      if (previousSuggestion.id === selectedTranslatedPhraseId) {
+      console.log("previousCorrection.translatedPhraseId: ",previousCorrection.translatedphraseId);
+      console.log("previousSuggestion.translatedPhraseId: ",previousSuggestion.translatedphraseId);
+      console.log("selected translatedPhraseId: ", selectedTranslatedPhraseId);
+      if (previousSuggestion.translatedphraseId === selectedTranslatedPhraseId) {
         await updateSuggestion(selectedTranslatedPhraseId, modalText, token);
       } else {
         await createSuggestion(selectedTranslatedPhraseId, modalText, token);
       }
-      if (previousCorrection.id === selectedTranslatedPhraseId) {
+      if (previousCorrection.translatedphraseId === selectedTranslatedPhraseId) {
         await updateCorrection(selectedTranslatedPhraseId, selectedOptions, token);
       } else {
         await createCorrection(selectedTranslatedPhraseId, selectedOptions, token);
@@ -107,7 +110,7 @@ return (
               <Card border="info">
                 <Row>
                   <Col xs={3}>
-                    {console.log(selectedOptions)}
+                 
                     <ToggleButton
                       type="checkbox"
                       variant={selectedOptions.includes('Terminological') ? 'info' : 'light'}
