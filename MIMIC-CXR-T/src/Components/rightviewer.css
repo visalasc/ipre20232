@@ -7,9 +7,16 @@
     background-color:#b6e7be;
   }
 
-  .selected-word{
-    background-color:#d0d0d0;
+  .selected-word-info{
+    background-color:#abdff6;
   }
+  .selected-word-success{
+    background-color:#cbffcf;
+  }
+  .selected-word-warning{
+    background-color:#fff5cb;
+  }
+
 
   .selected-times{
     background-color:#e7b6b6;

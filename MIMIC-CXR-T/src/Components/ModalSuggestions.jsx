@@ -122,7 +122,9 @@ return (
                   <Col >
                     <WordSelector sentence={translatedPhrase} 
                     variant={"outline-info"}
-                    disabled={!selectedOptions.includes('Terminological')}/>
+                    disabled={!selectedOptions.includes('Terminological')}
+                    selectedClass = {'selected-word-info'}
+                    />
                   </Col>   
                 </Row>
               </Card>
@@ -140,7 +142,9 @@ return (
                   <Col >
                     <WordSelector sentence={translatedPhrase} 
                     variant={"outline-success"}
-                    disabled={!selectedOptions.includes('Grammatical')}/>
+                    disabled={!selectedOptions.includes('Grammatical')}
+                    selectedClass = {'selected-word-success'}
+                    />
                   </Col>  
                 </Row>
               </Card>
@@ -158,7 +162,9 @@ return (
                   <Col >
                     <WordSelector sentence={translatedPhrase} 
                     variant={"outline-warning"}
-                    disabled={!selectedOptions.includes('Functional')}/>
+                    disabled={!selectedOptions.includes('Functional')}
+                    selectedClass = {'selected-word-warning'}
+                    />
                   </Col>  
                 </Row>
               </Card>
