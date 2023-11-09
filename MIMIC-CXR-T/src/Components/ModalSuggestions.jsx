@@ -35,6 +35,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
     try {
       const previousCorrectionResponse = await getPreviousCorrection(selectedTranslatedPhraseId, token);
       if (previousCorrectionResponse){
+        console.log("previousCorrectionResponse",previousCorrectionResponse)
         setPreviousCorrection(previousCorrectionResponse);
         setSelectedOptions(previousCorrection.text)
         console.log("previousCorrection",previousCorrection);
@@ -73,19 +74,33 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
   const handleModalSave = async (event) => {
     event.preventDefault();
     try {
-      console.log("previousCorrection.translatedPhraseId: ",previousCorrection.translatedphraseId);
-      console.log("previousSuggestion.translatedPhraseId: ",previousSuggestion.translatedphraseId);
-      console.log("selected translatedPhraseId: ", selectedTranslatedPhraseId);
-      if (previousSuggestion.translatedphraseId === selectedTranslatedPhraseId) {
-        await updateSuggestion(selectedTranslatedPhraseId, modalText, token);
-      } else {
+      if (previousSuggestion == null){
         await createSuggestion(selectedTranslatedPhraseId, modalText, token);
-      }
-      if (previousCorrection.translatedphraseId === selectedTranslatedPhraseId) {
-        await updateCorrection(selectedTranslatedPhraseId, selectedOptions, token);
+        console.log("sugerencia para la frase ", selectedTranslatedPhraseId, " creada")
+      } else {
+        console.log("previousSuggestion.translatedphraseId: ",previousSuggestion.translatedphraseId)
+        if (previousSuggestion.translatedphraseId == selectedTranslatedPhraseId) {
+          await updateSuggestion(selectedTranslatedPhraseId, modalText, token);
+          console.log("sugerencia para la frase ", selectedTranslatedPhraseId, " actualizada")
+        }
+        else {
+          await createSuggestion(selectedTranslatedPhraseId, modalText, token);
+          console.log("sugerencia para la frase ", selectedTranslatedPhraseId, " creada")
+      }}
+
+      if (previousCorrection == null) {
+        await createCorrection(selectedTranslatedPhraseId, selectedOptions, token);
+        console.log("correccion para la frase ", selectedTranslatedPhraseId, " creada")
+      } else {
+        console.log("previousCorrection.translatedphraseId: ",previousCorrection.translatedphraseId)
+        if (previousCorrection.translatedphraseId == selectedTranslatedPhraseId) {
+          await updateCorrection(selectedTranslatedPhraseId, selectedOptions, token);
+          console.log("correccion para la frase ", selectedTranslatedPhraseId, " actualizada")
       } else {
         await createCorrection(selectedTranslatedPhraseId, selectedOptions, token);
-      }
+        console.log("correccion para la frase ", selectedTranslatedPhraseId, " creada")
+      }}
+
       onHide();
     } catch (error) {
       console.error('Error al guardar la sugerencia:', error);
