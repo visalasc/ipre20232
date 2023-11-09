@@ -3,10 +3,10 @@ import NavBarReportSelection from '../Components/NavBarReportSelect';
 import LeftViewer from '../Components/LeftViewer';
 import RightViewer from '../Components/RightViewer';
 import './translator.css';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../auth/AuthContext';
 import { Button, Card, Container, Col, Row, ButtonGroup, ProgressBar } from 'react-bootstrap';
+import { getReportGroupReports , getPreviousUserTranslatedPhraseByReport} from '../utils/api';
 
 function Translator() {
   const { token } = useContext(AuthContext);
@@ -21,41 +21,43 @@ function Translator() {
   // Track how many translated phrases have been reviewed
   const [reviewedTranslatedPhrases, setReviewedTranslatedPhrases] = useState(0);
 
-  useEffect(() => {
-    const fetchReportsForGroup = async () => {
-      try {
-        if (!token) {
-          console.error('Token not available.');
-          return;
+  const fetchReviewedTranslatedPhrases = async (translatedreports) => {
+    try {
+      let translatedPhrasesReviewed = 0;
+      console.log("translatedPhrasesReviewed: ", translatedPhrasesReviewed);
+          
+      for (const translatedreport of translatedreports) {
+        const response = await getPreviousUserTranslatedPhraseByReport(translatedreport.id, token);
+        if (response) {
+          console.log("largo de las UTP: ", response.length);
+          translatedPhrasesReviewed += response.length;
         }
-
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/reportgroupreports/${groupId}`,
-          config
-        );
-
-        setReports(response.data.reportData);
-        setTranslatedReports(response.data.translatedreportData);
-
-        // Calculate the total number of translated phrases in the group
-        const totalPhrases = response.data.translatedreportData.reduce(
-          (total, report) => total + report.translatedphrases.length,
-          0
-        );
-        setTotalTranslatedPhrases(totalPhrases);
-      } catch (error) {
-        console.error('Error fetching data:', error);
       }
-    };
-
-    if (groupId) {
-      fetchReportsForGroup();
+      setReviewedTranslatedPhrases(translatedPhrasesReviewed);
+    } catch (error) {
+      console.error('Error fetching reviewed phrases:', error);
     }
+  };  
+
+  const fetchReportsForGroup = async (groupId, token) => {
+    try {
+      const response = await getReportGroupReports(groupId, token);
+      setReports(response.reportData);
+      setTranslatedReports(response.translatedreportData);
+
+      // Calculate the total number of translated phrases in the group
+      const totalPhrases = response.translatedreportData.reduce(
+        (total, report) => total + report.translatedphrases.length,
+        0
+      );
+      setTotalTranslatedPhrases(totalPhrases);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReportsForGroup(groupId, token)
   }, [groupId]);
 
   // Calculate the overall progress as a percentage
@@ -121,7 +123,6 @@ function Translator() {
                     currentIndex={currentIndex}
                     highlightedPhraseIndex={highlightedPhraseIndex}
                     setHighlightedPhraseIndex={setHighlightedPhraseIndex}
-                    onReview={() => setReviewedTranslatedPhrases((count) => count + 1)}
                   />
                 ) : (
                   <p>Loading reports...</p>
