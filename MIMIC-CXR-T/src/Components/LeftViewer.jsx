@@ -1,26 +1,33 @@
-import { Card } from 'react-bootstrap';
+import { Card, Table } from 'react-bootstrap';
 import './leftviewer.css'
+
 function LeftViewer({ reports , currentIndex, highlightedPhraseIndex, setHighlightedPhraseIndex}) {
   const currentReport = reports[currentIndex];
   return (
     <>
-      <Card text="dark" 
-      bg="light" border="secondary">
-        <Card.Body>
-          <Card.Header>Reporte original:</Card.Header>
-            <Card.Text>ReportID: {currentReport.id}</Card.Text>
-            
-                    {currentReport.phrases.map((phrase, index) => (
-                <Card.Text key={phrase.id} 
-                className={highlightedPhraseIndex === index ? 'highlighted-left' : ''}
-                onMouseEnter={() => setHighlightedPhraseIndex(index)}
-                onMouseLeave={() => setHighlightedPhraseIndex(null)}
-                >{phrase.text} 
-                  </Card.Text>
+      <div>
+      <Table responsive="sm">
+        <thead>
+          <tr>
+            <th>ReportID: {currentReport.id}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentReport.phrases.map((phrase, index) => (
+            <tr key={phrase.id}>
+                <td key={phrase.id} 
+                className={` ${highlightedPhraseIndex === index ? 'highlighted-left' : 'text-left'}`}
+                  onMouseEnter={() => setHighlightedPhraseIndex(index)}
+                  onMouseLeave={() => setHighlightedPhraseIndex(null)}
+                >
+                  {phrase.text} 
+                </td>
+                </tr>
               ))}
-           
-        </Card.Body>
-      </Card>
+          
+        </tbody>
+      </Table>
+      </div>
       </>
   );
 }

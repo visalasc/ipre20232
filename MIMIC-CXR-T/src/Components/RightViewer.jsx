@@ -1,91 +1,115 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { Row, Col, Card, ToggleButton} from 'react-bootstrap';
+import { Table, ToggleButton} from 'react-bootstrap';
 import './rightviewer.css';
-import ModalSuggestions from './ModalSuggestions';
-import { createUserTranslatedPhrase, deleteCorrection, deleteSuggestion, 
+//import ModalSuggestions from './ModalSuggestions';
+//import ModalSuggestions from './ModalSuggestionsOldWorking';
+import ModalSuggestions from './ModalWithAccordeons';
+import { createUserTranslatedPhrase,
   getPreviousUserTranslatedPhrase, updateUserTranslatedPhrase } from '../utils/api';
 import { AuthContext } from '../auth/AuthContext';
 
-function RightViewer({ translatedreports, currentIndex, highlightedPhraseIndex, setHighlightedPhraseIndex }) {
+function RightViewer({translatedreports, currentIndex, 
+  highlightedPhraseIndex, setHighlightedPhraseIndex, triggerProgressRecalculation }) {
   const currentTranslatedReport = translatedreports[currentIndex];
   const [translatedPhrasesState, setTranslatedPhrasesState] = useState({})
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTranslatedPhraseId, setSelectedTranslatedPhraseId] = useState(null);
   const { token } = useContext(AuthContext);
 
+  useEffect(() => {
+    if (currentTranslatedReport) {
+      currentTranslatedReport.translatedphrases.forEach(translatedphrase => {
+        loadUserTranslatedPhrase(translatedphrase);
+      });
+    }
+  }, [currentTranslatedReport, token]); 
+
   const loadUserTranslatedPhrase = async (translatedphrase) => {
       try {
         const response = await getPreviousUserTranslatedPhrase(translatedphrase.id, token);
         if (response) {
-          if (response.isSelectedCheck) {
+          if (response.isSelectedCheck) 
             setTranslatedPhrasesState(prev => ({ ...prev, [translatedphrase.id]: true }));
-          } else {
+          if (response.isSelectedTimes) 
             setTranslatedPhrasesState(prev => ({ ...prev, [translatedphrase.id]: false }));
-          }
-          
         }
-      } catch (error) {
+        else {
+          setTranslatedPhrasesState(prev => ({ ...prev, [translatedphrase.id]: null }));
+        }
+      }
+       catch (error) {
         // Manejar el error, por ejemplo, mostrar un mensaje de error o registrar en la consola
-        console.error(`Error obteniendo traducciones para ${translatedphrase.id}:`, error);
+        console.error(`no encontrada UTP de tphrase id: ${translatedphrase.id}:`, error);
       }
   }
 
-  const handleTranslatedPhraseClick = (translatedPhrases, check) => {
+  const handleTranslatedPhraseClick = async (translatedPhrases, check) => {
     if(check) {
       if (translatedPhrases.id in translatedPhrasesState){
-        updateUserTranslatedPhrase(translatedPhrases.id, true, false, token);
+        await updateUserTranslatedPhrase(translatedPhrases.id, true, false, token);
         console.log("updateUserTranslatedPhrase frase:", translatedPhrases.id)
-        deleteCorrection(translatedPhrases.id, token);
-        console.log("deletedCorrection para frase ", translatedPhrases.id)
-        deleteSuggestion(translatedPhrases.id, token);
-        console.log("deletedSuggestion para frase ", translatedPhrases.id)
+        //deleteCorrection(translatedPhrases.id, token);
+        //console.log("deletedCorrection para frase ", translatedPhrases.id)
+        //deleteSuggestion(translatedPhrases.id, token);
+        //console.log("deletedSuggestion para frase ", translatedPhrases.id)
       }
       else {
-        createUserTranslatedPhrase(translatedPhrases.id, true, false, token);
-        
+        await createUserTranslatedPhrase(translatedPhrases.id, true, false, token);
+        console.log("createUserTranslatedPhrase frase:", translatedPhrases.id)
+      
       }
       setTranslatedPhrasesState(prev => ({...prev, [translatedPhrases.id]: true}))
+      triggerProgressRecalculation();
+      console.log("triggerProgressRecalculation create UTP")
     }
     else {
       if (translatedPhrases.id in translatedPhrasesState){
-        updateUserTranslatedPhrase(translatedPhrases.id, false, true, token);
+        await updateUserTranslatedPhrase(translatedPhrases.id, false, true, token);
         console.log("updateUserTranslatedPhrase frase:", translatedPhrases.id)
       }
       else{
-        createUserTranslatedPhrase(translatedPhrases.id, false, true, token);
+        await createUserTranslatedPhrase(translatedPhrases.id, false, true, token);
         console.log("createUserTranslatedPhrase frase:", translatedPhrases.id)
         
       }
       setTranslatedPhrasesState(prev => ({...prev, [translatedPhrases.id]: false}))
       setSelectedTranslatedPhraseId(translatedPhrases.id);
       setIsModalOpen(true);
+      triggerProgressRecalculation();
+      console.log("triggerProgressRecalculation update UTP")
+      
     }
+   
   }
+
 
   return (
     <>
-      <Card text="dark" bg="light" border="secondary">
-        <Card.Header>Reporte Pre-traducido:</Card.Header>
-        <Card.Text>TranslatedReportID: {currentTranslatedReport.id}</Card.Text> 
-        <Row>
-            <Col>
-          {currentTranslatedReport.translatedphrases.map((translatedphrase, indexPhrase) => {
-              loadUserTranslatedPhrase(translatedphrase); 
+      <div>
+      <Table responsive="sm">
+        <thead>
+          <tr>
+            <th>ReportID: {currentTranslatedReport.id}</th>
+          </tr>
+        </thead>
+        <tbody>
 
-              return (
-              <div key={translatedphrase.id} className="translated-phrase">
-                <Card.Text className={`${translatedphrase.isCorrect ||
-                  translatedphrase.isIncorrect ? 'selected' : ''}
+          {currentTranslatedReport.translatedphrases.map((translatedphrase, indexPhrase) => (
+               <tr key={translatedphrase.id}>
+               <td key={translatedphrase.id} 
+               className={`text-left ${translatedphrase.isCorrect ||
+                  translatedphrase.isIncorrect ? 'selected'  : ''} 
                   ${highlightedPhraseIndex === indexPhrase ? 'highlighted-right' : ''}`}
                   onMouseEnter={() => setHighlightedPhraseIndex(indexPhrase)}
                   onMouseLeave={() => setHighlightedPhraseIndex(null)}
                   >
                   {translatedphrase.text}
-                </Card.Text>
-                <div id={translatedphrase.id} className="button-row">
+                </td>
+                <td key={translatedphrase.id} className="button-row">
                   <ToggleButton
+                    size="sm"
                     type="checkbox"
                     variant={translatedPhrasesState[translatedphrase.id] === true ? 'success' : 'outline-success'}
                     onClick={() => handleTranslatedPhraseClick(translatedphrase, true)}
@@ -93,21 +117,21 @@ function RightViewer({ translatedreports, currentIndex, highlightedPhraseIndex, 
                     <FontAwesomeIcon icon={faCheck} />
                   </ToggleButton>
                   <ToggleButton
+                    size="sm"
                     type="checkbox"
                     variant={translatedPhrasesState[translatedphrase.id] === false ? 'danger' : 'outline-danger'}
                     onClick={() => handleTranslatedPhraseClick(translatedphrase, false)}
                   >
                     <FontAwesomeIcon icon={faTimes} />
                   </ToggleButton>
-                </div>
-              </div>
-              );
-                })}
-          </Col>
-        </Row>
-      </Card>
+                </td>
+              </tr>
+              ))};
+        </tbody>
+          </Table>
       <ModalSuggestions  show={isModalOpen} onHide={() => setIsModalOpen(false)}
           selectedTranslatedPhraseId={selectedTranslatedPhraseId}/>
+      </div>
     </>
   );
 }
