@@ -6,7 +6,7 @@ import './translator.css';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../auth/AuthContext';
 import { Button, Card, Container, Col, Row, ButtonGroup, ProgressBar } from 'react-bootstrap';
-import { getReportGroupReports , getPreviousUserTranslatedPhraseByReport} from '../utils/api';
+import { getReportGroupReports, getPreviousUserTranslatedPhraseByReport, updateUserReportGroupProgress } from '../utils/api';
 
 function Translator() {
   const { token } = useContext(AuthContext);
@@ -15,70 +15,86 @@ function Translator() {
   const [translatedreports, setTranslatedReports] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [highlightedPhraseIndex, setHighlightedPhraseIndex] = useState(null);
-
-  // Track the total number of translated phrases in the group
   const [totalTranslatedPhrases, setTotalTranslatedPhrases] = useState(0);
-  // Track how many translated phrases have been reviewed
   const [reviewedTranslatedPhrases, setReviewedTranslatedPhrases] = useState(0);
+  const [progress, setProgress] = useState(0); // Nuevo estado para el progreso
 
+  const calculateProgress = () => {
+    return totalTranslatedPhrases ? (reviewedTranslatedPhrases / totalTranslatedPhrases) * 100 : 0;
+  };
+
+  // Actualizar el progreso cuando cambian los reportes o las frases revisadas
+  useEffect(() => {
+    const newProgress = calculateProgress();
+    setProgress(newProgress);
+    updateProgressInDatabase(newProgress).catch(error => {
+      console.error('Error updating progress:', error);
+    });
+  }, [reviewedTranslatedPhrases, totalTranslatedPhrases]);
+
+    
   const fetchReviewedTranslatedPhrases = async (translatedreports) => {
     try {
       let translatedPhrasesReviewed = 0;
-      console.log("translatedPhrasesReviewed: ", translatedPhrasesReviewed);
-          
-      for (const translatedreport of translatedreports) {
-        const response = await getPreviousUserTranslatedPhraseByReport(translatedreport.id, token);
+      for (const translatedReport of translatedreports) {
+        const response = await getPreviousUserTranslatedPhraseByReport(translatedReport.id, token);
         if (response) {
-          console.log("largo de las UTP: ", response.length);
-          translatedPhrasesReviewed += response.length;
+          const numUserTranslatedPhrases = response.userTranslatedPhrases.length;
+          translatedPhrasesReviewed += numUserTranslatedPhrases;
         }
       }
       setReviewedTranslatedPhrases(translatedPhrasesReviewed);
     } catch (error) {
       console.error('Error fetching reviewed phrases:', error);
     }
-  };  
+  };
 
-  const fetchReportsForGroup = async (groupId, token) => {
+  const updateProgressInDatabase = async (progressValue) => {
     try {
-      const response = await getReportGroupReports(groupId, token);
-      setReports(response.reportData);
-      setTranslatedReports(response.translatedreportData);
-
-      // Calculate the total number of translated phrases in the group
-      const totalPhrases = response.translatedreportData.reduce(
-        (total, report) => total + report.translatedphrases.length,
-        0
-      );
-      setTotalTranslatedPhrases(totalPhrases);
+      await updateUserReportGroupProgress(progressValue, groupId, token);
+      console.log("updateUserReportGroupProgress", progressValue, groupId);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error updating progress:', error);
     }
   };
 
   useEffect(() => {
-    fetchReportsForGroup(groupId, token)
-  }, [groupId]);
+    const fetchData = async () => {
+      try {
+        const reportsResponse = await getReportGroupReports(groupId, token);
+        setReports(reportsResponse.reportData);
+        setTranslatedReports(reportsResponse.translatedreportData);
 
-  // Calculate the overall progress as a percentage
-  const progress = totalTranslatedPhrases
-    ? (reviewedTranslatedPhrases / totalTranslatedPhrases) * 100
-    : 0;
+        const totalPhrases = reportsResponse.translatedreportData.reduce(
+          (total, report) => total + report.translatedphrases.length,
+          0
+        );
+        setTotalTranslatedPhrases(totalPhrases);
+
+        await fetchReviewedTranslatedPhrases(reportsResponse.translatedreportData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, [groupId, token]);
+
+  const triggerProgressRecalculation = async () => {
+    await fetchReviewedTranslatedPhrases(translatedreports);
+    const newProgress = calculateProgress();
+    setProgress(newProgress);
+    updateProgressInDatabase(newProgress).catch(error => {
+      console.error('Error updating progress:', error);
+    });
+  };
 
   const goToNextReport = () => {
-    setCurrentIndex((prevIndex) => {
-      const nextIndex = (prevIndex + 1) % reports.length;
-      return nextIndex;
-    });
-   
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % reports.length);
   };
 
   const goToPreviousReport = () => {
-    setCurrentIndex((prevIndex) => {
-      const previousIndex = (prevIndex - 1 + reports.length) % reports.length;
-      return previousIndex;
-    });
-
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + reports.length) % reports.length);
   };
 
   useEffect(() => {
@@ -89,60 +105,60 @@ function Translator() {
     <>
       <NavBarReportSelection />
       <Container>
-        <Card bg="secondary" border="light" style={{ marginTop: '4%' }}>   
-          <Row>
-            <Col>
-              <Row>
-                <Col>
-                  <ProgressBar now={progress} label={`${Math.round(progress)}%`} />
-                </Col>
-              </Row>
-              <Row>
-                <ButtonGroup size="sm" className="mb-2">
-                  <Button
-                    variant="primary"
-                    onClick={goToPreviousReport}
-                    disabled={reports === null || currentIndex === 0}
-                  >
-                    Anterior
-                  </Button>
+        <Card bg="light" border="light" style={{ marginTop: '4%', height: '800px'}}>
+            <Row style={{ marginBottom: '1%'}}>
+              <Col>
+              <ProgressBar  striped animated className="custom-progress-bar" now={progress} label={`${Math.round(progress)}%`} variant="success" /> {/* Barra de progreso */}
+       
+                 </Col>
+            </Row>
+            <Row>
+              <ButtonGroup size="sm" className="mb-2">
+                <Button
+                  variant="primary"
+                  onClick={goToPreviousReport}
+                  disabled={reports === null || currentIndex === 0}
+                >
+                  Anterior
+                </Button>
 
-                  <Button
-                    variant="primary"
-                    onClick={goToNextReport}
-                    disabled={reports === null || currentIndex === reports.length - 1}
-                  >
-                    Siguiente
-                  </Button>
-                </ButtonGroup>
-              </Row>
-              <Row>
-                {reports !== null ? (
-                  <LeftViewer
-                    reports={reports}
+                <Button
+                  variant="primary"
+                  onClick={goToNextReport}
+                  disabled={reports === null || currentIndex === reports.length - 1}
+                >
+                  Siguiente 
+                </Button>
+              </ButtonGroup>
+            </Row>
+            <Row>
+              <Col xs={5}>
+                  {reports !== null ? (
+                    <LeftViewer
+                      reports={reports}
+                      currentIndex={currentIndex}
+                      highlightedPhraseIndex={highlightedPhraseIndex}
+                      setHighlightedPhraseIndex={setHighlightedPhraseIndex}
+                    />
+                  ) : (
+                    <p>Loading reports...</p>
+                  )}
+              </Col>
+
+              <Col xs={7}>
+                {translatedreports !== null ? (
+                  <RightViewer
+                    translatedreports={translatedreports}
                     currentIndex={currentIndex}
                     highlightedPhraseIndex={highlightedPhraseIndex}
                     setHighlightedPhraseIndex={setHighlightedPhraseIndex}
+                    triggerProgressRecalculation={triggerProgressRecalculation}
                   />
                 ) : (
-                  <p>Loading reports...</p>
+                  <p>Loading translatedreports...</p>
                 )}
-              </Row>
-            </Col>
-
-            <Col>
-              {translatedreports !== null ? (
-                <RightViewer
-                  translatedreports={translatedreports}
-                  currentIndex={currentIndex}
-                  highlightedPhraseIndex={highlightedPhraseIndex}
-                  setHighlightedPhraseIndex={setHighlightedPhraseIndex}
-                />
-              ) : (
-                <p>Loading translatedreports...</p>
-              )}
-            </Col>
-          </Row>
+              </Col>
+            </Row>
         </Card>
       </Container>
     </>
