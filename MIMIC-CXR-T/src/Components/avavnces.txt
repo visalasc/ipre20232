@@ -1,0 +1,12 @@
+alinear textos
+
+partir modelo de la vista admin 
+    carga masiva de archivos (quiza habilitar esto tambien para usuario normal)
+    eliminacion de archivo por id o por batch y q automaticamente se eliminaran las cosas asociadas a esos reportes
+    armar user report groups
+    armar report group reports
+    eliminar usuarios
+    editar grupos de reportes . verificar q la actualizacion llega a los usuarios normales
+    vista para editar reporte original
+    
+    
