@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from 'react-bootstrap';
-function WordSelector({sentence, variant, disabled, selectedClass}) {
+import './WordSelector.css'
+function WordSelector({sentence, disabled}) {
   const [selectedWords, setSelectedWords] = useState([]);
 
   const handleClick = (word) => {
@@ -17,8 +18,7 @@ function WordSelector({sentence, variant, disabled, selectedClass}) {
         {sentence.split(/\s+/).map((word, index) => (
           <Button
             key={index}
-            variant={variant}
-            className={selectedWords.includes(word) ? selectedClass : ''}
+            className={selectedWords.includes(word) ? 'word-selector-button-selected' : 'word-selector-button'}
             onClick={() => handleClick(word)}
             disabled={disabled}
           >
