@@ -1,0 +1,20 @@
+/* WordSelector.css */
+.word-selector-button {
+    border: none !important; /* Elimina el borde */
+    padding: 2px 5px; /* Ajusta el padding al mínimo que consideres adecuado */
+    margin: 2px; /* Ajusta el margen al mínimo */
+    line-height: 1; /* Opcional: ajusta la línea para un mejor aspecto */
+    background-color: white;
+    color: black;
+  }
+  
+  /* Estilo para botones seleccionados, si es necesario */
+  .word-selector-button-selected {
+    background-color: blueviolet;
+    border: none !important; /* Elimina el borde */
+    padding: 2px 5px; /* Ajusta el padding al mínimo que consideres adecuado */
+    margin: 2px; /* Ajusta el margen al mínimo */
+    line-height: 1; /* Opcional: ajusta la línea para un mejor aspecto */
+
+  }
+  
