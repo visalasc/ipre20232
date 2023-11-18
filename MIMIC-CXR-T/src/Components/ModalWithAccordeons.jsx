@@ -1,9 +1,9 @@
 import { useState, useContext } from 'react';
-import { Button, Modal, Form, ToggleButton, Col, Row, Card } from 'react-bootstrap';
+import { Button, Modal, Form, Row, Card, Tab, Tabs} from 'react-bootstrap';
 import { AuthContext } from '../auth/AuthContext';
 import { getPreviousSuggestion, updateSuggestion, createSuggestion, 
   getTranslatedPhraseById, createCorrection, updateCorrection, getPreviousCorrection,
-  updateUserTranslatedPhrase, findOriginalPhrase } from '../utils/api';
+  findOriginalPhrase } from '../utils/api';
 import WordSelector from './WordSelector';
 
 function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
@@ -16,7 +16,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
   const [editedTranslatedPhrase, setEditedTranslatedPhrase] = useState(''); 
   const [otherCorrection, setOtherCorrection] = useState('');
   const { token } = useContext(AuthContext);
-
+ 
   const loadOriginalPhrase = async(selectedTranslatedPhraseId) => {
     try{
         const originalphrase = await findOriginalPhrase(selectedTranslatedPhraseId, token);
@@ -58,12 +58,12 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
         console.log("previousCorrection",previousCorrection);
       } else {
         setSelectedOptions([]);
-        setOtherCorrection('');
+        setPreviousCorrection('');
       }
     } catch (error) {
       console.error('Error al cargar datos previos:', error);
       setSelectedOptions([]);
-      setOtherCorrection('');
+      setPreviousCorrection('');
     }
   };
 
@@ -126,6 +126,18 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
     }
   };
 
+  const handleModalClose = () => {
+    // Restablecer estados
+    setSelectedOptions([]);
+    setOtherCorrection('');
+    setPreviousSuggestion(null);
+    setPreviousCorrection(null);
+    // ... restablecer otros estados necesarios ...
+  
+    // Llamar a onHide para cerrar el modal
+    onHide();
+  };
+
 return (
     <>
       <Modal show={show} onShow={() => {
@@ -143,67 +155,69 @@ return (
               <Form.Label className="h6">Seleccione uno o varios tipos de errores:</Form.Label>
               <div>
                 <Row>
-                  <Col>
-                    <ToggleButton
-                      type="checkbox"
-                      variant={selectedOptions.includes('Terminological') ? 'info' : 'light'}
-                      onClick={() => handleOptionClick('Terminological')}
-                    >
-                      Terminological
-                    </ToggleButton>
-                  </Col>
-                  <Col>
-                    <ToggleButton
-                        type="checkbox"
-                        variant={selectedOptions.includes('Grammatical') ? 'success' : 'light'}
-                        onClick={() => handleOptionClick('Grammatical')}
-                      >
-                        Grammatical
-                    </ToggleButton>
-                  </Col>
-                  <Col>
-                    <ToggleButton
-                      type="checkbox"
-                      variant={selectedOptions.includes('Functional') ? 'warning' : 'light'}
-                      onClick={() => handleOptionClick('Functional')}
-                    >
-                      Functional
-                    </ToggleButton>
-                  </Col>
-                  <Col xs={1}>
-                    <ToggleButton
-                      type="checkbox"
-                      variant={selectedOptions.includes('Other') ? 'secondary' : 'light'}
-                      onClick={() => handleOptionClick('Other')}
-                    >
-                      Other
-                    </ToggleButton>
-                    </Col>
-                    <Col>
-                    {
-                       
-                        selectedOptions.includes('Other') && (
-                            <Form.Control
+                  <Tabs
+                    defaultActiveKey="grammatical"
+                    onSelect={(key) => handleOptionClick(key)}
+                    id="fill-tab-example"
+                    className="mb-3"
+                    fill
+                   >
+                  <Tab eventKey="grammatical" title="Grammatical">
+                    <Card border="success" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
+                      <Form.Label className="h6" >Seleccionar errores gramaticales encontrados en la traducción:</Form.Label>
+                      <WordSelector
+                        sentence={translatedPhrase}
+                        disabled={false}
+                      />
+                    </Card>
+                  </Tab>
+                  <Tab eventKey="terminological" title="Terminological">
+                    <Card border="primary" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
+                      <Form.Label className="h6" >Seleccionar errores terminológicos encontrados en la traducción:</Form.Label>
+                        <WordSelector
+                          sentence={translatedPhrase}
+                          disabled={false}
+                        />
+                      </Card>
+                  </Tab>
+                  <Tab eventKey="functional" title="Functional">
+                    <Card border="warning" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
+                      <Form.Label className="h6" >Seleccionar errores funcionales encontrados en la traducción:</Form.Label>
+                        <WordSelector
+                          sentence={translatedPhrase}
+                          disabled={false}
+                        />
+                    </Card>
+                  </Tab>
+                  <Tab eventKey="other" title="Other">
+                    <Card border="danger" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
+                      <Form.Label className="h6" >Seleccionar errores de otro tipo encontrados en la traducción:</Form.Label>
+                        <WordSelector
+                          sentence={translatedPhrase}
+                          disabled={false}
+                        />
+                    
+                       <Form.Label className="h6" >Describa el tipo de error encontrado:</Form.Label>
+                    <Form.Control
                             type="text"
                             value={otherCorrection}
                             onChange={(otherChange) => setOtherCorrection(otherChange.target.value)}
-                            />)
-                    }
-                    </Col>
+                            />
+                    </Card>
+                  </Tab>
+                  </Tabs>
                 </Row>
               </div>
             </Form.Group>
-            <Form.Group>
-              <Card border="light" style={{ width: 'auto' }}>
-                    <Form.Label >Frase original:</Form.Label>
-              
-         
-                    <Form.Label>{originalPhrase}</Form.Label>   
-       
-                </Card>
+              <Form.Group>
+                <Card border="light" style={{ width: 'auto', padding: '5px' }}>
+                  <Form.Label >Frase original:</Form.Label>
+                  <Form.Label>{originalPhrase}</Form.Label>   
+          
+                  </Card>
               <Form.Label className="h6" >Editar la traducción final:</Form.Label>
               <Form.Control
-                type="text"
+                as="textarea" rows={2} 
                 value={editedTranslatedPhrase}
                 onChange={(evento) => setEditedTranslatedPhrase(evento.target.value)}
               />
@@ -211,7 +225,7 @@ return (
             <Form.Group>
               <Form.Label className="h6">Si tienes algún comentario adicional agregar aquí:</Form.Label>
               <Form.Control
-                type="text"
+                 as="textarea" rows={1} 
                 value={modalText}
                 onChange={(change) => setModalText(change.target.value)}
                 />
@@ -220,7 +234,7 @@ return (
           
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={onHide}>
+          <Button variant="secondary" onClick={handleModalClose}>
             Cerrar
           </Button>
           <Button variant="primary" onClick={handleModalSave} 
