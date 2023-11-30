@@ -1,10 +1,13 @@
 import { useState, useContext } from 'react';
-import { Button, Modal, Form, Row, Card, Tab, Tabs} from 'react-bootstrap';
+import { Button, Modal, Form, Row, Card, Tab, Tabs, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import { AuthContext } from '../auth/AuthContext';
 import { getPreviousSuggestion, updateSuggestion, createSuggestion, 
   getTranslatedPhraseById, createCorrection, updateCorrection, getPreviousCorrection,
   findOriginalPhrase } from '../utils/api';
 import WordSelector from './WordSelector';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+
 
 function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
   const [modalText, setModalText] = useState('');
@@ -132,7 +135,6 @@ function ModalSuggestions({ show, onHide, selectedTranslatedPhraseId }) {
     setOtherCorrection('');
     setPreviousSuggestion(null);
     setPreviousCorrection(null);
-    // ... restablecer otros estados necesarios ...
   
     // Llamar a onHide para cerrar el modal
     onHide();
@@ -152,8 +154,13 @@ return (
         <Modal.Body>
           <Form>
             <Form.Group>
-              <Form.Label className="h6">Seleccione uno o varios tipos de errores:</Form.Label>
               <div>
+                <Row>
+                  <Card border="light" style={{ width: 'auto', padding: '6px',margin: '3px' }}>
+                    <Form.Label className="h6">Frase original a revisar:</Form.Label>
+                    <Form.Label className="h7">{originalPhrase}</Form.Label>   
+                  </Card>
+                </Row>
                 <Row>
                   <Tabs
                     defaultActiveKey="grammatical"
@@ -162,39 +169,103 @@ return (
                     className="mb-3"
                     fill
                    >
-                  <Tab eventKey="grammatical" title="Grammatical">
+                  <Tab eventKey="grammatical" title={
+                      <OverlayTrigger
+                        key="grammatical-tooltip"
+                        placement="top"
+                        overlay={
+                          <Tooltip id={`tooltip-grammatical`}>
+                            Descripción de errores gramaticales.
+                          </Tooltip>
+                        }
+                      >
+                        <div>
+                          <span>Grammatical</span>
+                          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginLeft: '5px' }} />
+                        </div>
+                      </OverlayTrigger>
+                    }>
                     <Card border="success" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
                       <Form.Label className="h6" >Seleccionar errores gramaticales encontrados en la traducción:</Form.Label>
                       <WordSelector
                         sentence={translatedPhrase}
                         disabled={false}
+                        variant="success"
                       />
                     </Card>
                   </Tab>
-                  <Tab eventKey="terminological" title="Terminological">
+                  <Tab eventKey="terminological" title={
+                      <OverlayTrigger
+                        key="terminological-tooltip"
+                        placement="top"
+                        overlay={
+                          <Tooltip id={`tooltip-terminological`}>
+                            Descripción de errores terminológicos.
+                          </Tooltip>
+                        }
+                      >
+                        <div>
+                          <span>Terminological</span>
+                          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginLeft: '5px' }} />
+                        </div>
+                      </OverlayTrigger>
+                    }>
                     <Card border="primary" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
                       <Form.Label className="h6" >Seleccionar errores terminológicos encontrados en la traducción:</Form.Label>
                         <WordSelector
                           sentence={translatedPhrase}
                           disabled={false}
+                          variant="primary"
                         />
                       </Card>
                   </Tab>
-                  <Tab eventKey="functional" title="Functional">
+                  <Tab eventKey="functional" title={
+                      <OverlayTrigger
+                        key="functional-tooltip"
+                        placement="top"
+                        overlay={
+                          <Tooltip id={`tooltip-functional`}>
+                            Descripción de errores funcionales.
+                          </Tooltip>
+                        }
+                      >
+                        <div>
+                          <span>Functional</span>
+                          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginLeft: '5px' }} />
+                        </div>
+                      </OverlayTrigger>
+                    }>
                     <Card border="warning" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
                       <Form.Label className="h6" >Seleccionar errores funcionales encontrados en la traducción:</Form.Label>
                         <WordSelector
                           sentence={translatedPhrase}
                           disabled={false}
+                          variant="warning"
                         />
                     </Card>
                   </Tab>
-                  <Tab eventKey="other" title="Other">
+                  <Tab eventKey="other" title={
+                      <OverlayTrigger
+                        key="other-tooltip"
+                        placement="top"
+                        overlay={
+                          <Tooltip id={`tooltip-other`}>
+                            Descripción de otros errores.
+                          </Tooltip>
+                        }
+                      >
+                        <div>
+                          <span>Other</span>
+                          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginLeft: '5px' }} />
+                        </div>
+                      </OverlayTrigger>
+                    }>
                     <Card border="danger" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
                       <Form.Label className="h6" >Seleccionar errores de otro tipo encontrados en la traducción:</Form.Label>
                         <WordSelector
                           sentence={translatedPhrase}
                           disabled={false}
+                          variant="danger"
                         />
                     
                        <Form.Label className="h6" >Describa el tipo de error encontrado:</Form.Label>
@@ -209,12 +280,7 @@ return (
                 </Row>
               </div>
             </Form.Group>
-              <Form.Group>
-                <Card border="light" style={{ width: 'auto', padding: '5px' }}>
-                  <Form.Label >Frase original:</Form.Label>
-                  <Form.Label>{originalPhrase}</Form.Label>   
-          
-                  </Card>
+            <Form.Group>
               <Form.Label className="h6" >Editar la traducción final:</Form.Label>
               <Form.Control
                 as="textarea" rows={2} 
