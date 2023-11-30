@@ -46,3 +46,22 @@
   align-items: center; /* Centra verticalmente los botones con respecto al texto */
 }
 
+.custom-toggle-button {
+  font-size: 10px; /* Ajusta el tamaño de la fuente según tus necesidades */
+  padding-top:0px;  
+  padding-bottom:0px; 
+  margin-left: 10px;
+}
+
+tr {
+  display: flex;
+  align-items: stretch;
+}
+
+.text-row{
+  width: 100%;
+}
+/* Establece una altura mínima para las celdas con botones */
+.button-row {
+  min-height: 40px; /* Ajusta la altura mínima según tus necesidades */
+}

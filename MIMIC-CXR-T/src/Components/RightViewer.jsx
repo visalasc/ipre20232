@@ -88,23 +88,26 @@ function RightViewer({translatedreports, currentIndex,
   return (
     <>
       <div>
-      <Table responsive="sm">
-        <thead>
-          <tr>
-            <th>ReportID: {currentTranslatedReport.id}</th>
-          </tr>
-        </thead>
-        <tbody>
-
-          {currentTranslatedReport.translatedphrases.map((translatedphrase, indexPhrase) => (
-               <tr key={translatedphrase.id}>
-               <td key={translatedphrase.id} 
-               className={`text-left ${translatedphrase.isCorrect ||
-                  translatedphrase.isIncorrect ? 'selected'  : ''} 
-                  ${highlightedPhraseIndex === indexPhrase ? 'highlighted-right' : ''}`}
+      <Table striped hover borderless responsive="sm">
+          <thead>
+            <tr>
+              <th>Reporte pretraducido</th>
+            </tr>
+            <tr>
+              <th>ReportID: {currentTranslatedReport.id}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentTranslatedReport.translatedphrases.map((translatedphrase, indexPhrase) => (
+              <tr key={translatedphrase.id}>
+                <td
+                  key={translatedphrase.id}
+                  className={`text-row text-left ${translatedphrase.isCorrect || translatedphrase.isIncorrect ? 'selected' : ''} ${
+                    highlightedPhraseIndex === indexPhrase ? 'highlighted-right' : ''
+                  }`}
                   onMouseEnter={() => setHighlightedPhraseIndex(indexPhrase)}
                   onMouseLeave={() => setHighlightedPhraseIndex(null)}
-                  >
+                >
                   {translatedphrase.text}
                 </td>
                 <td key={translatedphrase.id} className="button-row">
@@ -113,6 +116,7 @@ function RightViewer({translatedreports, currentIndex,
                     type="checkbox"
                     variant={translatedPhrasesState[translatedphrase.id] === true ? 'success' : 'outline-success'}
                     onClick={() => handleTranslatedPhraseClick(translatedphrase, true)}
+                    className="custom-toggle-button times"
                   >
                     <FontAwesomeIcon icon={faCheck} />
                   </ToggleButton>
@@ -121,14 +125,15 @@ function RightViewer({translatedreports, currentIndex,
                     type="checkbox"
                     variant={translatedPhrasesState[translatedphrase.id] === false ? 'danger' : 'outline-danger'}
                     onClick={() => handleTranslatedPhraseClick(translatedphrase, false)}
+                    className="custom-toggle-button check"
                   >
                     <FontAwesomeIcon icon={faTimes} />
                   </ToggleButton>
                 </td>
               </tr>
-              ))};
-        </tbody>
-          </Table>
+            ))}
+          </tbody>
+        </Table>
       <ModalSuggestions  show={isModalOpen} onHide={() => setIsModalOpen(false)}
           selectedTranslatedPhraseId={selectedTranslatedPhraseId}/>
       </div>
