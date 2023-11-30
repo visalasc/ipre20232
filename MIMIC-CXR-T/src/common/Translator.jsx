@@ -2,6 +2,8 @@ import { useEffect, useState, useContext } from 'react';
 import NavBarReportSelection from '../Components/NavBarReportSelect';
 import LeftViewer from '../Components/LeftViewer';
 import RightViewer from '../Components/RightViewer';
+//import LeftViewer from '../Components/LeftViewerCard';
+//import RightViewer from '../Components/RightViewerCard';
 import './translator.css';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../auth/AuthContext';
@@ -105,7 +107,7 @@ function Translator() {
     <>
       <NavBarReportSelection />
       <Container>
-        <Card bg="light" border="light" style={{ marginTop: '4%', height: '800px'}}>
+        <Card border="light" style={{ marginTop: '4%', height: '800px'}}>
             <Row style={{ marginBottom: '1%'}}>
               <Col>
               <ProgressBar  striped animated className="custom-progress-bar" now={progress} label={`${Math.round(progress)}%`} variant="success" /> {/* Barra de progreso */}
