@@ -1,6 +1,5 @@
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
-import ModalDictionary  from '../Components/ModalDictionary';
 import ModalUploadReport from '../Components/ModalUploadReport';
 
 
@@ -18,9 +17,6 @@ const NavBarReportSelection = () => {
         </Nav.Link>
         <Nav.Link>
           <ModalUploadReport/>
-        </Nav.Link>
-        <Nav.Link>
-          <ModalDictionary/>
         </Nav.Link>
         <Nav.Link>
         <LogoutButton />
