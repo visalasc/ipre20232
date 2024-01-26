@@ -17,7 +17,7 @@ function Signup() {
     axios.post(`${import.meta.env.VITE_BACKEND_URL}/signup`, {
         firstName: firstName,
         lastName: lastName,
-        role: "usuario",
+        role: "User",
         email: email,
         password: password
       }).then((response) => {
