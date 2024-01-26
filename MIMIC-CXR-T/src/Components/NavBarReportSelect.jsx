@@ -1,6 +1,6 @@
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
-import ModalUploadReport from '../Components/ModalUploadReport';
+import ModalUploadReport from '../Components/CreateJsonBatchReports';
 
 const NavBarReportSelection = () => {
   return (
