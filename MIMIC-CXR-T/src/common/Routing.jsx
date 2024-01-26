@@ -6,11 +6,10 @@ import Signup from '../profile/Signup'
 import ReportGroupSelection from '../common/ReportGroupSelection'; 
 import Admin from '../common/Admin';
 import TableUserDisplayReportGroup from '../Components/TableUserDisplayReportGroup'
-import { useAuth } from '../auth/AuthProvider';  // Importa el contexto de autenticación
 import { useNavigate } from 'react-router-dom';
 
 function AdminRoute({ element }) {
-  const { user } = useAuth();
+  const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
 
   // Comprueba si el usuario tiene el rol de administrador

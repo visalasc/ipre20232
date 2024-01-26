@@ -1,9 +1,8 @@
 import { Nav, Navbar, Button } from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
-import { useAuth } from '../auth/AuthProvider';
 
 function NavAdmin() {
-  const { user } = useAuth();
+  const user = JSON.parse(localStorage.getItem('user'));
 
   return (
     <Navbar className="justify-content-end" bg="dark" data-bs-theme="dark" expand="lg">
@@ -15,7 +14,7 @@ function NavAdmin() {
                 </Button>
               </Nav.Link>
             )}
-      <Nav.Link href="/reportselection">
+      <Nav.Link href="/reportselection">s
         <Button variant="success">
             Vista usuario
         </Button>
