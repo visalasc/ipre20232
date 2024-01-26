@@ -6,7 +6,6 @@ function Signup() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState("");
@@ -18,7 +17,7 @@ function Signup() {
     axios.post(`${import.meta.env.VITE_BACKEND_URL}/signup`, {
         firstName: firstName,
         lastName: lastName,
-        role: role,
+        role: "usuario",
         email: email,
         password: password
       }).then((response) => {
@@ -70,17 +69,6 @@ function Signup() {
             name="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            required
-          />
-        </label>
-
-        <label>
-          Rol:
-          <input 
-            type="text" 
-            name="role"
-            value={role}
-            onChange={e => setRole(e.target.value)}
             required
           />
         </label>
