@@ -1,69 +1,60 @@
 /* WordSelector.css */
 .word-selector-button {
-    border: none !important; /* Elimina el borde */
-    padding: 2px 5px; /* Ajusta el padding al mínimo que consideres adecuado */
-    margin: 2px; /* Ajusta el margen al mínimo */
-    line-height: 1; /* Opcional: ajusta la línea para un mejor aspecto */
-    background-color: white;
-    color: black;
-    transition: background-color 0.3s;
-  }
+  border: none !important;
+  padding: 2px 5px;
+  margin: 2px;
+  line-height: 1;
+  background-color: white;
+  color: black;
+  transition: background-color 0.3s;
+}
 
-  
-
-/* Estilos para botones seleccionados */
 .word-selector-button-selected {
-  background-color: lightblue; /* Ajusta el color de fondo según tus necesidades para los botones seleccionados */
-  color: white; /* Ajusta el color del texto según tus necesidades para los botones seleccionados */
+background-color: lightblue;
+color: white;
 }
 
 .word-selector-button-selected.primary {
-  background-color: rgb(79, 90, 245); /* Ajusta el color de fondo según tus necesidades para la variante "primary" */
+background-color: rgb(79, 90, 245);
 }
 
-/* Estilos específicos para la variante "secondary" */
 .word-selector-button-selected.secondary {
-  background-color: rgb(73, 64, 64); /* Ajusta el color de fondo según tus necesidades para la variante "secondary" */
+background-color: rgb(73, 64, 64);
 }
 
-/* Estilos específicos para la variante "success" */
 .word-selector-button-selected.success {
-  background-color: rgb(85, 138, 85); /* Ajusta el color de fondo según tus necesidades para la variante "success" */
+background-color: rgb(85, 138, 85);
 }
 
-/* Estilos específicos para la variante "danger" */
 .word-selector-button-selected.danger {
-  background-color: rgb(192, 82, 82); /* Ajusta el color de fondo según tus necesidades para la variante "danger" */
+background-color: rgb(192, 82, 82);
 }
 
-/* Estilos específicos para la variante "warning" */
 .word-selector-button-selected.warning {
-  background-color: rgb(228, 177, 66);  /* Ajusta el color de fondo según tus necesidades para la variante "warning" */
+background-color: rgb(228, 177, 66);
 }
 
-
-/* Estilos para el estado "hover" en cada variante */
 .word-selector-button.primary:hover {
-  background-color: rgb(129, 136, 244); /* Ajusta el color de fondo según tus necesidades para el estado "hover" en "primary" */
-  color: black; /* Ajusta el color del texto según tus necesidades para el estado "hover" en "primary" */
+background-color: rgb(129, 136, 244);
+color: black;
 }
 
 .word-selector-button.secondary:hover {
-  background-color: rgb(118, 118, 118); /* Ajusta el color de fondo según tus necesidades para el estado "hover" en "secondary" */
-  color: black; /* Ajusta el color del texto según tus necesidades para el estado "hover" en "secondary" */
+background-color: rgb(118, 118, 118);
+color: black;
 }
 
 .word-selector-button.success:hover {
-  background-color: rgb(194, 219, 194); /* Ajusta el color de fondo según tus necesidades para el estado "hover" en "success" */
-  color: black; /* Ajusta el color del texto según tus necesidades para el estado "hover" en "success" */
+background-color: rgb(194, 219, 194);
+color: black;
 }
 
 .word-selector-button.danger:hover {
-  background-color: rgb(226, 141, 141); /* Ajusta el color de fondo según tus necesidades para el estado "hover" en "danger" */
-  color: black; /* Ajusta el color del texto según tus necesidades para el estado "hover" en "danger" */
+background-color: rgb(226, 141, 141);
+color: black;
 }
 
 .word-selector-button.warning:hover {
-  background-color: rgb(255, 213, 122); /* Ajusta el color de fondo según tus necesidades para el estado "hover" en "warning" */
-  color: black; /* Ajusta el color del texto según tus necesidades para el estado "hover" en "warning" */
+background-color: rgb(255, 213, 122);
+color: black;
 }

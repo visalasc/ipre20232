@@ -1,16 +1,43 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import './WordSelector.css'
-function WordSelector({sentence, disabled, variant}) {
-  const [selectedWords, setSelectedWords] = useState([]);
+import './wordSelector.css';
+import { useRef } from 'react';
 
-  const handleClick = (word) => {
-    if (selectedWords.includes(word)) {
-      setSelectedWords(selectedWords.filter((w) => w !== word));
-    } else {
-      setSelectedWords([...selectedWords, word]);
+function WordSelector({ sentence, disabled, variant, initialSelectedWords, onOptionClick }) {
+  const [selectedWords, setSelectedWords] = useState([]);
+  const onOptionClickRef = useRef(onOptionClick);
+
+  useEffect(() => {
+    onOptionClickRef.current = onOptionClick;
+  }, [onOptionClick ]);
+
+  const handleClick = (word, index, variant) => {
+    const type = mapVariantToType(variant);
+    const isWordSelected = selectedWords.some(
+      (w) => w.word === word && w.index === index && w.type === type
+    );
+   
+    const updatedSelectedWords = isWordSelected
+      ? selectedWords.filter(
+          (w) => !(w.word === word && w.index === index && w.type === type)
+        )
+      : [...selectedWords, { word, index, type }];
+    if (!areArraysEqual(selectedWords, updatedSelectedWords)) {
+      setSelectedWords(updatedSelectedWords);
     }
   };
+
+  useEffect(() => {
+    setSelectedWords(initialSelectedWords);
+  }, [initialSelectedWords]);
+  
+  useEffect(() => {
+    const updatedOptions = selectedWords.map((w) => ({
+      word: { text: w.word, index: w.index },
+      type: w.type,
+    }));
+    onOptionClickRef.current(updatedOptions);
+  }, [selectedWords]);
 
   return (
     <div>
@@ -19,9 +46,9 @@ function WordSelector({sentence, disabled, variant}) {
           <Button
             key={index}
             className={`word-selector-button ${variantClass(variant)} ${
-              selectedWords.includes(word) ? 'word-selector-button-selected' : ''
+              selectedWords.some(w => w.word === word && w.index === index && w.type === mapVariantToType(variant)) ? 'word-selector-button-selected' : ''
             }`}
-            onClick={() => handleClick(word)}
+            onClick={() => handleClick(word, index, variant)}
             disabled={disabled}
           >
             {word}{' '}
@@ -31,6 +58,27 @@ function WordSelector({sentence, disabled, variant}) {
     </div>
   );
 }
+
+const areArraysEqual = (arr1, arr2) => {
+  return JSON.stringify(arr1) === JSON.stringify(arr2);
+};
+
+const mapVariantToType = (variant) => {
+  switch (variant) {
+    case 'primary':
+      return 'terminological';
+    case 'secondary':
+      return 'grammatical';
+    case 'success':
+      return 'grammatical';
+    case 'warning':
+      return 'functional';
+    case 'danger':
+      return 'other';
+    default:
+      return 'other';
+  }
+};
 
 const variantClass = (variant) => {
   switch (variant) {
@@ -45,7 +93,7 @@ const variantClass = (variant) => {
     case 'warning':
       return 'warning';
     default:
-      return 'secondary'; // Valor por defecto o manejar de otra manera según sea necesario
+      return 'ligth';
   }
 };
 
