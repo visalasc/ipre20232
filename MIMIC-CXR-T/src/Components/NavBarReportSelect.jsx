@@ -1,10 +1,9 @@
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
 import ModalUploadReport from '../Components/ModalUploadReport';
-import { useAuth } from '../auth/AuthProvider';  // Importa el contexto de autenticación
 
 const NavBarReportSelection = () => {
-  const { user } = useAuth();
+  const user = JSON.parse(localStorage.getItem('user'));
 
   return (
     <Navbar bg="dark" data-bs-theme="dark" expand="lg">
