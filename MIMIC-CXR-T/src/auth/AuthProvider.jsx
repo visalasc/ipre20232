@@ -12,11 +12,8 @@ function AuthProvider({ children }) {
 
   useEffect(() => {
     localStorage.setItem('token', token);
-  }, [token]);
-
-  useEffect(() => {
     localStorage.setItem('user', JSON.stringify(user));
-  }, [user]);
+  }, [token, user]);
 
   return (
     <AuthContext.Provider value={{ token, setToken, user, setUser, logout }}>
