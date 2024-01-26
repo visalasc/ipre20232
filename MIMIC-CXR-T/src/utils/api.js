@@ -8,9 +8,9 @@ function config(token) {
   };
 }
 
-export async function findOriginalPhrase(selectedTranslatedPhraseId, token) {
+export async function findSentence(selectedTranslatedSentenceId) {
   const response = await axios.get(
-    `${import.meta.env.VITE_BACKEND_URL}/translatedphrases/tphrase/${selectedTranslatedPhraseId}`, config(token),
+    `${import.meta.env.VITE_BACKEND_URL}/translatedsentences/${selectedTranslatedSentenceId}`,
     ); 
     return response.data;
 }
@@ -36,51 +36,54 @@ export async function getReportGroupReports(groupId, token) {
   return response.data;
 }
 
-export async function getPreviousSuggestion(translatedphraseId, token) {
-  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/suggestions/${translatedphraseId}`,  config(token),
+export async function getPreviousSuggestion(translatedsentenceId, token) {
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/suggestions/${translatedsentenceId}`,  config(token),
   );
   return response.data;
 }
 
-export async function getPreviousCorrection(translatedphraseId, token) {
-  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/corrections/${translatedphraseId}`,  config(token),
+export async function getPreviousUserCorrections(translatedSentenceId, token) {
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/corrections/user/translatedsentence/${translatedSentenceId}`,  config(token),
   );
   return response.data;
 }
 
-export async function getPreviousUserTranslatedPhrase(translatedphraseId, token) {
-  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/usertranslatedphrases/${translatedphraseId}`,  config(token),
+export async function getPreviousUserTranslatedSentence(translatedsentenceId, token) {
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/usertranslatedsentences/${translatedsentenceId}`,  config(token),
   );
   return response.data;
 }
 
-export async function getPreviousUserTranslatedPhraseByReport(translatedreportId, token) {
-  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/usertranslatedphrases/translatedreport/${translatedreportId}`,  config(token),
+export async function getUserTranslatedSentencesByReportGroup(groupId, token) {
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/usertranslatedsentences/countTotal/${groupId}`,  config(token),
   );
   return response.data;
 }
 
-export async function createCorrection(translatedphraseId, selectedOptions, token) {
-  const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/corrections`, {
-    translatedphraseId,
-    selectedOptions: selectedOptions.sort().join(', '),
-  },  config(token),
-  );
-  return response.data;
-}
-
-export async function createSuggestion(translatedphraseId, text, token) {
+export async function createSuggestion(selectedTranslatedSentenceId, modalText, editedTranslatedSentence, token) {
   const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/suggestions`, {
-    translatedphraseId,
-    text,
+    translatedSentenceId: selectedTranslatedSentenceId,
+    comments: modalText,
+    changesFinalTranslation: editedTranslatedSentence,
   },  config(token),
   );
   return response.data;
 }
 
-export async function createUserTranslatedPhrase(translatedphraseId, isSelectedCheck, isSelectedTimes, token) {
-  const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/usertranslatedphrases/${translatedphraseId}`, {
-    translatedphraseId,
+export async function createCorrection(correctionData, token) {
+  const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/corrections`, {
+    translatedSentenceId: correctionData.translatedSentenceId,
+    wordSelected: correctionData.wordSelected,
+    wordIndex: correctionData.wordIndex,
+  errorType: correctionData.errorType
+  },  config(token),
+  );
+  return response.data;
+}
+
+export async function createUserTranslatedSentence(translatedsentenceId, isSelectedCheck, isSelectedTimes, token) {
+  const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/usertranslatedsentences/${translatedsentenceId}`, {
+    translatedsentenceId,
     isSelectedCheck,
     isSelectedTimes,
   },  config(token),
@@ -88,9 +91,9 @@ export async function createUserTranslatedPhrase(translatedphraseId, isSelectedC
   return response.data;
 }
 
-export async function updateUserTranslatedPhrase(translatedphraseId, isSelectedCheck, isSelectedTimes, token) {
-  const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/usertranslatedphrases/update/${translatedphraseId}`, {
-    translatedphraseId,
+export async function updateUserTranslatedSentence(translatedsentenceId, isSelectedCheck, isSelectedTimes, token) {
+  const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/usertranslatedsentences/update/${translatedsentenceId}`, {
+    translatedsentenceId,
     isSelectedCheck,
     isSelectedTimes,
   },  config(token),
@@ -98,44 +101,58 @@ export async function updateUserTranslatedPhrase(translatedphraseId, isSelectedC
   return response.data;
 }
 
-export async function updateCorrection(translatedphraseId, selectedOptions, token) {
-  const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/corrections/update/${translatedphraseId}`, {
+export async function updateCorrection(translatedsentenceId, selectedOptions, token) {
+  const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/corrections/update/${translatedsentenceId}`, {
     selectedOptions: selectedOptions.sort().join(', '),
   },  config(token),
   );
   return response.data;
 }
 
-export async function updateSuggestion(translatedphraseId, text, token) {
-  const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/suggestions/update/${translatedphraseId}`, {
-    text,
+export async function updateSuggestion(translatedsentenceId, modalText, editedTranslatedSentence, token) {
+  const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/suggestions/update/${translatedsentenceId}`, {
+    text: modalText,
+    changesFinalTranslation: editedTranslatedSentence,
   },  config(token),
   );
   return response.data;
 }
 
-export async function deleteCorrection(translatedphraseId, token) {
-  const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/corrections/${translatedphraseId}`,  config(token),
+export async function deleteCorrection(correcctionId, token) {
+  const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/corrections/delete/${correcctionId}`,  config(token),
   );
   return response.data;
 }
 
-export async function deleteSuggestion(translatedphraseId, token) {
+export async function deleteUserCorrectionsTranslatedSentence(translatedsentenceId, token) {
+  const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/corrections/delete/user/${translatedsentenceId}`,  config(token),
+  );
+  return response.data;
+}
+ 
+export async function deleteSuggestion(translatedsentenceId, token) {
   const response = await axios.delete(
-    `${import.meta.env.VITE_BACKEND_URL}/suggestions/${translatedphraseId}`,  config(token),
+    `${import.meta.env.VITE_BACKEND_URL}/suggestions/${translatedsentenceId}`,  config(token),
     );
   return response.data;
 }
 
-export async function getTranslatedPhraseById(translatedphraseId, token) {
-  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/translatedphrases/${translatedphraseId}`,  config(token),
+export async function getTranslatedSentenceById(translatedsentenceId, token) {
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/translatedsentences/${translatedsentenceId}`,  config(token),
   );
   return response.data;
 }
 
-export async function updateUserReportGroupProgress(progress, reportGroupId, token) {
-  const response = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/userreportgroups/updateprogress/${reportGroupId}`, {
-    progress}, config(token),
+export async function updateUserReportGroupProgress(progressTranslatedSentences, reportGroupId, token) {
+  const response = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/userreportgroups/updateprogressTranslatedSentences/${reportGroupId}`, {
+    progressTranslatedSentences}, config(token),
+  );
+  return response.data;
+}
+
+export async function updateReportProgress(progressReports, reportGroupId, token) {
+  const response = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/userreportgroups/updateprogressReports/${reportGroupId}`, {
+    progressReports}, config(token),
   );
   return response.data;
 }
@@ -145,3 +162,65 @@ export async function getUserReportGroup(reportGroupId, token) {
   );
   return response.data;
 }
+
+export async function getAllReportGroupReports(token){
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/reportgroupreports`, config(token),
+  );
+  return response.data;
+}
+
+export async function createReportGroups(reportgroup, token){
+  const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/reportgroups`, {
+    name: reportgroup.name,
+    reportIds: reportgroup.reportIds,
+  }, config(token),
+  );
+  return response.data;
+}
+
+export async function createUserReportGroups(userReportGroupData, token){
+  const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/userreportgroups`, {
+    reportGroupId: userReportGroupData.reportGroupId,
+    userIds: userReportGroupData.userIds,
+  }, config(token),
+  );
+  return response.data;
+}
+
+export async function getAllUsers(){
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users`,
+  );
+  return response.data;
+}
+
+export async function deleteUser(userId, token){
+  const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/users/delete/${userId}`, config(token),
+  );
+  return response.data;
+}
+
+export async function deleteReportGroupReport(reportGroupReportId, token){
+  const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/reportgroupreports/${reportGroupReportId}`, config(token),
+  );
+  return response.data;
+}
+
+export async function createReportBatch(fileContent, token){
+  const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/reports`, {
+    jsonContent: JSON.parse(fileContent)},  config(token)
+  );
+  return response.data;
+}
+
+export async function checkIsReportCompleted(reportId, token){
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/usertranslatedsentences/completed/${reportId}`, config(token),
+  );
+  return response.data;
+}
+
+export async function getReportById(reportId, token){
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/reports/${reportId}`, config(token),
+  );
+  return response.data;
+}
+
