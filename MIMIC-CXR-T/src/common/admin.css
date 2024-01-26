@@ -1,0 +1,8 @@
+.container-admin {
+  margin-top: 40px;
+}
+
+.table-display-container{
+  max-height: '50px';
+  overflow-y: 'auto';
+}
