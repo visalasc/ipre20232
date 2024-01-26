@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { Container, ToastContainer, Toast } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import CreateReportGroup from '../Components/CreateReportGroup';
 import TableDisplayReports from '../Components/TableDisplayReportGroup';
 import { AuthContext } from '../auth/AuthContext';
@@ -33,26 +33,6 @@ function Admin() {
     getReportGroupReports();
   }, [token]);
 
-  const showToast = (message, variant) => {
-    // Muestra el Toast según el variant
-    return (
-      <Toast
-        className="d-inline-block m-1"
-        bg={variant.toLowerCase()}
-        key={new Date().getTime()}
-      >
-        <Toast.Header>
-          <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
-          <strong className="me-auto">Bootstrap</strong>
-          <small>{new Date().toLocaleTimeString()}</small>
-        </Toast.Header>
-        <Toast.Body className={variant === 'dark' && 'text-white'}>
-          {message}
-        </Toast.Body>
-      </Toast>
-    );
-  };
-
   const handleCreateReportGroup = async (reportGroupData) => {
     try {
       setLoading(true);
@@ -61,11 +41,9 @@ function Admin() {
       setReportGroupReports([...reportGroupReports, response.reportgroup]);
       setCurrentView('view1');
       // Muestra notificación Toast de éxito
-      showToast('Report group created successfully', 'success');
     } catch (error) {
       console.error('Error creating report group:', error);
       // Muestra notificación Toast de error
-      showToast('Error creating report group. Please try again.', 'danger');
     } finally {
       setLoading(false);
     }
@@ -76,12 +54,10 @@ function Admin() {
       setLoading(true);
       const response = await createUserReportGroups(reportGroupId, userIds, token);
       console.log('user report group created:', response);
-      showToast('user report group created successfully', 'success');
       
     } catch (error) {
       console.error('Error creating user report groups:', error);
       // Muestra notificación Toast de error
-      showToast('Error creating user report group. Please try again.', 'danger');
     } finally {
       setLoading(false);
     }
@@ -111,11 +87,6 @@ function Admin() {
           <ModalUploadReports />
         )}
       </Container>
-
-      {/* ToastContainer para las notificaciones Toast */}
-      <ToastContainer position="top-end" className="p-3">
-        {/* Placeholder para mostrar Toasts */}
-      </ToastContainer>
     </>
   );
 }
