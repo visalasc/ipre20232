@@ -4,42 +4,6 @@
   text-align: center;
 }
 
-.card {
-  padding: 2em;
-}
-
-.app-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  margin-top: 3%;
-  background-color: #c1e3e4;
-}
-
-.rightviewer-container {
-  grid-column: 2; 
-  display: flex;
-  justify-content: space-between;
-  align-items: normal;
-  border-radius: .5em;
-  margin-top: 10px;
-  padding-top: 10px;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  text-align: justify;
-}
-
-.leftviewer-container {
-  grid-column: 1;
-  display: flex;
-  justify-content: space-between;
-  border-radius: .5em;
-  align-items: normal; 
-  margin-top: 10px;
-  padding-top: 10px;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  text-align: justify;
-}
 
 .custom-progress-bar {
   height: 30px;
