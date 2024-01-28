@@ -1,10 +1,12 @@
+import React, { useState, useEffect } from 'react';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
 import ModalUploadReport from '../Components/CreateJsonBatchReports';
 import { useNavigate } from 'react-router-dom';
 import { getUser } from '../utils/api';
 
-const NavBarReportSelection = async () => {
+const NavBarReportSelection = () => {
+  const [isAdmin, setIsAdmin] = useState(false);
   const user = JSON.parse(localStorage.getItem('user'));
   console.log("user: ", user);
   const token = localStorage.getItem('token');
@@ -14,21 +16,23 @@ const NavBarReportSelection = async () => {
 
   const navigate = useNavigate();
 
-  const isAdmin = async () => {
-    try {
-      if (userId) {
-        const user = await getUser(userId, token);
-        return user && user.role === 'Admin';
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      try {
+        if (userId) {
+          const user = await getUser(userId, token);
+          setIsAdmin(user && user.role === 'Admin');
+        }
+      } catch (error) {
+        console.log(error);
       }
-      return false;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
-  };
+    };
 
-  const handleAdminButtonClick = async () => {
-    if (await isAdmin()) {
+    checkAdminStatus();
+  }, [userId, token]);
+
+  const handleAdminButtonClick = () => {
+    if (isAdmin) {
       navigate('/admin');
     }
   };
@@ -46,7 +50,7 @@ const NavBarReportSelection = async () => {
         <Nav.Link>
           <LogoutButton />
         </Nav.Link>
-        {await isAdmin() && (
+        {isAdmin && (
           <Nav.Link>
             <Button variant="primary" onClick={handleAdminButtonClick}>
               Vista Admin
