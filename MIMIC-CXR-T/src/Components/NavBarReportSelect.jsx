@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
 import ModalUploadReport from '../Components/CreateJsonBatchReports';
@@ -50,13 +50,13 @@ const NavBarReportSelection = () => {
         <Nav.Link>
           <LogoutButton />
         </Nav.Link>
-        {isAdmin && (
+       
           <Nav.Link>
             <Button variant="primary" onClick={handleAdminButtonClick}>
               Vista Admin
             </Button>
           </Nav.Link>
-        )}
+        
       </Nav>
     </Navbar>
   );
