@@ -15,6 +15,7 @@ const NavBarReportSelection = () => {
       try {
         if (token) {
           const user = await getUser(token);
+          console.log('user', user);
           setIsAdmin(user && user.role === 'Admin');
         }
       } catch (error) {
