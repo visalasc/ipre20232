@@ -8,7 +8,8 @@ const NavBarReportSelection = () => {
   const navigate = useNavigate();
 
   const isAdmin = () => user && user.role === 'Admin';
-
+  console.log(user);
+  console.log("isAdmin?: ",isAdmin());
   const handleAdminButtonClick = () => {
     // Redirige a la ruta '/admin' si el usuario es administrador
     if (isAdmin()) {

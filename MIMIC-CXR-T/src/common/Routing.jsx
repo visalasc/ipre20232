@@ -14,7 +14,7 @@ function NoPermissions() {
 function AdminComponent() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
-
+  console.log(user);
   // Función para comprobar si el usuario es administrador
   const isAdmin = () => user && user.role === 'Admin';
 
