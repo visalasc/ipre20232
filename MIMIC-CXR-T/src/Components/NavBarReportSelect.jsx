@@ -2,8 +2,6 @@ import { Navbar, Nav, Button } from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
 import ModalUploadReport from '../Components/CreateJsonBatchReports';
 import { useNavigate } from 'react-router-dom';
-import jwt from 'jsonwebtoken';
-import process from 'process'; // You might not need this import, check if you're using 'process' in your code.
 import { getUser } from '../utils/api';
 
 const NavBarReportSelection = async () => {
@@ -12,15 +10,17 @@ const NavBarReportSelection = async () => {
   const token = localStorage.getItem('token');
   console.log("token: ", token);
 
-  const decodedToken = jwt.verify(token, process.env.JWT_SECRET); // Assuming process.env.JWT_SECRET is defined somewhere.
-  const userId = decodedToken.userId;
+  const userId = user ? user.userId : null; // Assuming the user object has a userId property.
 
   const navigate = useNavigate();
 
   const isAdmin = async () => {
     try {
-      const user = await getUser(userId, token);
-      return user && user.role === 'Admin';
+      if (userId) {
+        const user = await getUser(userId, token);
+        return user && user.role === 'Admin';
+      }
+      return false;
     } catch (error) {
       console.log(error);
       return false;
