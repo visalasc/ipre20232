@@ -22,13 +22,14 @@ const NavBarReportSelection = () => {
           <ModalUploadReport />
         </Nav.Link>
         <Nav.Link>
-          <LogoutButton />
-        </Nav.Link>
-          <Nav.Link>
             <Button variant="primary" onClick={handleAdminButtonClick}>
               Vista Admin
             </Button>
           </Nav.Link>
+        <Nav.Link>
+          <LogoutButton />
+        </Nav.Link>
+          
       </Nav>
     </Navbar>
   );
