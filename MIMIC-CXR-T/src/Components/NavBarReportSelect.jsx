@@ -7,29 +7,23 @@ import { getUser } from '../utils/api';
 
 const NavBarReportSelection = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const user = JSON.parse(localStorage.getItem('user'));
-  console.log("user: ", user);
   const token = localStorage.getItem('token');
-  console.log("token: ", token);
-
-  const userId = user ? user.userId : null; // Assuming the user object has a userId property.
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkAdminStatus = async () => {
       try {
-        if (userId) {
-          const user = await getUser(userId, token);
+        if (token) {
+          const user = await getUser(token);
           setIsAdmin(user && user.role === 'Admin');
         }
       } catch (error) {
-        console.log(error);
+        console.error('Error while checking admin status:', error);
       }
     };
 
     checkAdminStatus();
-  }, [userId, token]);
+  }, [token]);
 
   const handleAdminButtonClick = () => {
     if (isAdmin) {
@@ -50,13 +44,13 @@ const NavBarReportSelection = () => {
         <Nav.Link>
           <LogoutButton />
         </Nav.Link>
-       
+        {isAdmin && (
           <Nav.Link>
             <Button variant="primary" onClick={handleAdminButtonClick}>
               Vista Admin
             </Button>
           </Nav.Link>
-        
+        )}
       </Nav>
     </Navbar>
   );
