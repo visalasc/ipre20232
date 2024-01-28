@@ -186,6 +186,11 @@ export async function createUserReportGroups(userReportGroupData, token){
   );
   return response.data;
 }
+export async function getUser(userId, token){
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/${userId}`, config(token),
+  );
+  return response.data;
+}
 
 export async function getAllUsers(){
   const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users`,

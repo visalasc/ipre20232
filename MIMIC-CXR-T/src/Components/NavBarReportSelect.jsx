@@ -2,17 +2,33 @@ import { Navbar, Nav, Button } from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
 import ModalUploadReport from '../Components/CreateJsonBatchReports';
 import { useNavigate } from 'react-router-dom';
+import jwt from 'jsonwebtoken';
+import process from 'process'; // You might not need this import, check if you're using 'process' in your code.
+import { getUser } from '../utils/api';
 
-const NavBarReportSelection = () => {
+const NavBarReportSelection = async () => {
   const user = JSON.parse(localStorage.getItem('user'));
+  console.log("user: ", user);
+  const token = localStorage.getItem('token');
+  console.log("token: ", token);
+
+  const decodedToken = jwt.verify(token, process.env.JWT_SECRET); // Assuming process.env.JWT_SECRET is defined somewhere.
+  const userId = decodedToken.userId;
+
   const navigate = useNavigate();
 
-  const isAdmin = () => user && user.role === 'Admin';
-  console.log(user);
-  console.log("isAdmin?: ",isAdmin());
-  const handleAdminButtonClick = () => {
-    // Redirige a la ruta '/admin' si el usuario es administrador
-    if (isAdmin()) {
+  const isAdmin = async () => {
+    try {
+      const user = await getUser(userId, token);
+      return user && user.role === 'Admin';
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+  const handleAdminButtonClick = async () => {
+    if (await isAdmin()) {
       navigate('/admin');
     }
   };
@@ -30,7 +46,7 @@ const NavBarReportSelection = () => {
         <Nav.Link>
           <LogoutButton />
         </Nav.Link>
-        {isAdmin() && (
+        {await isAdmin() && (
           <Nav.Link>
             <Button variant="primary" onClick={handleAdminButtonClick}>
               Vista Admin
