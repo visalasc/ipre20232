@@ -7,25 +7,6 @@ import ReportGroupSelection from '../common/ReportGroupSelection';
 import Admin from '../common/Admin';
 import TableUserDisplayReportGroup from '../Components/TableUserDisplayReportGroup';
 
-function NoPermissions() {
-  return <div>No tienes permisos para acceder a esta página.</div>;
-}
-
-function AdminComponent() {
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user'));
-  console.log(user);
-  // Función para comprobar si el usuario es administrador
-  const isAdmin = () => user && user.role === 'Admin';
-
-  // Redirigir a la página principal si el usuario no es administrador
-  if (!isAdmin()) {
-    return <Navigate to="/" />;
-  }
-
-  return <Admin />;
-}
-
 function Routing() {
   return (
     <BrowserRouter>
@@ -36,7 +17,7 @@ function Routing() {
         <Route path="/login" element={<ModalLogin />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/reportselection" element={<ReportGroupSelection />} />
-        <Route path="/admin" element={<AdminComponent />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   );
