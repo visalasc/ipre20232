@@ -1,15 +1,7 @@
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
 import ModalUploadReport from '../Components/CreateJsonBatchReports';
-import { useNavigate } from 'react-router-dom';
 const NavBarReportSelection = () => {
-  const navigate = useNavigate();
-
-
-  const handleAdminButtonClick = () => {
-    
-      navigate('/admin');
-    }
 
   return (
     <Navbar bg="dark" data-bs-theme="dark" expand="lg">
@@ -21,8 +13,8 @@ const NavBarReportSelection = () => {
         <Nav.Link>
           <ModalUploadReport />
         </Nav.Link>
-        <Nav.Link>
-            <Button variant="primary" onClick={handleAdminButtonClick}>
+        <Nav.Link href="/admin">
+            <Button variant="primary">
               Vista Admin
             </Button>
           </Nav.Link>
