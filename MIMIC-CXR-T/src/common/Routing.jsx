@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from '../common/App';
 import Translator from '../common/Translator';
 import ModalLogin from '../profile/ModalLogin';
