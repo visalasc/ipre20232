@@ -226,7 +226,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
                         }
                       >
                         <div>
-                          <span>Grammatical</span>
+                          <span>Gramatical</span>
                           <FontAwesomeIcon icon={faQuestionCircle} style={{ marginLeft: '5px' }} />
                         </div>
                       </OverlayTrigger>
@@ -256,7 +256,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
                         }
                       >
                         <div>
-                          <span>Terminological</span>
+                          <span>Terminológico</span>
                           <FontAwesomeIcon icon={faQuestionCircle} style={{ marginLeft: '5px' }} />
                         </div>
                       </OverlayTrigger>
@@ -286,7 +286,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
                         }
                       >
                         <div>
-                          <span>Functional</span>
+                          <span>Funcional</span>
                           <FontAwesomeIcon icon={faQuestionCircle} style={{ marginLeft: '5px' }} />
                         </div>
                       </OverlayTrigger>
@@ -316,7 +316,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
                         }
                       >
                         <div>
-                          <span>Other</span>
+                          <span>Otros</span>
                           <FontAwesomeIcon icon={faQuestionCircle} style={{ marginLeft: '5px' }} />
                         </div>
                       </OverlayTrigger>
