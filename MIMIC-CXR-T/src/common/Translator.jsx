@@ -117,7 +117,7 @@ function Translator() {
   
   const renderTooltipProgressBarTranslatedSentences = (props) => (
     <Tooltip id="button-tooltip" {...props}>
-      Progreso de frases traducidas del batch
+      Progreso de oraciones traducidas del batch
     </Tooltip>
   );
 
@@ -125,31 +125,12 @@ function Translator() {
     <>
       <NavBarReportSelection />
       <Container style={{ marginTop: '5%' }}>
-        <Row >
-          <ButtonGroup size="sm" >
-            <Button
-              variant="primary"
-              onClick={goToPreviousReport}
-              disabled={reports.length === 0 || currentIndex === 0}
-            >
-              Anterior
-            </Button>
-            <Button
-              variant="primary"
-              onClick={goToNextReport}
-              disabled={reports.length === 0 || currentIndex === reports.length - 1}
-            >
-              Siguiente
-            </Button>
-          </ButtonGroup>
-
-        </Row>
-
+ 
         {/* Alerta para mostrar si el reporte no está completo */}
         <Row style={{ marginTop: '2%' }}>
           <Col>
             <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
-              El reporte actual no está completo. Por favor, revisa todas las frases antes de avanzar.
+              El reporte actual no está completo. Por favor, revisa todas las oraciones antes de avanzar.
             </Alert>
           </Col>
         </Row>
@@ -162,8 +143,7 @@ function Translator() {
           </Alert>
         </Col>
       </Row>
-
-        <Row>
+      <Row>
           <Col >
             {(reports.length > 0) ? (
               <Viewer
@@ -173,6 +153,8 @@ function Translator() {
                 reports={reports}
                 currentIndex={currentIndex}
                 checkIsReportCompleted={checkIsReportCompleted}
+                goToNextReport={goToNextReport}
+                goToPreviousReport={goToPreviousReport}
                 />
             ) : (
               <p>Loading translated sentences...</p>
@@ -182,11 +164,11 @@ function Translator() {
         <Row>
           <Col>
           <OverlayTrigger
-            placement="right"
+            placement="top"
             delay={{ show: 250, hide: 400 }}
             overlay={renderTooltipProgressBarTranslatedSentences}
             >
-            <ProgressBar striped animated className="custom-progress-bar" 
+            <ProgressBar striped animated className="tphrases-progress-bar" 
             now={progressTranslatedSentences} 
             label={`(${reviewedTranslatedSentences}/${totalTranslatedSentences})  `+`${Math.round(progressTranslatedSentences)}%`} 
             variant={

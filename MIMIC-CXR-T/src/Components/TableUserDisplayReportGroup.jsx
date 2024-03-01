@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { Table, Button, Col, Container, Row, ProgressBar, Alert } from 'react-bootstrap';
+import { Table, Button, Col, Container, Row, ProgressBar, Alert, Spinner } from 'react-bootstrap';
 import './tabledisplayreportgroup.css';
 import NavBarReportSelection from './NavBarReportSelect';
 import { AuthContext } from '../auth/AuthContext';
@@ -12,12 +12,14 @@ const TableUserDisplayReportGroup = () => {
   const [reports, setReports] = useState([]);
   const [reportDetails, setReportDetails] = useState({});
   const [showAlert, setShowAlert] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { groupId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true); 
         const dataReports = await getReportGroupReports(groupId, token);
         setReports(dataReports);
         const numberOfReports = dataReports.length;
@@ -44,6 +46,7 @@ const TableUserDisplayReportGroup = () => {
                        }
               } catch (error) {
                 console.error("Error fetching previous user translated sentence:", error);
+                setLoading(false); // Finaliza la carga
               }
             }
           }
@@ -83,8 +86,10 @@ const TableUserDisplayReportGroup = () => {
         }
 
         setReportDetails(reportDetailsObject);
+        setLoading(false); // Finaliza la carga
       } catch (error) {
         //console.error('Error fetching data:', error);
+        setLoading(false); // Finaliza la carga
       }
     };
 
@@ -154,12 +159,31 @@ const TableUserDisplayReportGroup = () => {
                   <th>Report IDs</th>
                   <th>Contenido</th>
                   <th>Progreso reportes</th>
-                  <th>Progreso frases traducidas</th>
+                  <th>Progreso oraciones traducidas</th>
                   <th>Ver reporte</th>
                 </tr>
               </thead>
               <tbody>
-                {reports && reports.map((report) => (
+                { loading ? (
+                  <>
+                  <Spinner  as="span"
+                      animation="grow"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                      variant="primary"
+                  />
+                    <Spinner  as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                      variant="primary"
+                  />
+                    <span className="sr-only">Cargando...</span>
+                    </>
+                ) : (
+                reports && reports.map((report) => (
                   <tr key={report.report.index}>
                     <td>{report.report.reportId}</td>
                     <td>{reportDetails[report.report.reportId]?.content || ''}</td>
@@ -195,7 +219,7 @@ const TableUserDisplayReportGroup = () => {
                       <Button onClick={() => startTranslationReport(groupId, report.report.reportId)}>Traducir</Button>
                     </td>
                   </tr>
-                ))}
+                )))}
               </tbody>
             </Table>
           </Col>

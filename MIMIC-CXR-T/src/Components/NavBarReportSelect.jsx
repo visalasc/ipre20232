@@ -1,7 +1,11 @@
+import { useContext } from 'react';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
 import ModalUploadReport from '../Components/CreateJsonBatchReports';
+import { AuthContext } from '../auth/AuthContext';
+
 const NavBarReportSelection = () => {
+  const { user } = useContext(AuthContext);
 
   return (
     <Navbar bg="dark" data-bs-theme="dark" expand="lg">
@@ -13,15 +17,14 @@ const NavBarReportSelection = () => {
         <Nav.Link>
           <ModalUploadReport />
         </Nav.Link>
-        <Nav.Link href="/admin">
-            <Button variant="primary">
-              Vista Admin
-            </Button>
+        {user && user.role === 'admin' && ( // Mostrar solo si el usuario tiene rol de admin
+          <Nav.Link href="/admin">
+            <Button variant="primary">Vista Admin</Button>
           </Nav.Link>
+        )}
         <Nav.Link>
           <LogoutButton />
         </Nav.Link>
-          
       </Nav>
     </Navbar>
   );

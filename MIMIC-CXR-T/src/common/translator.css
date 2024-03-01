@@ -8,3 +8,8 @@
 .custom-progress-bar {
   height: 30px;
 }
+
+.tphrases-progress-bar {
+  width: 98%;
+  margin: 0 auto;
+}

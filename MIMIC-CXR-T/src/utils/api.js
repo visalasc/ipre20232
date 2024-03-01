@@ -60,11 +60,12 @@ export async function getUserTranslatedSentencesByReportGroup(groupId, token) {
   return response.data;
 }
 
-export async function createSuggestion(selectedTranslatedSentenceId, modalText, editedTranslatedSentence, token) {
+export async function createSuggestion(selectedTranslatedSentenceId, modalText, editedTranslatedSentence, otherErrorDescription, token) {
   const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/suggestions`, {
     translatedSentenceId: selectedTranslatedSentenceId,
     comments: modalText,
     changesFinalTranslation: editedTranslatedSentence,
+    text: otherErrorDescription,
   },  config(token),
   );
   return response.data;
@@ -109,10 +110,11 @@ export async function updateCorrection(translatedsentenceId, selectedOptions, to
   return response.data;
 }
 
-export async function updateSuggestion(translatedsentenceId, modalText, editedTranslatedSentence, token) {
+export async function updateSuggestion(translatedsentenceId, modalText, editedTranslatedSentence, otherErrorDescription, token) {
   const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/suggestions/update/${translatedsentenceId}`, {
-    text: modalText,
+    comments: modalText,
     changesFinalTranslation: editedTranslatedSentence,
+    text: otherErrorDescription,
   },  config(token),
   );
   return response.data;
@@ -187,7 +189,7 @@ export async function createUserReportGroups(userReportGroupData, token){
   return response.data;
 }
 export async function getUser(token){
-  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/user`, config(token),
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/user`, {token: token}
   );
   return response.data;
 }

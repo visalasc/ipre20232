@@ -6,6 +6,7 @@ import Signup from '../profile/Signup';
 import ReportGroupSelection from '../common/ReportGroupSelection'; 
 import Admin from '../common/Admin';
 import TableUserDisplayReportGroup from '../Components/TableUserDisplayReportGroup';
+import AccessDenied from '../Components/AccessDenied';
 
 function Routing() {
   return (
@@ -18,6 +19,7 @@ function Routing() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/reportselection" element={<ReportGroupSelection />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/access-denied" element={<AccessDenied />} />
       </Routes>
     </BrowserRouter>
   );

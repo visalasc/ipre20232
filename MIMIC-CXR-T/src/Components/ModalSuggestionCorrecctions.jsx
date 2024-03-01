@@ -22,6 +22,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
   const [translatedSentence, setTranslatedSentence] = useState('');
   const [originalSentence, setOriginalSentence] = useState('');
   const [editedTranslatedSentence, setEditedTranslatedSentence] = useState('');
+  const [otherErrorDescription, setOtherErrorDescription] = useState('');
   const { token } = useContext(AuthContext);
   const [selectedOptionsByType, setSelectedOptionsByType] = useState({});
   const [selectedWords, setSelectedWords] = useState([]);
@@ -96,7 +97,6 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
     }
   };
   
-
   const handleOptionClick = (options, type) => {
     setSelectedOptionsByType((prevOptionsByType) => {
       const updatedOptionsByType = { ...prevOptionsByType };
@@ -114,6 +114,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
           selectedTranslatedSentenceId,
           modalText,
           editedTranslatedSentence,
+          otherErrorDescription,
           token
         );
 
@@ -131,9 +132,21 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
         );
       } else {
         if (previousSuggestion.translatedSentenceId === selectedTranslatedSentenceId) {
-          await updateSuggestion(selectedTranslatedSentenceId, modalText, editedTranslatedSentence, token);
+          await updateSuggestion(
+            selectedTranslatedSentenceId,
+            modalText,
+            editedTranslatedSentence,
+            otherErrorDescription,
+            token
+          );
         } else {
-          await createSuggestion(selectedTranslatedSentenceId, modalText, token);
+          await createSuggestion(
+            selectedTranslatedSentenceId,
+            modalText,
+            editedTranslatedSentence,
+            otherErrorDescription,
+            token
+          );
         }
         if (previousCorrection !== null) {
           await deleteUserCorrectionsTranslatedSentence(selectedTranslatedSentenceId, token);
@@ -320,6 +333,12 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
                           
                         />
                         <Form.Label className="h6" >Describa el tipo de error encontrado:</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={2}
+                          value={otherErrorDescription}
+                          onChange={(otherErrorEvent) => setOtherErrorDescription(otherErrorEvent.target.value)}
+                        />
                       </Card>
                     </Tab>
                   </Tabs>

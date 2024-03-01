@@ -2,14 +2,14 @@ import React, { useState, useContext, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Table, ToggleButton, Form, Container, Row, Col ,
-OverlayTrigger, Tooltip, ProgressBar} from 'react-bootstrap';
+OverlayTrigger, Tooltip, ProgressBar, Badge, Button, ButtonGroup} from 'react-bootstrap';
 import './viewer.css';
 import ModalSuggestions from './ModalSuggestionCorrecctions';
 import { createUserTranslatedSentence, getPreviousUserTranslatedSentence, 
   updateUserTranslatedSentence, updateReportProgress } from '../utils/api';
 import { AuthContext } from '../auth/AuthContext';
 
-function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculation, reports, checkIsReportCompleted}) {
+function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculation, reports, currentIndex, checkIsReportCompleted, goToNextReport, goToPreviousReport}) {
   const [translatedSentencesState, setTranslatedSentencesState] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTranslatedSentenceId, setSelectedTranslatedSentenceId] = useState(null);
@@ -46,7 +46,7 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
 
   const renderTooltipProgressBarReports = (props) => (
     <Tooltip id="button-tooltip" {...props}>
-      Progreso del reportes del batch
+      Progreso de reportes en el batch
     </Tooltip>
   );
 
@@ -181,8 +181,8 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
         return (
           <React.Fragment key={type}>
            {isSwitchChecked && (
-            <tr>
-              <th colSpan="2">{type}</th>
+            <tr className="title-row">
+              <th className="title-row">{type}</th><th className="title-row"></th><th className="title-row"></th>
             </tr>
           )}
             {nonEmptyOriginalSentences.map((sentence, index) => (
@@ -224,9 +224,47 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
       <Container>
         <Row>
           <Col>
-            <p>ID Reporte: {report.reportId}</p>
+            <h3><Badge bg="secondary">ID Reporte: {report.reportId}</Badge> </h3>
           </Col>
         </Row>
+        <Row>
+          <Col>
+          <OverlayTrigger
+            placement="bottom"
+            delay={{ show: 250, hide: 400 }}
+            overlay={renderTooltipProgressBarReports}
+            >
+            <ProgressBar striped animated className="reports-progress-bar" 
+              now={progressReports} 
+              label={`(${completedReports}/${reports.length})  `+`${Math.round(progressReports)}%`} 
+              variant={
+                Math.round(progressReports) <= 33 ? "danger" :
+                Math.round(progressReports) < 99 ? "warning" :
+                "success"
+              } />
+
+          </OverlayTrigger>
+          </Col>
+        </Row>
+        <Row >
+          <ButtonGroup size="sm" >
+            <Button
+              variant="primary"
+              onClick={goToPreviousReport}
+              disabled={reports.length === 0 || currentIndex === 0}
+            >
+              Anterior
+            </Button>
+            <Button
+              variant="primary"
+              onClick={goToNextReport}
+              disabled={reports.length === 0 || currentIndex === reports.length - 1}
+            >
+              Siguiente
+            </Button>
+          </ButtonGroup>
+        </Row>
+
         <Row>
           <Col xs={4}>
           <Form>
@@ -242,26 +280,6 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
         </Row>
         <Row>
           <Table striped hover responsive="lg" className="custom-table">
-              <tbody>
-              <tr>
-          <td>
-          <OverlayTrigger
-                placement="right"
-                delay={{ show: 250, hide: 400 }}
-                overlay={renderTooltipProgressBarReports}
-                >
-                <ProgressBar striped animated
-                  now={progressReports} 
-                  label={`(${completedReports}/${reports.length})  `+`${Math.round(progressReports)}%`} 
-                  variant={
-                    Math.round(progressReports) <= 33 ? "danger" :
-                    Math.round(progressReports) < 99 ? "warning" :
-                    "success"
-                  } />
-              </OverlayTrigger>
-          </td>
-        </tr>
-              </tbody>
             <tbody className="custom-table">{renderRows(report)}
     
             </tbody>

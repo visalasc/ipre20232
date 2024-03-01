@@ -9,6 +9,7 @@ import NavAdmin from '../Components/NavAdmin';
 import CreateUserReportGroup from '../Components/CreateUserReportGroup';
 import DisplayUsers from '../Components/TableDisplayUsers';
 import ModalUploadReports from '../Components/CreateJsonBatchReports';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import './admin.css';
 
 function Admin() {
@@ -16,6 +17,9 @@ function Admin() {
   const [reportGroupReports, setReportGroupReports] = useState([]);
   const [currentView, setCurrentView] = useState('view1');
   const [loading, setLoading] = useState(false);
+
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate(); // Usa useNavigate para gestionar la navegación
 
   useEffect(() => {
     const getReportGroupReports = async () => {
@@ -54,7 +58,7 @@ function Admin() {
       setLoading(true);
       const response = await createUserReportGroups(reportGroupId, userIds, token);
       console.log('user report group created:', response);
-      
+
     } catch (error) {
       console.error('Error creating user report groups:', error);
       // Muestra notificación Toast de error
@@ -62,6 +66,12 @@ function Admin() {
       setLoading(false);
     }
   };
+
+  if (!user || user.role !== 'admin') {
+    // Si no es un administrador, redirigir a otra página (puedes elegir una página de acceso denegado)
+    navigate("/access-denied");
+    return null; // Puedes devolver null después de la redirección para evitar renderizar el resto del componente
+  }
 
   return (
     <>

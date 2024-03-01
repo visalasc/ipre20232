@@ -1,4 +1,4 @@
-  /* Estilo para resaltar frases traducidas */
+
   .highlighted-right {
     background-color: #bfe6e6; 
   }
@@ -60,6 +60,7 @@ tr {
   min-height: 40px; /* Ajusta la altura mínima según tus necesidades */
 }
 
+
 /* Establece un ancho máximo para las celdas de la tabla */
 td, th {
   max-width: 100%;
@@ -97,6 +98,17 @@ tr {
 }
 
 .custom-table tr:hover td:hover{
-  background-color: #f2eed1; /* Cambia el color de fondo a tu preferencia */
+  background-color: #e7fff6; /* Cambia el color de fondo a tu preferencia */
   transition: background-color 0.3s; /* Agrega una transición suave */
+}
+
+.custom-table th {
+  background-color: #a0c1f3b7; /* Cambia el color de fondo a tu preferencia */
+}
+
+.reports-progress-bar {
+  width: 100%;
+  margin: 0 auto;
+  height: 35px;
+  margin-bottom: 1%;
 }
