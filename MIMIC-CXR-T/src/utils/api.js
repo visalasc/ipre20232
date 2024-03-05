@@ -134,7 +134,7 @@ export async function deleteUserCorrectionsTranslatedSentence(translatedsentence
  
 export async function deleteSuggestion(translatedsentenceId, token) {
   const response = await axios.delete(
-    `${import.meta.env.VITE_BACKEND_URL}/suggestions/${translatedsentenceId}`,  config(token),
+    `${import.meta.env.VITE_BACKEND_URL}/suggestions/delete/${translatedsentenceId}`,  config(token),
     );
   return response.data;
 }
@@ -232,4 +232,3 @@ export async function getReportById(reportId, token){
   );
   return response.data;
 }
-
