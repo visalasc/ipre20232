@@ -14,6 +14,7 @@ const NavBarReportSelection = () => {
     const fetchUser = async () => {
       try {
         const response = await getUser(token);
+        console.log('Response:', response);
         setUser(response);
       } catch (error) {
         console.error('Error fetching user:', error);
