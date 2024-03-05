@@ -4,8 +4,7 @@ import Viewer from '../Components/Viewer';
 import './translator.css';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../auth/AuthContext';
-import { Container, Col, Row, ProgressBar, Alert, 
-Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Container, Col, Row, Alert } from 'react-bootstrap';
 import { getReportGroupReports, getUserTranslatedSentencesByReportGroup, 
   updateUserReportGroupProgress, checkIsReportCompleted } from '../utils/api';
 
@@ -19,9 +18,18 @@ function Translator() {
   const [totalTranslatedSentences, setTotalTranslatedSentences] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
   const [individualReportCompletedAlert, setIndividualReportCompletedAlert] = useState(false); // Nuevo estado para alerta de reporte individual completado
- 
+  const dismissDelay = 1400; // 2000 milliseconds = 2 seconds
+
   const calculateProgressTranslatedSentences = () => {
     return totalTranslatedSentences ? (reviewedTranslatedSentences / totalTranslatedSentences) * 100 : 0;
+  };
+  
+  const closeGeneralAlert = () => {
+    setShowAlert(false);
+  };
+
+  const closeIndividualReportCompletedAlert = () => {
+    setIndividualReportCompletedAlert(false);
   };
 
   useEffect(() => {
@@ -89,23 +97,37 @@ function Translator() {
       console.error('Error fetching reviewed phrases:', error);
     }
   };
-  
+
+  const setIndividualReportCompletedAlertData = ({ showAlert, reportId }) => {
+    setIndividualReportCompletedAlert({
+      showAlert: showAlert,
+      reportId: reportId,
+    });
+  };
+
   const goToNextReport = async () => {
     try {
       const nextIndex = (currentIndex + 1) % reports.length;
       const isCurrentReportCompleted = await checkIsReportCompleted(reports[currentIndex].report.reportId, token);
       if (isCurrentReportCompleted.completed) {
+        setIndividualReportCompletedAlertData({ showAlert: true, reportId: reports[currentIndex].report.reportId });
+        
+        setShowAlert(false); 
+        setTimeout(() => {
+          setIndividualReportCompletedAlertData({ showAlert: false, reportId: null });
+        }, dismissDelay);
         setCurrentIndex(nextIndex);
-        setIndividualReportCompletedAlert(true); // Mostrar alerta para reporte individual completado
-        setShowAlert(false);
-      } 
-      else {
+      } else {
         setShowAlert(true);
+        setTimeout(() => {
+          setShowAlert(false);
+        }, dismissDelay);
       }
     } catch (error) {
       console.error('Error checking report completion:', error);
     }
   };
+  
 
   const goToPreviousReport = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + reports.length) % reports.length);
@@ -114,12 +136,6 @@ function Translator() {
   useEffect(() => {
     setTotalTranslatedSentences(calculateTotalTranslatedSentences());
   }, [reports]);
-  
-  const renderTooltipProgressBarTranslatedSentences = (props) => (
-    <Tooltip id="button-tooltip" {...props}>
-      Progreso de oraciones traducidas del batch
-    </Tooltip>
-  );
 
   return (
     <>
@@ -129,7 +145,7 @@ function Translator() {
         {/* Alerta para mostrar si el reporte no está completo */}
         <Row style={{ marginTop: '2%' }}>
           <Col>
-            <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+            <Alert show={showAlert} variant="danger" onClose={closeGeneralAlert} dismissible>
               El reporte actual no está completo. Por favor, revisa todas las oraciones antes de avanzar.
             </Alert>
           </Col>
@@ -138,31 +154,16 @@ function Translator() {
        {/* Alerta para mostrar si un reporte individual está completado */}
        <Row style={{ marginTop: '2%' }}>
         <Col>
-          <Alert show={individualReportCompletedAlert} variant="success" onClose={() => setIndividualReportCompletedAlert(false)} dismissible>
-            ¡El reporte actual ha sido completado!
-          </Alert>
+          <Alert
+              show={individualReportCompletedAlert?.showAlert}
+              variant="success"
+              onClose={closeIndividualReportCompletedAlert}
+              dismissible
+            >
+              ¡El reporte {individualReportCompletedAlert?.reportId} ha sido completado!
+            </Alert>
         </Col>
       </Row>
-
-      <Row>
-          <Col>
-          <OverlayTrigger
-            placement="top"
-            delay={{ show: 250, hide: 400 }}
-            overlay={renderTooltipProgressBarTranslatedSentences}
-            >
-            <ProgressBar striped animated className="tphrases-progress-bar" 
-            now={progressTranslatedSentences} 
-            label={`(${reviewedTranslatedSentences}/${totalTranslatedSentences})  `+`${Math.round(progressTranslatedSentences)}%`} 
-            variant={
-              Math.round(progressTranslatedSentences) <= 33 ? "danger" :
-                Math.round(progressTranslatedSentences) <= 99 ? "warning" :
-                "success"
-            } 
-            />
-          </OverlayTrigger>
-          </Col>
-        </Row>
 
       <Row>
           <Col >
