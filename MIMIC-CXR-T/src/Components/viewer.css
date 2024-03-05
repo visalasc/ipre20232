@@ -111,3 +111,13 @@ tr {
   margin: 0 auto;
   height: 35px;
 }
+
+.badge-report {
+  margin-top: 2%;
+}
+
+.custom-switch{
+  margin-left: 0%;
+  margin-top: 1%;
+
+}

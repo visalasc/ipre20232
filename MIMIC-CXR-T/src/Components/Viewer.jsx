@@ -183,6 +183,12 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
     
   };
 
+  const renderTooltipProgressBarTranslatedSentences = (props) => (
+    <Tooltip id="button-tooltip" {...props}>
+      Progreso de oraciones traducidas del batch
+    </Tooltip>
+  );
+  
   useEffect(() => {
     // Calculate totalSentencesReport using uniqueTranslatedSentenceIds
     console.log("uniqueTranslatedSentenceIds: ", uniqueTranslatedSentenceIds);
@@ -298,7 +304,7 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
         </Row>
         <Row>
           <Col>
-            <h3><Badge bg="secondary">ID Reporte: {report.reportId}</Badge> </h3>
+            <h3><Badge bg="secondary" className="badge-report" >ID Reporte: {report.reportId}</Badge> </h3>
           </Col>
         </Row>
         <Row>
@@ -306,7 +312,7 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
             <OverlayTrigger
               placement="bottom"
               delay={{ show: 250, hide: 400 }}
-              overlay={renderTooltipProgressBarReports}
+              overlay={renderTooltipProgressBarTranslatedSentences}
               >
             <ProgressBar
               striped
@@ -329,9 +335,10 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
             <Form.Check
               type="switch"
               id="custom-switch"
-              label="Mostrar/esconder encabezado de la sección"
+              label="Mostrar encabezado de la sección"
               checked={isSwitchChecked}
               onChange={() => setIsSwitchChecked(!isSwitchChecked)}
+              className="custom-switch"
             />
           </Form>
           </Col>
