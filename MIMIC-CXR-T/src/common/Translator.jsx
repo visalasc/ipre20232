@@ -140,25 +140,28 @@ function Translator() {
   return (
     <>
       <NavBarReportSelection />
-      <Container style={{ marginTop: '3%' }}>
- 
-        {/* Alerta para mostrar si el reporte no está completo */}
-        <Row style={{ marginTop: '2%' }}>
+      <Container className="translator-container">
+        <Row>
           <Col>
-            <Alert show={showAlert} variant="danger" onClose={closeGeneralAlert} dismissible>
+            <Alert 
+              show={showAlert} 
+              variant="danger" 
+              onClose={closeGeneralAlert} 
+              dismissible
+              className="custom-alert"
+            >
               El reporte actual no está completo. Por favor, revisa todas las oraciones antes de avanzar.
             </Alert>
           </Col>
         </Row>
-
-       {/* Alerta para mostrar si un reporte individual está completado */}
-       <Row style={{ marginTop: '2%' }}>
+       <Row>
         <Col>
           <Alert
               show={individualReportCompletedAlert?.showAlert}
               variant="success"
               onClose={closeIndividualReportCompletedAlert}
               dismissible
+              className="custom-alert"
             >
               ¡El reporte {individualReportCompletedAlert?.reportId} ha sido completado!
             </Alert>
