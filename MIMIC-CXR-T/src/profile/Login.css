@@ -8,7 +8,7 @@
     border: 1px solid #ddd;
     border-radius: 5px;
     box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.1);
-    background-color: #f0faff;
+    background-color: #f3f8fb;
     
   }
   
@@ -27,6 +27,7 @@
     margin-bottom: 20px;
     border: 1px solid #ddd;
     border-radius: 3px;
+    background-color: #ffffff;
   }
   
   .Login form input[type="submit"] {
@@ -46,9 +47,9 @@
     width: 80%;
     margin: 10px auto;
     padding: 10px;
-    border: 1px solid #ff4d4d; /* red */
+    border: 1px solid #ff9696; /* red */
     border-radius: 5px;
-    color: #ff4d4d; /* red */
+    color: #f99595; /* red */
     background-color: #ffe6e6; /* light red */
     text-align: center;
   }
@@ -57,13 +58,15 @@
     width: 80%;
     margin: 10px auto;
     padding: 10px;
-    border: 1px solid #5cff4d; /* green */
+    border: 1px solid #acffa4; /* green */
     border-radius: 5px;
-    color: #2aff86; /* green */
+    color: #93ffc2; /* green */
     background-color: #e9ffe6; /* light green */
     text-align: center;
   }
 
  h3{
-  color: #6e6f70;
+  color: #4a4a4a;
+  font-size: 25px;
+
  }
