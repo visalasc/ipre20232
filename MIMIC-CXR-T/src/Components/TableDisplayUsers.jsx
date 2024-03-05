@@ -13,7 +13,7 @@ const DisplayUsers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const usersData = await getAllUsers();
+        const usersData = await getAllUsers(token);
         setUsers(usersData);
       } catch (error) {
         console.error('Error fetching users:', error);
