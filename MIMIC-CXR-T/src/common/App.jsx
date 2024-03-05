@@ -10,9 +10,10 @@ function App() {
       <main>
         <section className="left-section">
           <h1>Proyecto MIMIC-CXR-Translation</h1>
-          <p>m ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis ullamcorper velit sed ullamcorper. Et odio pellentesque diam volutpat commodo sed. Justo nec ultrices dui sapien eget mi proin sed. Ipsum suspendisse ultrices gravida dictum fusce. Sit amet massa vitae tortor condimentum lacinia quis vel eros. Et malesuada f</p>
-          <p>Información del proyecto</p>
-        </section>
+          <p> El propósito de esta plataforma es traducir el conjunto de datos MIMIC-CXR del inglés al español. Los profesionales médicos seleccionados pueden introducir y corregir traducciones realizadas por computadora para volver a capacitarse en el futuro y mejorar el rendimiento de la traducción.</p>
+      
+          <p> The purpose of this platform is to translate the MIMIC-CXR dataset from English to Spanish. Selected medical professionals can input and correct computer-made translations to be retrained in the future and improve translation performance.</p>
+         </section>
 
 
         <section className="right-section">
