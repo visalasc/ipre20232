@@ -196,8 +196,8 @@ export async function getUser(token){
   return response.data;
 }
 
-export async function getAllUsers(){
-  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users`,
+export async function getAllUsers(token){
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users`, config(token),
   );
   return response.data;
 }
