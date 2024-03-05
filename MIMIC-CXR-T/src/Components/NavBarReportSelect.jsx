@@ -1,11 +1,29 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
 import ModalUploadReport from '../Components/CreateJsonBatchReports';
 import { AuthContext } from '../auth/AuthContext';
+import { getUser }  from '../utils/api';
 
 const NavBarReportSelection = () => {
-  const { user } = useContext(AuthContext);
+
+  const [user, setUser] = useState(null);
+  const { token } = useContext(AuthContext);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await getUser(token);
+        setUser(response);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+
+    fetchUser();
+  }
+  , [token]);
+
 
   return (
     <Navbar bg="dark" data-bs-theme="dark" expand="lg">
@@ -17,7 +35,7 @@ const NavBarReportSelection = () => {
         <Nav.Link>
           <ModalUploadReport />
         </Nav.Link>
-        {user && user.role === 'admin' && ( // Mostrar solo si el usuario tiene rol de admin
+        {user && user.role === 'Admin' && ( // Mostrar solo si el usuario tiene rol de admin
           <Nav.Link href="/admin">
             <Button variant="primary">Vista Admin</Button>
           </Nav.Link>
