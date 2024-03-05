@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { Button, Modal, Form, Row, Card, Tab, Tabs, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Button, Modal, Form, Row, Card, Tab, Tabs, OverlayTrigger, Tooltip, Alert } from 'react-bootstrap';
 import { AuthContext } from '../auth/AuthContext';
 import {
   getPreviousSuggestion,
@@ -26,6 +26,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
   const { token } = useContext(AuthContext);
   const [selectedOptionsByType, setSelectedOptionsByType] = useState({});
   const [selectedWords, setSelectedWords] = useState([]);
+  const [showNoChangesAlert, setShowNoChangesAlert] = useState(false);
 
   const loadSentenceAndTranslation = async (selectedTranslatedSentenceId) => {
     try {
@@ -107,39 +108,16 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
 
   const handleModalSave = async (event) => {
     event.preventDefault();
-
+  
     try {
-      if (previousSuggestion === null) {
-        await createSuggestion(
-          selectedTranslatedSentenceId,
-          modalText,
-          editedTranslatedSentence,
-          otherErrorDescription,
-          token
-        );
-
-        await Promise.all(
-          selectedOptions.map(async (option) => {
-            const word = option.word;
-            const instanceData = {
-              translatedSentenceId: selectedTranslatedSentenceId,
-              wordSelected: word.text,
-              wordIndex: word.index,
-              errorType: option.type,
-            };
-            return createCorrection(instanceData, token);
-          })
-        );
-      } else {
-        if (previousSuggestion.translatedSentenceId === selectedTranslatedSentenceId) {
-          await updateSuggestion(
-            selectedTranslatedSentenceId,
-            modalText,
-            editedTranslatedSentence,
-            otherErrorDescription,
-            token
-          );
-        } else {
+      // Check if any field has been modified, including editedTranslatedSentence
+      const isModified =
+        editedTranslatedSentence !== translatedSentence && // Check if editedTranslatedSentence is different from the original translation
+        selectedOptions.length > 0 
+  
+      if (isModified) {
+        if (previousSuggestion === null) {
+          // Your existing logic for creating a new suggestion and corrections
           await createSuggestion(
             selectedTranslatedSentenceId,
             modalText,
@@ -147,30 +125,68 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
             otherErrorDescription,
             token
           );
+  
+          await Promise.all(
+            selectedOptions.map(async (option) => {
+              const word = option.word;
+              const instanceData = {
+                translatedSentenceId: selectedTranslatedSentenceId,
+                wordSelected: word.text,
+                wordIndex: word.index,
+                errorType: option.type,
+              };
+              return createCorrection(instanceData, token);
+            })
+          );
+        } else {
+          // Your existing logic for updating suggestion and corrections
+          if (previousSuggestion.translatedSentenceId === selectedTranslatedSentenceId) {
+            await updateSuggestion(
+              selectedTranslatedSentenceId,
+              modalText,
+              editedTranslatedSentence,
+              otherErrorDescription,
+              token
+            );
+          } else {
+            await createSuggestion(
+              selectedTranslatedSentenceId,
+              modalText,
+              editedTranslatedSentence,
+              otherErrorDescription,
+              token
+            );
+          }
+          if (previousCorrection !== null) {
+            await deleteUserCorrectionsTranslatedSentence(selectedTranslatedSentenceId, token);
+          }
+          await Promise.all(
+            selectedOptions.map(async (option) => {
+              const word = option.word;
+              const instanceData = {
+                translatedSentenceId: selectedTranslatedSentenceId,
+                wordSelected: word.text,
+                wordIndex: word.index,
+                errorType: option.type,
+              };
+              return createCorrection(instanceData, token);
+            })
+          );
         }
-        if (previousCorrection !== null) {
-          await deleteUserCorrectionsTranslatedSentence(selectedTranslatedSentenceId, token);
-        }
-        await Promise.all(
-        selectedOptions.map(async (option) => {
-          const word = option.word;
-          const instanceData = {
-            translatedSentenceId: selectedTranslatedSentenceId,
-            wordSelected: word.text,
-            wordIndex: word.index,
-            errorType: option.type,
-          };
-          return createCorrection(instanceData, token);
-        })
-      );
+  
+        onHide();
+      } else {
+        // Handle the case when no field has been modified
+        // For example, show an alert or set an error state
+        setShowNoChangesAlert(true);
+        console.warn('No changes have been made. Please make modifications before saving.');
       }
-
-      onHide();
     } catch (error) {
       console.error('Error saving modal:', error);
       // Handle errors appropriately
     }
   };
+  
 
   const handleModalClose = () => {
     setSelectedOptions([]);
@@ -367,6 +383,14 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
         </Modal.Body>
        
         <Modal.Footer>
+        <Alert
+          variant="warning"
+          show={showNoChangesAlert}
+          onClose={() => setShowNoChangesAlert(false)}
+          dismissible
+        >
+          Por favor modifique la traducción final antes de guardar.
+        </Alert>
           <Button variant="secondary" onClick={handleModalClose}>
             Cerrar
           </Button>
@@ -377,9 +401,16 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
           >
             Guardar
           </Button>
+        
+       
         </Modal.Footer>
       </Modal>
+
+
+
     </>
+
+    
   );
 }
 
