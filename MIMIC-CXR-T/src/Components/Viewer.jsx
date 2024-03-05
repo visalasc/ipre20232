@@ -123,7 +123,6 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
           console.log("createUserTranslatedSentence frase:", translatedSentences.id);
         }
         setTranslatedSentencesState(prev => ({ ...prev, [translatedSentences.id]: true }));
-    
         triggerProgressTranslatedSentencesRecalculation();
 
         console.log("triggerProgressTranslatedSentencesRecalculation create UTP");
@@ -135,8 +134,8 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
         console.log("newProgressByReports22: ", newProgressByReports)
         setProgressReports(newProgressByReports);
 
-        
       } else {
+        //chequear si modal fue guardado, debe existir una sugerencia creada para q se cree UTP false, true. si no deberia crearse como false false, para q no marque el boton de times
         if (translatedSentences.id in translatedSentencesState) {
           await updateUserTranslatedSentence(translatedSentences.id, false, true, token);
           console.log("updateUserTranslatedSentence frase:", translatedSentences.id);
@@ -222,11 +221,7 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
     return (
      <>
       <Container>
-        <Row>
-          <Col>
-            <h3><Badge bg="secondary">ID Reporte: {report.reportId}</Badge> </h3>
-          </Col>
-        </Row>
+       
         <Row>
           <Col>
           <OverlayTrigger
@@ -253,18 +248,22 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
               onClick={goToPreviousReport}
               disabled={reports.length === 0 || currentIndex === 0}
             >
-              Anterior
+              Reporte anterior
             </Button>
             <Button
               variant="primary"
               onClick={goToNextReport}
               disabled={reports.length === 0 || currentIndex === reports.length - 1}
             >
-              Siguiente
+              Siguiente reporte
             </Button>
           </ButtonGroup>
         </Row>
-
+        <Row>
+          <Col>
+            <h3><Badge bg="secondary">ID Reporte: {report.reportId}</Badge> </h3>
+          </Col>
+        </Row>
         <Row>
           <Col xs={4}>
           <Form>

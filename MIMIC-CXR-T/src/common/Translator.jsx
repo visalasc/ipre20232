@@ -4,7 +4,7 @@ import Viewer from '../Components/Viewer';
 import './translator.css';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../auth/AuthContext';
-import { Button, Container, Col, Row, ButtonGroup, ProgressBar, Alert, 
+import { Container, Col, Row, ProgressBar, Alert, 
 Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { getReportGroupReports, getUserTranslatedSentencesByReportGroup, 
   updateUserReportGroupProgress, checkIsReportCompleted } from '../utils/api';
@@ -124,7 +124,7 @@ function Translator() {
   return (
     <>
       <NavBarReportSelection />
-      <Container style={{ marginTop: '5%' }}>
+      <Container style={{ marginTop: '3%' }}>
  
         {/* Alerta para mostrar si el reporte no está completo */}
         <Row style={{ marginTop: '2%' }}>
@@ -143,25 +143,8 @@ function Translator() {
           </Alert>
         </Col>
       </Row>
+
       <Row>
-          <Col >
-            {(reports.length > 0) ? (
-              <Viewer
-                groupId={groupId}
-                report={reports[currentIndex]}
-                triggerProgressTranslatedSentencesRecalculation={triggerProgressTranslatedSentencesRecalculation}
-                reports={reports}
-                currentIndex={currentIndex}
-                checkIsReportCompleted={checkIsReportCompleted}
-                goToNextReport={goToNextReport}
-                goToPreviousReport={goToPreviousReport}
-                />
-            ) : (
-              <p>Loading translated sentences...</p>
-            )}
-          </Col>
-        </Row>
-        <Row>
           <Col>
           <OverlayTrigger
             placement="top"
@@ -180,6 +163,26 @@ function Translator() {
           </OverlayTrigger>
           </Col>
         </Row>
+
+      <Row>
+          <Col >
+            {(reports.length > 0) ? (
+              <Viewer
+                groupId={groupId}
+                report={reports[currentIndex]}
+                triggerProgressTranslatedSentencesRecalculation={triggerProgressTranslatedSentencesRecalculation}
+                reports={reports}
+                currentIndex={currentIndex}
+                checkIsReportCompleted={checkIsReportCompleted}
+                goToNextReport={goToNextReport}
+                goToPreviousReport={goToPreviousReport}
+                />
+            ) : (
+              <p>Loading translated sentences...</p>
+            )}
+          </Col>
+        </Row>
+       
       </Container>
     </>
   );
