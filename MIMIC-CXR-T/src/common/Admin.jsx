@@ -67,11 +67,13 @@ function Admin() {
     }
   };
 
-  if (!user || user.role !== 'admin') {
-    // Si no es un administrador, redirigir a otra página (puedes elegir una página de acceso denegado)
-    navigate("/access-denied");
-    return null; // Puedes devolver null después de la redirección para evitar renderizar el resto del componente
-  }
+  useEffect(() => {
+    // Redirect if the user is not an admin
+    if (user && user.role !== 'Admin') {
+      navigate("/access-denied");
+    }
+  }, [user, navigate]);
+
 
   return (
     <>
