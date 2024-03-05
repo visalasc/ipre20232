@@ -6,7 +6,8 @@ OverlayTrigger, Tooltip, ProgressBar, Badge, Button, ButtonGroup} from 'react-bo
 import './viewer.css';
 import ModalSuggestions from './ModalSuggestionCorrecctions';
 import { createUserTranslatedSentence, getPreviousUserTranslatedSentence, 
-  updateUserTranslatedSentence, updateReportProgress } from '../utils/api';
+  updateUserTranslatedSentence, updateReportProgress, 
+  deleteUserCorrectionsTranslatedSentence, deleteSuggestion } from '../utils/api';
 import { AuthContext } from '../auth/AuthContext';
 
 function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculation, reports, currentIndex, checkIsReportCompleted, goToNextReport, goToPreviousReport}) {
@@ -138,46 +139,47 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
         console.log("translatedSentences: ",translatedSentences);
         if (translatedSentences.id in translatedSentencesState) {
           await updateUserTranslatedSentence(translatedSentences.id, true, false, token);
-          console.log("updateUserTranslatedSentence frase:", translatedSentences.id);
+          //borrar correcciones y sugerencias pq ya no deben existir si es q se marca buena la frase
+          await deleteUserCorrectionsTranslatedSentence(translatedSentences.id, token);
+          await deleteSuggestion(translatedSentences.id, token);
+
+          //console.log("updateUserTranslatedSentence frase:", translatedSentences.id);
         } else {
           await createUserTranslatedSentence(translatedSentences.id, true, false, token);
-          console.log("createUserTranslatedSentence frase:", translatedSentences.id);
+          //console.log("createUserTranslatedSentence frase:", translatedSentences.id);
         }
         setTranslatedSentencesState(prev => ({ ...prev, [translatedSentences.id]: true }));
         triggerProgressTranslatedSentencesRecalculation();
-
-        console.log("triggerProgressTranslatedSentencesRecalculation create UTP");
 
         calculateCompletedReports().then(result => {
           setCompletedReports(result.completedCount);
           });
         const newProgressByReports = calculateProgressByReports();
-        console.log("newProgressByReports22: ", newProgressByReports)
         setProgressReports(newProgressByReports);
 
       } else {
         //chequear si modal fue guardado, debe existir una sugerencia creada para q se cree UTP false, true. si no deberia crearse como false false, para q no marque el boton de times
         if (translatedSentences.id in translatedSentencesState) {
           await updateUserTranslatedSentence(translatedSentences.id, false, true, token);
-          console.log("updateUserTranslatedSentence frase:", translatedSentences.id);
+         
+          //console.log("updateUserTranslatedSentence frase:", translatedSentences.id);
         } else {
           await createUserTranslatedSentence(translatedSentences.id, false, true, token);
-          console.log("createUserTranslatedSentence frase:", translatedSentences.id);
+          //console.log("createUserTranslatedSentence frase:", translatedSentences.id);
         }
         setTranslatedSentencesState(prev => ({ ...prev, [translatedSentences.id]: false }));
         setSelectedTranslatedSentenceId(translatedSentences.id);
         setIsModalOpen(true);
         triggerProgressTranslatedSentencesRecalculation();
 
-        console.log("triggerProgressTranslatedSentencesRecalculation update UTP");
         calculateCompletedReports().then(result => {
           setCompletedReports(result.completedCount);
           });
         const newProgressByReports = calculateProgressByReports();
-        console.log("newProgressByReports22: ", newProgressByReports)
-        setProgressReports(newProgressByReports);
-        
-    } triggerProgressTranslatedSentencesRecalculation();
+        setProgressReports(newProgressByReports);  
+    } 
+    
+    triggerProgressTranslatedSentencesRecalculation();
     updateProgressForCurrentReport(); // Update the totalReviewedSentences
 
     
