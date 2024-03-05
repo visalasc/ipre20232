@@ -188,8 +188,10 @@ export async function createUserReportGroups(userReportGroupData, token){
   );
   return response.data;
 }
+
 export async function getUser(token){
-  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/user`, {token: token}
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/user`, 
+  config(token),
   );
   return response.data;
 }
