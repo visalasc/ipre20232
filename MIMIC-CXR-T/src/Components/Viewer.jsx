@@ -18,8 +18,22 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
   const [completedReports, setCompletedReports] = useState(0);
   const { token } = useContext(AuthContext);
 
+  const [uniqueTranslatedSentenceIds, setUniqueTranslatedSentenceIds] = useState(new Set());
+  const [totalReviewedSentences, setTotalReviewedSentences] = useState(0);
+  const [totalSentencesByReport, setTotalSentencesByReport] = useState({});
+
   const calculateProgressByReports = () => {
     return reports.length ? (completedReports / reports.length) * 100 : 0;
+  };
+
+  const calculateProgressCurrentReport = () => {
+    const translatedSentencesCount = Object.values(translatedSentencesState).filter((value) => value !== null).length;
+    return totalSentencesByReport[report.reportId] ? (translatedSentencesCount / totalSentencesByReport[report.reportId]) * 100 : 0;
+  };
+  
+  const updateProgressForCurrentReport = () => {
+    const translatedSentencesCount = Object.values(translatedSentencesState).filter((value) => value !== null).length;
+    setTotalReviewedSentences(translatedSentencesCount);
   };
 
   const calculateCompletedReports = async () => {
@@ -77,25 +91,30 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
     fetchData();
   }, [completedReports, reports]);
 
-
   useEffect(() => {
     if (report) {
+      // Reset relevant state variables
+      setTranslatedSentencesState({});
+      setUniqueTranslatedSentenceIds(new Set());
+  
       const updatedState = {};
       Object.keys(report.report.translated_sentences).forEach((type) => {
         report.report.translated_sentences[type].forEach((translatedsentence) => {
           loadUserTranslatedPhrase(translatedsentence);
         });
       });
-
+  
       // Actualizar el estado después de cargar todas las traducciones
       setTranslatedSentencesState((prev) => ({ ...prev, ...updatedState }));
- 
     }
-  }, [report, token]); 
+  }, [report, token]);
 
   const loadUserTranslatedPhrase = async (translatedsentence) => {
       try {
         const response = await getPreviousUserTranslatedSentence(translatedsentence.id, token);
+        console.log("response UTP: ", response);
+        setUniqueTranslatedSentenceIds((prevIds) => new Set([...prevIds, translatedsentence.id]));
+
         if (response) {
           if (response.isSelectedCheck) 
             setTranslatedSentencesState(prev => ({ ...prev, [translatedsentence.id]: true }));
@@ -109,6 +128,8 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
        catch (error) {
         // Manejar el error, por ejemplo, mostrar un mensaje de error o registrar en la consola
         console.error(`no encontrada UTP de tphrase id: ${translatedsentence.id}:`, error);
+        setUniqueTranslatedSentenceIds((prevIds) => new Set([...prevIds, translatedsentence.id]));
+
       }
   }
 
@@ -155,10 +176,26 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
         const newProgressByReports = calculateProgressByReports();
         console.log("newProgressByReports22: ", newProgressByReports)
         setProgressReports(newProgressByReports);
-       
-    }
+        
+    } triggerProgressTranslatedSentencesRecalculation();
+    updateProgressForCurrentReport(); // Update the totalReviewedSentences
+
     
   };
+
+  useEffect(() => {
+    // Calculate totalSentencesReport using uniqueTranslatedSentenceIds
+    console.log("uniqueTranslatedSentenceIds: ", uniqueTranslatedSentenceIds);
+    console.log("uniqueTranslatedSentenceIds.size: ", uniqueTranslatedSentenceIds.size);
+  
+    // Update total sentences count for the current report
+    setTotalSentencesByReport((prev) => ({
+      ...prev,
+      [report.reportId]: uniqueTranslatedSentenceIds.size,
+    }));
+  
+    updateProgressForCurrentReport(); // Initial update when report is loaded
+  }, [uniqueTranslatedSentenceIds, report]);
 
   function ReportTable({ report }) {
     const renderRows = (report) => {
@@ -262,6 +299,28 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
         <Row>
           <Col>
             <h3><Badge bg="secondary">ID Reporte: {report.reportId}</Badge> </h3>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <OverlayTrigger
+              placement="bottom"
+              delay={{ show: 250, hide: 400 }}
+              overlay={renderTooltipProgressBarReports}
+              >
+            <ProgressBar
+              striped
+              animated
+              className="reports-progress-bar"
+              now={calculateProgressCurrentReport()}
+              label={`(${totalReviewedSentences}/${uniqueTranslatedSentenceIds.size})  ${Math.round(calculateProgressCurrentReport())}%`}
+              variant={
+                Math.round(calculateProgressCurrentReport()) <= 33 ? 'danger' :
+                  Math.round(calculateProgressCurrentReport()) < 99 ? 'warning' :
+                    'success'
+              }
+            />
+            </OverlayTrigger>
           </Col>
         </Row>
         <Row>
