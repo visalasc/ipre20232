@@ -1,8 +1,8 @@
 import { useState, useContext, useEffect } from 'react';
-import { Button, Modal, Form, Row, Card, Tab, Tabs, OverlayTrigger, Tooltip, Alert } from 'react-bootstrap';
+import { Button, Modal, Form, Row, Card, Tab, Tabs, OverlayTrigger, Tooltip, Alert, Badge } from 'react-bootstrap';
 import { AuthContext } from '../auth/AuthContext';
 import {
-  getPreviousSuggestion,
+  getPreviousUserSuggestion,
   updateSuggestion,
   createSuggestion,
   findSentence,
@@ -34,9 +34,6 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
       if (sentenceAndTranslatedSentence) {
         setOriginalSentence(sentenceAndTranslatedSentence.sentence.text);
         setTranslatedSentence(sentenceAndTranslatedSentence.translatedSentence.text);
-        if (!editedTranslatedSentence) {
-          setEditedTranslatedSentence(sentenceAndTranslatedSentence.translatedSentence.text);
-        }
       }
     } catch (error) {
       console.error('Error loading sentence and translation:', error);
@@ -45,17 +42,17 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
 
   const loadPreviousSuggestionData = async (selectedTranslatedSentenceId) => {
     try {
-      const previousSuggestionResponse = await getPreviousSuggestion(selectedTranslatedSentenceId, token);
+      const previousSuggestionResponse = await getPreviousUserSuggestion(selectedTranslatedSentenceId, token);
       if (previousSuggestionResponse) {
         setPreviousSuggestion(previousSuggestionResponse);
         setModalText(previousSuggestionResponse.comments);
         setEditedTranslatedSentence(previousSuggestionResponse.changesFinalTranslation);
       } else {
         setModalText('');
+        setEditedTranslatedSentence(translatedSentence);
       }
     } catch (error) {
       console.error('Error loading previous suggestion data:', error);
-      setModalText('');
     }
   };
 
@@ -112,10 +109,10 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
     try {
       // Check if any field has been modified, including editedTranslatedSentence
       const isModified =
-        editedTranslatedSentence !== translatedSentence && // Check if editedTranslatedSentence is different from the original translation
-        selectedOptions.length > 0 
+        editedTranslatedSentence !== translatedSentence && selectedOptions.length > 0 
   
       if (isModified) {
+      
         if (previousSuggestion === null) {
           // Your existing logic for creating a new suggestion and corrections
           await createSuggestion(
@@ -148,6 +145,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
               otherErrorDescription,
               token
             );
+    
           } else {
             await createSuggestion(
               selectedTranslatedSentenceId,
@@ -210,16 +208,21 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
         loadPreviousSuggestionData(selectedTranslatedSentenceId);
         loadPreviousCorrectionData(selectedTranslatedSentenceId);
       }} onHide={onHide} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Identificar errores y editar traducción final:</Modal.Title>
+        <Modal.Header closeButton style={{ backgroundColor: '#717F7E', color:'#ffffff' }}>
+          <Modal.Title className="h3">
+           
+             Identificar errores y editar traducción final: 
+              </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ backgroundColor: '#f7f7f7' }}>
           <Form>
             <Form.Group>
               <div>
                 <Row>
-                  <Card border="light" style={{ width: 'auto', padding: '6px', margin: '3px' }}>
-                    <Form.Label className="h6">Frase original a revisar:</Form.Label>
+                  <Card border="light" style={{ width: 'auto', padding: '6px', margin: '3px', backgroundColor: '#f7f7f7' }}>
+                    <Form.Label className="h5">
+                      Frase original a revisar:
+                    </Form.Label>
                     <Form.Label className="h7">{originalSentence}</Form.Label>
                   </Card>
                 </Row>
@@ -247,9 +250,10 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
                         </div>
                       </OverlayTrigger>
                     }>
-                      <Card border="success" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
-                        <Form.Label className="h6" >Seleccionar errores gramaticales encontrados en la traducción:</Form.Label>
-                        <WordSelector
+                      <Form.Label className="h5 " >Seleccionar errores gramaticales encontrados en la traducción:</Form.Label>
+                       
+                      <Card border="light" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
+                         <WordSelector
                           sentence={translatedSentence}
                           disabled={false}
                           variant="success"
@@ -277,8 +281,9 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
                         </div>
                       </OverlayTrigger>
                     }>
-                      <Card border="primary" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
-                        <Form.Label className="h6" >Seleccionar errores terminológicos encontrados en la traducción:</Form.Label>
+                      <Form.Label className="h5" >Seleccionar errores terminológicos encontrados en la traducción:</Form.Label>
+                       
+                      <Card border="light" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
                         <WordSelector
                           sentence={translatedSentence}
                           disabled={false}
@@ -301,14 +306,15 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
                           </Tooltip>
                         }
                       >
-                        <div>
+                        <div >
                           <span>Funcional</span>
                           <FontAwesomeIcon icon={faQuestionCircle} style={{ marginLeft: '5px' }} />
                         </div>
                       </OverlayTrigger>
-                    }>
-                      <Card border="warning" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
-                        <Form.Label className="h6" >Seleccionar errores funcionales encontrados en la traducción:</Form.Label>
+                     } >
+                      <Form.Label className="h5" >Seleccionar errores funcionales encontrados en la traducción:</Form.Label>
+                       
+                      <Card border="light" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
                         <WordSelector
                           sentence={translatedSentence}
                           disabled={false}
@@ -337,8 +343,9 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
                         </div>
                       </OverlayTrigger>
                     }>
-                      <Card border="danger" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
-                        <Form.Label className="h6" >Seleccionar errores de otro tipo encontrados en la traducción:</Form.Label>
+                      <Form.Label className="h5" >Seleccionar errores de otro tipo encontrados en la traducción:</Form.Label>
+                      <Card border="light" 
+                        style={{ width: 'auto', padding: '5px', margin: '2px', fontSize: '5px' }}>
                         <WordSelector
                           sentence={translatedSentence}
                           disabled={false}
@@ -348,7 +355,10 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
                           onOptionClick={(option) => handleOptionClick(option, 'other')}
                           
                         />
-                        <Form.Label className="h6" >Describa el tipo de error encontrado:</Form.Label>
+                        <Form.Label className="h4" >
+                          <Badge bg="secondary">
+                          Describa el tipo de error encontrado:
+                            </Badge></Form.Label>
                         <Form.Control
                           as="textarea"
                           rows={2}
@@ -362,7 +372,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
               </div>
             </Form.Group>
             <Form.Group>
-              <Form.Label className="h6">Editar la traducción final:</Form.Label>
+              <Form.Label className="h5">Editar la traducción final:</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={2}
@@ -371,7 +381,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label className="h6">Si tienes algún comentario adicional agregar aquí:</Form.Label>
+              <Form.Label className="h5">Si tienes algún comentario adicional agregar aquí:</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={1}
@@ -382,7 +392,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
           </Form>
         </Modal.Body>
        
-        <Modal.Footer>
+        <Modal.Footer style={{ backgroundColor: '#f7f7f7' }}>
         <Alert
           variant="warning"
           show={showNoChangesAlert}

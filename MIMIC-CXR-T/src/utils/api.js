@@ -36,7 +36,7 @@ export async function getReportGroupReports(groupId, token) {
   return response.data;
 }
 
-export async function getPreviousSuggestion(translatedsentenceId, token) {
+export async function getPreviousUserSuggestion(translatedsentenceId, token) {
   const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/suggestions/${translatedsentenceId}`,  config(token),
   );
   return response.data;
