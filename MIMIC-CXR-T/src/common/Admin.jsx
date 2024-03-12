@@ -1,15 +1,15 @@
 import { useState, useContext, useEffect } from 'react';
-import { Container } from 'react-bootstrap';
+import { Tab, Nav, Col, Row } from 'react-bootstrap';
 import CreateReportGroup from '../Components/CreateReportGroup';
 import TableDisplayReports from '../Components/TableDisplayReportGroup';
 import { AuthContext } from '../auth/AuthContext';
 import { getAllReportGroupReports, createReportGroups, createUserReportGroups } from '../utils/api';
-import Sidebar from '../Components/Sidebar';
 import NavAdmin from '../Components/NavAdmin';
 import CreateUserReportGroup from '../Components/CreateUserReportGroup';
 import DisplayUsers from '../Components/TableDisplayUsers';
 import ModalUploadReports from '../Components/CreateJsonBatchReports';
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import Signup from '../profile/Signup';
 import './admin.css';
 
 function Admin() {
@@ -41,7 +41,7 @@ function Admin() {
     try {
       setLoading(true);
       const response = await createReportGroups(reportGroupData, token);
-      console.log('Report group created:', response);
+      //('Report group created:', response);
       setReportGroupReports([...reportGroupReports, response.reportgroup]);
       setCurrentView('view1');
       // Muestra notificación Toast de éxito
@@ -57,7 +57,7 @@ function Admin() {
     try {
       setLoading(true);
       const response = await createUserReportGroups(reportGroupId, userIds, token);
-      console.log('user report group created:', response);
+      //console.log('user report group created:', response);
 
     } catch (error) {
       console.error('Error creating user report groups:', error);
@@ -77,28 +77,49 @@ function Admin() {
 
   return (
     <>
-      <NavAdmin />
-      <Container className='container-admin'>
-        <Sidebar setCurrentView={setCurrentView} />
-        {/* Conditionally render content based on currentView */}
-        {currentView === 'view1' && (
-          <div className='table-display-container'>
-            <TableDisplayReports reportGroupReports={reportGroupReports} />
-          </div>
-        )}
-        {currentView === 'view2' && (
-          <CreateReportGroup onCreateReportGroup={handleCreateReportGroup} />
-        )}
-         {currentView === 'view4' && (
-          <CreateUserReportGroup onCreateUserReportGroup={handleCreateUserReportGroup} reportGroupReports={reportGroupReports}/>
-        )}
-        {currentView === 'view5' && (
-          <DisplayUsers />
-        )}
-         {currentView === 'view6' && (
-          <ModalUploadReports />
-        )}
-      </Container>
+    <Tab.Container id="left-tabs-example" defaultActiveKey="first" >
+      <Row className="container-admin">
+        <NavAdmin />
+      </Row>
+      
+        <Row>
+          <Col sm={3}>
+            <Nav variant="pills">
+              <Nav.Item>
+                <Nav.Link eventKey="first">Ver o eliminar grupos de reportes</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="second">Crear nuevos grupos de reportes</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="third">Asociar usuario a grupo de reportes</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="fourth">Ver lista de usuarios registrados</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="fifth">Cargar json con batch de reportes</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="sixth">Registro de usuarios</Nav.Link>
+              </Nav.Item>
+          
+            </Nav>
+          </Col>
+          <Col sm={9} >
+            <Tab.Content>
+              <Tab.Pane eventKey="first"><TableDisplayReports reportGroupReports={reportGroupReports} /></Tab.Pane>
+              <Tab.Pane eventKey="second"><CreateReportGroup onCreateReportGroup={handleCreateReportGroup} /></Tab.Pane>
+              <Tab.Pane eventKey="third"> 
+                <CreateUserReportGroup onCreateUserReportGroup={handleCreateUserReportGroup} reportGroupReports={reportGroupReports}/>
+              </Tab.Pane>
+              <Tab.Pane eventKey="fourth"><DisplayUsers /></Tab.Pane>
+              <Tab.Pane eventKey="fifth"><ModalUploadReports /></Tab.Pane>
+              <Tab.Pane eventKey="sixth"><Signup /></Tab.Pane>
+            </Tab.Content>
+          </Col>
+        </Row>
+      </Tab.Container>
     </>
   );
 }
