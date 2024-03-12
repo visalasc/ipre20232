@@ -34,8 +34,11 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
       if (sentenceAndTranslatedSentence) {
         setOriginalSentence(sentenceAndTranslatedSentence.sentence.text);
         setTranslatedSentence(sentenceAndTranslatedSentence.translatedSentence.text);
-      }
-    } catch (error) {
+        loadPreviousSuggestionData(selectedTranslatedSentenceId);
+        if (editedTranslatedSentence === '') 
+        {setEditedTranslatedSentence(sentenceAndTranslatedSentence.translatedSentence.text)}
+    }
+   } catch (error) {
       console.error('Error loading sentence and translation:', error);
     }
   };
