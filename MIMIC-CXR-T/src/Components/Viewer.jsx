@@ -7,7 +7,7 @@ import './viewer.css';
 import ModalSuggestions from './ModalSuggestionCorrecctions';
 import { createUserTranslatedSentence, getPreviousUserTranslatedSentence, 
   updateUserTranslatedSentence, updateReportProgress, 
-  deleteUserCorrectionsTranslatedSentence, deleteSuggestion } from '../utils/api';
+  deleteUserCorrectionsTranslatedSentence, deleteSuggestion, getPreviousUserSuggestion } from '../utils/api';
 import { AuthContext } from '../auth/AuthContext';
 
 function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculation, reports, currentIndex, checkIsReportCompleted, goToNextReport, goToPreviousReport}) {
@@ -22,6 +22,19 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
   const [uniqueTranslatedSentenceIds, setUniqueTranslatedSentenceIds] = useState(new Set());
   const [totalReviewedSentences, setTotalReviewedSentences] = useState(0);
   const [totalSentencesByReport, setTotalSentencesByReport] = useState({});
+
+  const [suggestionData, setSuggestionData] = useState({});
+
+  const handleModalSave = async () => {
+    // Función que se ejecutará después de guardar el modal
+    // Puedes realizar las actualizaciones necesarias aquí
+    console.log('Modal saved. Updating cell content...');
+    // Puedes llamar a la función que necesitas para actualizar las celdas
+
+    // Actualiza el estado o realiza otras acciones según tus necesidades
+    // Por ejemplo, puedes recargar los datos o realizar otras actualizaciones
+  };
+
 
   const calculateProgressByReports = () => {
     return reports.length ? (completedReports / reports.length) * 100 : 0;
@@ -102,6 +115,7 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
       Object.keys(report.report.translated_sentences).forEach((type) => {
         report.report.translated_sentences[type].forEach((translatedsentence) => {
           loadUserTranslatedPhrase(translatedsentence);
+          loadUserSuggestion(translatedsentence);
         });
       });
   
@@ -113,16 +127,14 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
   const loadUserTranslatedPhrase = async (translatedsentence) => {
       try {
         const response = await getPreviousUserTranslatedSentence(translatedsentence.id, token);
-        console.log("response UTP: ", response);
-        setUniqueTranslatedSentenceIds((prevIds) => new Set([...prevIds, translatedsentence.id]));
+         setUniqueTranslatedSentenceIds((prevIds) => new Set([...prevIds, translatedsentence.id]));
 
         if (response) {
           if (response.isSelectedCheck) 
             setTranslatedSentencesState(prev => ({ ...prev, [translatedsentence.id]: true }));
           if (response.isSelectedTimes) 
             setTranslatedSentencesState(prev => ({ ...prev, [translatedsentence.id]: false }));
-        }
-        else {
+          } else {
             setTranslatedSentencesState(prev => ({ ...prev, [translatedsentence.id]: null }));
         }
       }
@@ -134,9 +146,27 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
       }
   }
 
+  const loadUserSuggestion = async (translatedsentence) => {
+    try {
+      const response = await getPreviousUserSuggestion(translatedsentence.id, token);
+      if (response) {
+        if (response.changesFinalTranslation !== null && response.changesFinalTranslation !== '') {
+        setSuggestionData(prev => ({ ...prev, [translatedsentence.id]: response.changesFinalTranslation}));
+      }
+      else {
+        setSuggestionData(prev => ({ ...prev, [translatedsentence.id]: 'no encontrada sugerencia'}));
+      }
+    }}
+     catch (error) {
+      // Manejar el error, por ejemplo, mostrar un mensaje de error o registrar en la consola
+      console.error(`no encontrada sugerencia de tphrase id: ${translatedsentence.id}:`, error);
+    }
+}
+
+
   const handleTranslatedSentenceClick = async (translatedSentences, check) => {
       if (check) {
-        console.log("translatedSentences: ",translatedSentences);
+        //console.log("translatedSentences: ",translatedSentences);
         if (translatedSentences.id in translatedSentencesState) {
           await updateUserTranslatedSentence(translatedSentences.id, true, false, token);
           //borrar correcciones y sugerencias pq ya no deben existir si es q se marca buena la frase
@@ -193,8 +223,8 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
   
   useEffect(() => {
     // Calculate totalSentencesReport using uniqueTranslatedSentenceIds
-    console.log("uniqueTranslatedSentenceIds: ", uniqueTranslatedSentenceIds);
-    console.log("uniqueTranslatedSentenceIds.size: ", uniqueTranslatedSentenceIds.size);
+    //console.log("uniqueTranslatedSentenceIds: ", uniqueTranslatedSentenceIds);
+    //console.log("uniqueTranslatedSentenceIds.size: ", uniqueTranslatedSentenceIds.size);
   
     // Update total sentences count for the current report
     setTotalSentencesByReport((prev) => ({
@@ -209,7 +239,7 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
     const renderRows = (report) => {
       const originalSentences = report.sentences;
       const translatedSentences = report.translated_sentences;
-      if (!originalSentences || !translatedSentences) {
+      if (originalSentences == null || translatedSentences == null) {
         return null;
       }
 
@@ -232,7 +262,19 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
             {nonEmptyOriginalSentences.map((sentence, index) => (
               <tr key={index}>
                 <td>{sentence.text}</td>
-                <td>{nonEmptyTranslatedSentences[index]?.text || ''}</td>
+                <td>
+                  {suggestionData[nonEmptyTranslatedSentences[index]?.id] ? (
+                    <p style={{ textDecoration: 'line-through', color: 'red' }}>
+                      {nonEmptyTranslatedSentences[index]?.text || ''}
+                    </p>
+                  ) : (
+                    nonEmptyTranslatedSentences[index]?.text || ''
+                  )}
+                  <br />
+                  <p style={{ color: 'green' }}>
+                    {suggestionData[nonEmptyTranslatedSentences[index]?.id]}
+                  </p>
+                </td>
                 <td className="button-row">
                   <ToggleButton
                     size="sm"
@@ -359,7 +401,7 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
     );
   }
   
-  return <ReportTable report={report.report} />;
+  return <ReportTable report={report.report} handleModalSave={handleModalSave} />;
 }
 
 export default Viewer;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import './Login.css'; 
+import { Container, Row, Col } from 'react-bootstrap';
 
 function Signup() {
   const [firstName, setFirstName] = useState("");
@@ -31,8 +32,8 @@ function Signup() {
     }
 
   return (
-    <div className="container-login">
-    <h3 >Regístrate aquí:</h3>
+    <Container>
+    
     <div className="Login">
       {msg.length > 0 && <div className="successMsg"> {msg} </div>}
 
@@ -85,7 +86,7 @@ function Signup() {
         <input type="submit" value="Registrarse" />
       </form>
     </div>
-    </div>
+    </Container>
   );
 }
 

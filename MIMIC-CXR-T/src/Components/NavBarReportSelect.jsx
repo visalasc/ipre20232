@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import LogoutButton from '../profile/Logout';
-import ModalUploadReport from '../Components/CreateJsonBatchReports';
 import { AuthContext } from '../auth/AuthContext';
 import { getUser }  from '../utils/api';
 
@@ -14,7 +13,7 @@ const NavBarReportSelection = () => {
     const fetchUser = async () => {
       try {
         const response = await getUser(token);
-        console.log('Response:', response);
+        //console.log('Response:', response);
         setUser(response);
       } catch (error) {
         console.error('Error fetching user:', error);
@@ -32,9 +31,6 @@ const NavBarReportSelection = () => {
       <Nav className="ml-auto">
         <Nav.Link href="/reportselection">
           <Button variant="success">Home</Button>
-        </Nav.Link>
-        <Nav.Link>
-          <ModalUploadReport />
         </Nav.Link>
         {user && user.role === 'Admin' && ( // Mostrar solo si el usuario tiene rol de admin
           <Nav.Link href="/admin">

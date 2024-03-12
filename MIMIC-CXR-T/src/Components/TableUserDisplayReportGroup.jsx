@@ -56,7 +56,7 @@ const TableUserDisplayReportGroup = () => {
             totalTranslatedSentencesReport += translatedSentencesReport[type].filter((sentence) => sentence.text.trim() !== "").length;
           });
           const translatedSentencesProgress = Math.round((userTranslatedSentence.length / totalTranslatedSentencesReport) * 100);
-          console.log("translatedSentencesProgress: ", translatedSentencesProgress);
+          //console.log("translatedSentencesProgress: ", translatedSentencesProgress);
 
           const numberOfReviewedTranslatedSentences = Math.round(translatedSentencesProgress * totalTranslatedSentencesReport / 100);
           const individualTransaltedSentencesProgress = Math.round((numberOfReviewedTranslatedSentences / totalTranslatedSentencesReport) * 100);
@@ -106,14 +106,14 @@ const TableUserDisplayReportGroup = () => {
 
   const startTranslationReport = async (groupId, reportId) => {
     try {
-      console.log(reports);
+      //console.log(reports);
       const indexReport = await getIndexReport(reportId);
-      console.log("indexReport: ",indexReport);
+      //console.log("indexReport: ",indexReport);
       if (indexReport >0){
         const previousReportId = reports[indexReport-1].report.reportId;
-        console.log("previousReportId: ",previousReportId);
+        //console.log("previousReportId: ",previousReportId);
         const isReportCompleted = await checkIsReportCompleted(previousReportId, token);
-        console.log("isReportCompleted: ",isReportCompleted);
+        //console.log("isReportCompleted: ",isReportCompleted);
         if (!isReportCompleted.completed) {
           setShowAlert(true);
           return;
@@ -134,25 +134,32 @@ const TableUserDisplayReportGroup = () => {
     
   };
 
+  const loadingSpinner = (
+    <div className="loading-spinner-container">
+      <Spinner animation="grow" variant="primary" />
+      <span className="sr-only">Cargando...</span>
+    </div>
+  );
 
   return (
     <>
-      <Container>
-        <Row>
-          <NavBarReportSelection />
-        </Row>
-        <Row style={{ marginTop: '6%' }}>
-          <Col>
-            <Alert variant="danger" show={showAlert}>
-              <Alert.Heading>Reporte anterior incompleto</Alert.Heading>
-              <p>
-                Debe completar el reporte anterior para poder comenzar con el siguiente.
-              </p>
-            </Alert>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
+    <Container>
+      <Row>
+        <NavBarReportSelection />
+      </Row>
+      <Row style={{ marginTop: '6%' }}>
+        <Col>
+          <Alert variant="danger" show={showAlert}>
+            <Alert.Heading>Reporte anterior incompleto</Alert.Heading>
+            <p>Debe completar el reporte anterior para poder comenzar con el siguiente.</p>
+          </Alert>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          {loading ? (
+            loadingSpinner
+          ) : (
             <Table striped bordered hover>
               <thead>
                 <tr>
@@ -164,71 +171,55 @@ const TableUserDisplayReportGroup = () => {
                 </tr>
               </thead>
               <tbody>
-                { loading ? (
-                  <>
-                  <Spinner  as="span"
-                      animation="grow"
-                      size="sm"
-                      role="status"
-                      aria-hidden="true"
-                      variant="primary"
-                  />
-                    <Spinner  as="span"
-                      animation="border"
-                      size="sm"
-                      role="status"
-                      aria-hidden="true"
-                      variant="primary"
-                  />
-                    <span className="sr-only">Cargando...</span>
-                    </>
-                ) : (
-                reports && reports.map((report) => (
-                  <tr key={report.report.index}>
-                    <td>{report.report.reportId}</td>
-                    <td>{reportDetails[report.report.reportId]?.content || ''}</td>
-                    <td>
-                      <ProgressBar
-                        striped
-                        animated
-                        className="custom-progress-bar"
-                        now={reportDetails[report.report.reportId]?.progressReport || 0}
-                        label={`${Math.round(reportDetails[report.report.reportId]?.progressReport || 0)}%`}
-                        variant={
-                          Math.round(reportDetails[report.report.reportId]?.progressReport || 0) <= 33 ? 'danger' :
-                          Math.round(reportDetails[report.report.reportId]?.progressReport || 0) <= 99 ? 'warning' :
-                          'success'
-                        }
-                      />
-                    </td>
-                    <td>
-                      <ProgressBar
-                        striped
-                        animated
-                        className="custom-progress-bar"
-                        now={reportDetails[report.report.reportId]?.translatedSentencesProgressReport || 0}
-                        label={`${Math.round(reportDetails[report.report.reportId]?.translatedSentencesProgressReport || 0)}%`}
-                        variant={
-                          Math.round(reportDetails[report.report.reportId]?.translatedSentencesProgressReport || 0) <= 33 ? 'danger' :
-                          Math.round(reportDetails[report.report.reportId]?.translatedSentencesProgressReport || 0) <= 99 ? 'warning' :
-                          'success'
-                        }
-                      />
-                    </td>
-                    <td>
-                      <Button onClick={() => startTranslationReport(groupId, report.report.reportId)}>Traducir</Button>
-                    </td>
-                  </tr>
-                )))}
+                {reports.map((report) => {
+                  const reportId = report.report.reportId;
+                  const reportDetail = reportDetails[reportId] || {};
+
+                  return (
+                    <tr key={report.report.index}>
+                      <td>{reportId}</td>
+                      <td>{reportDetail.content || ''}</td>
+                      <td>
+                        <ProgressBar
+                          striped
+                          animated
+                          className="custom-progress-bar"
+                          now={reportDetail.progressReport || 0}
+                          label={`${Math.round(reportDetail.progressReport || 0)}%`}
+                          variant={
+                            Math.round(reportDetail.progressReport || 0) <= 33 ? 'danger' :
+                            Math.round(reportDetail.progressReport || 0) <= 99 ? 'warning' :
+                            'success'
+                          }
+                        />
+                      </td>
+                      <td>
+                        <ProgressBar
+                          striped
+                          animated
+                          className="custom-progress-bar"
+                          now={reportDetail.translatedSentencesProgressReport || 0}
+                          label={`${Math.round(reportDetail.translatedSentencesProgressReport || 0)}%`}
+                          variant={
+                            Math.round(reportDetail.translatedSentencesProgressReport || 0) <= 33 ? 'danger' :
+                            Math.round(reportDetail.translatedSentencesProgressReport || 0) <= 99 ? 'warning' :
+                            'success'
+                          }
+                        />
+                      </td>
+                      <td>
+                        <Button onClick={() => startTranslationReport(groupId, reportId)}>Traducir</Button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </Table>
-          </Col>
-        </Row>
-
-     
-
-      </Container>
-    </>
+          )}
+        </Col>
+      </Row>
+    </Container>
+  </>
   );
 };
 

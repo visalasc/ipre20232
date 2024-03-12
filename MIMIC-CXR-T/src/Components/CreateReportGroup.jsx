@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Form, Button, Alert, Row, Col, Container } from 'react-bootstrap';
+import { Form, Button, Container } from 'react-bootstrap';
 
 const CreateReportGroup = ({ onCreateReportGroup }) => {
-  const [showAlertReportGroup, setShowAlertReportGroup] = useState(false);
   const [reportGroupData, setReportGroupData] = useState({
     name: '',
     reportIds: [],
@@ -24,7 +23,6 @@ const CreateReportGroup = ({ onCreateReportGroup }) => {
         reportIds: reportIdsArray,
       };
       onCreateReportGroup(requestBody);
-      setShowAlertReportGroup(true);
     } catch (error) {
      
       console.error('Error al enviar el formulario:', error);
@@ -33,17 +31,6 @@ const CreateReportGroup = ({ onCreateReportGroup }) => {
 
   return (
     <Container>
-       {/* Alerta para mostrar si un reporte individual está completado */}
-       <Row style={{ marginTop: '2%' }}>
-        <Col>
-          <Alert show={showAlertReportGroup} 
-          variant="success" 
-          onClose={() =>  setShowAlertReportGroup(false)} dismissible>
-            ¡El reporte actual ha sido completado!
-          </Alert>
-        </Col>
-      </Row>
-
       <Form>
         <Form.Group controlId="formGroupName">
           <Form.Label>Report Group Name</Form.Label>

@@ -17,7 +17,6 @@ function Translator() {
   const [reviewedTranslatedSentences, setReviewedTranslatedSentences] = useState(0);
   const [totalTranslatedSentences, setTotalTranslatedSentences] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
-  const [individualReportCompletedAlert, setIndividualReportCompletedAlert] = useState(false); // Nuevo estado para alerta de reporte individual completado
   const dismissDelay = 1400; // 2000 milliseconds = 2 seconds
 
   const calculateProgressTranslatedSentences = () => {
@@ -26,10 +25,6 @@ function Translator() {
   
   const closeGeneralAlert = () => {
     setShowAlert(false);
-  };
-
-  const closeIndividualReportCompletedAlert = () => {
-    setIndividualReportCompletedAlert(false);
   };
 
   useEffect(() => {
@@ -98,24 +93,11 @@ function Translator() {
     }
   };
 
-  const setIndividualReportCompletedAlertData = ({ showAlert, reportId }) => {
-    setIndividualReportCompletedAlert({
-      showAlert: showAlert,
-      reportId: reportId,
-    });
-  };
-
   const goToNextReport = async () => {
     try {
       const nextIndex = (currentIndex + 1) % reports.length;
       const isCurrentReportCompleted = await checkIsReportCompleted(reports[currentIndex].report.reportId, token);
       if (isCurrentReportCompleted.completed) {
-        setIndividualReportCompletedAlertData({ showAlert: true, reportId: reports[currentIndex].report.reportId });
-        
-        setShowAlert(false); 
-        setTimeout(() => {
-          setIndividualReportCompletedAlertData({ showAlert: false, reportId: null });
-        }, dismissDelay);
         setCurrentIndex(nextIndex);
       } else {
         setShowAlert(true);
@@ -154,19 +136,7 @@ function Translator() {
             </Alert>
           </Col>
         </Row>
-       <Row>
-        <Col>
-          <Alert
-              show={individualReportCompletedAlert?.showAlert}
-              variant="success"
-              onClose={closeIndividualReportCompletedAlert}
-              dismissible
-              className="custom-alert"
-            >
-              ¡El reporte {individualReportCompletedAlert?.reportId} ha sido completado!
-            </Alert>
-        </Col>
-      </Row>
+ 
 
       <Row>
           <Col >
