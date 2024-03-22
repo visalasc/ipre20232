@@ -82,9 +82,10 @@ export async function createCorrection(correctionData, token) {
   return response.data;
 }
 
-export async function createUserTranslatedSentence(translatedsentenceId, isSelectedCheck, isSelectedTimes, token) {
+export async function createUserTranslatedSentence(translatedsentenceId, state, isSelectedCheck, isSelectedTimes, token) {
   const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/usertranslatedsentences/${translatedsentenceId}`, {
     translatedsentenceId,
+    state,
     isSelectedCheck,
     isSelectedTimes,
   },  config(token),
@@ -92,9 +93,10 @@ export async function createUserTranslatedSentence(translatedsentenceId, isSelec
   return response.data;
 }
 
-export async function updateUserTranslatedSentence(translatedsentenceId, isSelectedCheck, isSelectedTimes, token) {
+export async function updateUserTranslatedSentence(translatedsentenceId, state, isSelectedCheck, isSelectedTimes, token) {
   const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/usertranslatedsentences/update/${translatedsentenceId}`, {
     translatedsentenceId,
+    state,
     isSelectedCheck,
     isSelectedTimes,
   },  config(token),
@@ -161,6 +163,19 @@ export async function updateReportProgress(progressReports, reportGroupId, token
 
 export async function getUserReportGroup(reportGroupId, token) {
   const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/userreportgroups/user/${reportGroupId}`, config(token),
+  );
+  return response.data;
+}
+
+
+export async function getUserReportGroups(reportGroupId, token) {
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/userreportgroups/reportGroup/${reportGroupId}`, config(token),
+  );
+  return response.data;
+}
+
+export async function getUserReportGroupsAdmin(reportGroupId, token) {
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/userreportgroups/admin/reportGroup/${reportGroupId}`, config(token),
   );
   return response.data;
 }
