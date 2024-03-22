@@ -342,9 +342,17 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
                       nonEmptyTranslatedSentences[index]?.text || ''
                     )}
                     <br />
-                    <p style={{ color: 'green' }}>
-                      {suggestionAvailable ? suggestionData[translatedSentenceId] : ''}
-                    </p>
+                    <td>
+                    {isCrossed ? (
+                     <p style={{ color: 'green' }}>
+                     {suggestionAvailable ? suggestionData[translatedSentenceId] : ''}
+                      </p>
+                    ) : (
+                       ''
+                    )}
+                    <br />
+                  </td>
+                  
                   </td>
                   <td className="button-row">
                     <ToggleButton
