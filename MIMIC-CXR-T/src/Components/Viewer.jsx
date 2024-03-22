@@ -7,7 +7,8 @@ import './viewer.css';
 import ModalSuggestions from './ModalSuggestionCorrecctions';
 import { createUserTranslatedSentence, getPreviousUserTranslatedSentence, 
   updateUserTranslatedSentence, updateReportProgress, 
-  deleteUserCorrectionsTranslatedSentence, deleteSuggestion, getPreviousUserSuggestion } from '../utils/api';
+  deleteUserCorrectionsTranslatedSentence, deleteSuggestion, getPreviousUserSuggestion,
+  } from '../utils/api';
 import { AuthContext } from '../auth/AuthContext';
 
 function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculation, reports, currentIndex, checkIsReportCompleted, goToNextReport, goToPreviousReport}) {
@@ -24,17 +25,79 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
   const [totalSentencesByReport, setTotalSentencesByReport] = useState({});
 
   const [suggestionData, setSuggestionData] = useState({});
+  const [renderCounter, setRenderCounter] = useState(0);
 
   const handleModalSave = async () => {
-    // Función que se ejecutará después de guardar el modal
-    // Puedes realizar las actualizaciones necesarias aquí
     console.log('Modal saved. Updating cell content...');
-    // Puedes llamar a la función que necesitas para actualizar las celdas
+    setTranslatedSentencesState(prev => ({ ...prev, [selectedTranslatedSentenceId]: false }));
+    console.log("seteo que frase esta mala: estado false");
+    //selected times: true, selectedcheck : false
+    console.log("translatedSentences.id: ",selectedTranslatedSentenceId);
+    if (selectedTranslatedSentenceId in translatedSentencesState) {
+      console.log("coloco rojo dela cruz")
+      const updateUTS = await updateUserTranslatedSentence(selectedTranslatedSentenceId, false, false, true, token);
+      console.log("updateUserTranslatedSentence frase:", updateUTS);
+    
+    } 
+    else {
+      const createUTS = await createUserTranslatedSentence(selectedTranslatedSentenceId, false, false, true, token);
+      console.log("createUserTranslatedSentence frase:", createUTS);
+     
+    }
+     //setSelectedTranslatedSentenceId(selectedTranslatedSentenceId);
+    console.log("ahora se setea frase seleccioanda ");
+    triggerProgressTranslatedSentencesRecalculation();
 
-    // Actualiza el estado o realiza otras acciones según tus necesidades
-    // Por ejemplo, puedes recargar los datos o realizar otras actualizaciones
+    calculateCompletedReports().then(result => {
+          setCompletedReports(result.completedCount);
+          });
+
+    const newProgressByReports = calculateProgressByReports();
+    setProgressReports(newProgressByReports);  
+
   };
 
+  const handleCloseWithoutSave = async () => {
+    try {
+      console.log("handleCloseWithoutSave");
+      console.log("selectedTranslatedSentenceId: ", selectedTranslatedSentenceId);
+  
+      // Realizar la solicitud para verificar si hay una sugerencia anterior
+      const response = await getPreviousUserSuggestion(selectedTranslatedSentenceId, token);
+  
+      if (response) {      
+        console.log('Modal closed without saving. EXISTS PREVIOUS SUGGESTION.');
+        
+        // Si hay una sugerencia anterior, actualizar la traducción a falsa
+        await updateUserTranslatedSentence(selectedTranslatedSentenceId, false, false, true, token);
+        setTranslatedSentencesState(prev => ({ ...prev, [selectedTranslatedSentenceId]: false }));
+        console.log('Modal closed without saving. EXISTS PREVIOUS SUGGESTION.');
+        console.log("translatedSentencesState: ", translatedSentencesState);
+
+      } else {
+        // Si no hay una sugerencia anterior, restaurar el estado de la celda a nulo
+        console.log('Modal closed without saving. Cell content restored.');
+        console.log("translatedSentencesState: ", translatedSentencesState);
+        await updateUserTranslatedSentence(selectedTranslatedSentenceId, null, false, false, token);
+        setTranslatedSentencesState(prev => ({ ...prev, [selectedTranslatedSentenceId]: null }));
+      }
+    } catch (error) {
+      // Manejar el error 404 aquí
+      if (error.response && error.response.status === 404) {
+        console.log('No se encontró la sugerencia anterior. Cerrando modal sin guardar.');
+        // Ejecutar la misma lógica que en el bloque else
+        console.log('Modal closed without saving. Cell content restored.');
+        console.log("translatedSentencesState antes: ", translatedSentencesState);
+        await updateUserTranslatedSentence(selectedTranslatedSentenceId, null,false, false, token);
+        setTranslatedSentencesState(prev => ({ ...prev, [selectedTranslatedSentenceId]: null }));
+        
+      } else {
+        // Otros errores
+        console.error('Error al cerrar el modal sin guardar:', error);
+      }
+    }
+  };
+  
 
   const calculateProgressByReports = () => {
     return reports.length ? (completedReports / reports.length) * 100 : 0;
@@ -42,8 +105,10 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
 
   const calculateProgressCurrentReport = () => {
     const translatedSentencesCount = Object.values(translatedSentencesState).filter((value) => value !== null).length;
+    setTotalReviewedSentences(translatedSentencesCount); // Actualiza totalReviewedSentences
     return totalSentencesByReport[report.reportId] ? (translatedSentencesCount / totalSentencesByReport[report.reportId]) * 100 : 0;
   };
+  
   
   const updateProgressForCurrentReport = () => {
     const translatedSentencesCount = Object.values(translatedSentencesState).filter((value) => value !== null).length;
@@ -106,6 +171,13 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
   }, [completedReports, reports]);
 
   useEffect(() => {
+    console.log("translatedSentencesState después del cambio: ", translatedSentencesState);
+    
+  }, [translatedSentencesState]); // Agregar renderCounter como dependencia
+  
+
+  
+  useEffect(() => {
     if (report) {
       // Reset relevant state variables
       setTranslatedSentencesState({});
@@ -115,6 +187,7 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
       Object.keys(report.report.translated_sentences).forEach((type) => {
         report.report.translated_sentences[type].forEach((translatedsentence) => {
           loadUserTranslatedPhrase(translatedsentence);
+          console.log("loadusersugg translatedsentence: ",translatedsentence);
           loadUserSuggestion(translatedsentence);
         });
       });
@@ -130,9 +203,10 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
          setUniqueTranslatedSentenceIds((prevIds) => new Set([...prevIds, translatedsentence.id]));
 
         if (response) {
-          if (response.isSelectedCheck) 
+          console.log("getPreviousUserTranslatedSentence:", response);
+          if (response.isSelectedCheck && response.state) 
             setTranslatedSentencesState(prev => ({ ...prev, [translatedsentence.id]: true }));
-          if (response.isSelectedTimes) 
+          if (response.isSelectedTimes && !response.state) 
             setTranslatedSentencesState(prev => ({ ...prev, [translatedsentence.id]: false }));
           } else {
             setTranslatedSentencesState(prev => ({ ...prev, [translatedsentence.id]: null }));
@@ -150,6 +224,10 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
     try {
       const response = await getPreviousUserSuggestion(translatedsentence.id, token);
       if (response) {
+        //parche para corregir boton que queda desfasado en verde
+        await updateUserTranslatedSentence(translatedsentence.id, false, false, true, token);
+        setTranslatedSentencesState(prev => ({ ...prev, [translatedsentence.id]: false }));
+
         if (response.changesFinalTranslation !== null && response.changesFinalTranslation !== '') {
         setSuggestionData(prev => ({ ...prev, [translatedsentence.id]: response.changesFinalTranslation}));
       }
@@ -163,22 +241,22 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
     }
 }
 
-
   const handleTranslatedSentenceClick = async (translatedSentences, check) => {
+    console.log("lo clique ");
+    console.log("check:, " ,check);
       if (check) {
-        //console.log("translatedSentences: ",translatedSentences);
+        await deleteUserCorrectionsTranslatedSentence(translatedSentences.id, token);
+        await deleteSuggestion(translatedSentences.id, token);
+       
         if (translatedSentences.id in translatedSentencesState) {
-          await updateUserTranslatedSentence(translatedSentences.id, true, false, token);
-          //borrar correcciones y sugerencias pq ya no deben existir si es q se marca buena la frase
-          await deleteUserCorrectionsTranslatedSentence(translatedSentences.id, token);
-          await deleteSuggestion(translatedSentences.id, token);
-
-          //console.log("updateUserTranslatedSentence frase:", translatedSentences.id);
+          setTranslatedSentencesState(prev => ({ ...prev, [translatedSentences.id]: true }));
+        
+          await updateUserTranslatedSentence(translatedSentences.id, true, true, false, token);
         } else {
-          await createUserTranslatedSentence(translatedSentences.id, true, false, token);
-          //console.log("createUserTranslatedSentence frase:", translatedSentences.id);
+          setTranslatedSentencesState(prev => ({ ...prev, [translatedSentences.id]: true }));
+        
+          await createUserTranslatedSentence(translatedSentences.id, true, true, false, token);
         }
-        setTranslatedSentencesState(prev => ({ ...prev, [translatedSentences.id]: true }));
         triggerProgressTranslatedSentencesRecalculation();
 
         calculateCompletedReports().then(result => {
@@ -188,45 +266,31 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
         setProgressReports(newProgressByReports);
 
       } else {
-        //chequear si modal fue guardado, debe existir una sugerencia creada para q se cree UTP false, true. si no deberia crearse como false false, para q no marque el boton de times
-        if (translatedSentences.id in translatedSentencesState) {
-          await updateUserTranslatedSentence(translatedSentences.id, false, true, token);
-         
-          //console.log("updateUserTranslatedSentence frase:", translatedSentences.id);
-        } else {
-          await createUserTranslatedSentence(translatedSentences.id, false, true, token);
-          //console.log("createUserTranslatedSentence frase:", translatedSentences.id);
-        }
-        setTranslatedSentencesState(prev => ({ ...prev, [translatedSentences.id]: false }));
+     
         setSelectedTranslatedSentenceId(translatedSentences.id);
         setIsModalOpen(true);
+
         triggerProgressTranslatedSentencesRecalculation();
 
         calculateCompletedReports().then(result => {
           setCompletedReports(result.completedCount);
           });
+
         const newProgressByReports = calculateProgressByReports();
         setProgressReports(newProgressByReports);  
     } 
     
     triggerProgressTranslatedSentencesRecalculation();
     updateProgressForCurrentReport(); // Update the totalReviewedSentences
-
-    
   };
 
   const renderTooltipProgressBarTranslatedSentences = (props) => (
     <Tooltip id="button-tooltip" {...props}>
-      Progreso de oraciones traducidas del batch
+      Progreso de oraciones traducidas del reporte actual
     </Tooltip>
   );
   
   useEffect(() => {
-    // Calculate totalSentencesReport using uniqueTranslatedSentenceIds
-    //console.log("uniqueTranslatedSentenceIds: ", uniqueTranslatedSentenceIds);
-    //console.log("uniqueTranslatedSentenceIds.size: ", uniqueTranslatedSentenceIds.size);
-  
-    // Update total sentences count for the current report
     setTotalSentencesByReport((prev) => ({
       ...prev,
       [report.reportId]: uniqueTranslatedSentenceIds.size,
@@ -235,6 +299,7 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
     updateProgressForCurrentReport(); // Initial update when report is loaded
   }, [uniqueTranslatedSentenceIds, report]);
 
+
   function ReportTable({ report }) {
     const renderRows = (report) => {
       const originalSentences = report.sentences;
@@ -242,7 +307,7 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
       if (originalSentences == null || translatedSentences == null) {
         return null;
       }
-
+    
       const types = ["background", "findings", "impression"];
       return types.map((type) => {
         // Filtra las oraciones vacías para este tipo
@@ -254,57 +319,63 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
         }
         return (
           <React.Fragment key={type}>
-           {isSwitchChecked && (
-            <tr className="title-row">
-              <th className="title-row">{type}</th><th className="title-row"></th><th className="title-row"></th>
-            </tr>
-          )}
-            {nonEmptyOriginalSentences.map((sentence, index) => (
-              <tr key={index}>
-                <td>{sentence.text}</td>
-                <td>
-                  {suggestionData[nonEmptyTranslatedSentences[index]?.id] ? (
-                    <p style={{ textDecoration: 'line-through', color: 'red' }}>
-                      {nonEmptyTranslatedSentences[index]?.text || ''}
-                    </p>
-                  ) : (
-                    nonEmptyTranslatedSentences[index]?.text || ''
-                  )}
-                  <br />
-                  <p style={{ color: 'green' }}>
-                    {suggestionData[nonEmptyTranslatedSentences[index]?.id]}
-                  </p>
-                </td>
-                <td className="button-row">
-                  <ToggleButton
-                    size="sm"
-                    type="checkbox"
-                    variant={translatedSentencesState[translatedSentences[type][index].id] === true ? 'success' : 'outline-success'}
-                    onClick={() => handleTranslatedSentenceClick(translatedSentences[type][index], true)}
-                    className="custom-toggle-button times"
-                    id={`check-${translatedSentences[type][index].id || index}`}
-                  >
-                    <FontAwesomeIcon icon={faCheck} />
-                  </ToggleButton>
-                  <ToggleButton
-                    size="sm"
-                    type="checkbox"
-                    variant={translatedSentencesState[translatedSentences[type][index].id] === false ? 'danger' : 'outline-danger'}
-                    onClick={() => handleTranslatedSentenceClick(translatedSentences[type][index], false)}
-                    className="custom-toggle-button check"
-                    id={`times-${translatedSentences[type][index].id || index}`}
-                  >
-                    <FontAwesomeIcon icon={faTimes} />
-                  </ToggleButton>
-                </td>
+            {isSwitchChecked && (
+              <tr className="title-row">
+                <th className="title-row">{type}</th><th className="title-row"></th><th className="title-row"></th>
               </tr>
-            ))}
+            )}
+            {nonEmptyOriginalSentences.map((sentence, index) => {
+              const translatedSentenceId = translatedSentences[type][index].id;
+              const isChecked = translatedSentencesState[translatedSentenceId] === true;
+              const suggestionAvailable = suggestionData[translatedSentenceId] !== undefined;
+              const isCrossed = suggestionAvailable && !isChecked;
+        
+              return (
+                <tr key={index}>
+                  <td>{sentence.text}</td>
+                  <td>
+                    {isCrossed ? (
+                      <p style={{ textDecoration: 'line-through', color: 'red' }}>
+                        {nonEmptyTranslatedSentences[index]?.text || ''}
+                      </p>
+                    ) : (
+                      nonEmptyTranslatedSentences[index]?.text || ''
+                    )}
+                    <br />
+                    <p style={{ color: 'green' }}>
+                      {suggestionAvailable ? suggestionData[translatedSentenceId] : ''}
+                    </p>
+                  </td>
+                  <td className="button-row">
+                    <ToggleButton
+                      size="sm"
+                      type="checkbox"
+                      variant={isChecked ? 'success' : 'outline-success'}
+                      onClick={() => handleTranslatedSentenceClick(translatedSentences[type][index], true)}
+                      className="custom-toggle-button times"
+                      id={`check-${translatedSentenceId || index}`}
+                    >
+                      <FontAwesomeIcon icon={faCheck} />
+                    </ToggleButton>
+                    <ToggleButton
+                      size="sm"
+                      type="checkbox"
+                      variant={translatedSentencesState[translatedSentenceId] === false ? 'danger' : 'outline-danger'}
+                      onClick={() => handleTranslatedSentenceClick(translatedSentences[type][index], false)}
+                      className="custom-toggle-button check"
+                      id={`times-${translatedSentenceId || index}`}
+                    >
+                      <FontAwesomeIcon icon={faTimes} />
+                    </ToggleButton>
+                  </td>
+                </tr>
+              );
+            })}
           </React.Fragment>
-         
         );
       });
-    };
-  
+    }; 
+    
     return (
      <>
       <Container>
@@ -388,15 +459,20 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
           </Col>
         </Row>
         <Row>
-          <Table striped hover responsive="lg" className="custom-table">
+          <Table striped hover responsive="lg" className="custom-table" key={renderCounter}>
             <tbody className="custom-table">{renderRows(report)}
     
             </tbody>
             </Table>
         </Row>
       </Container>
-
-        <ModalSuggestions show={isModalOpen} onHide={() => setIsModalOpen(false)} selectedTranslatedSentenceId={selectedTranslatedSentenceId} />
+        <ModalSuggestions 
+          show={isModalOpen} 
+          onHide={() => setIsModalOpen(false)} 
+          selectedTranslatedSentenceId={selectedTranslatedSentenceId} 
+          onCloseWithoutSave={handleCloseWithoutSave}
+          onSave={handleModalSave}
+          />
       </>
     );
   }
