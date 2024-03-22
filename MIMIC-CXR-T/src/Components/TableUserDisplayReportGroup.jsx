@@ -16,14 +16,15 @@ const TableUserDisplayReportGroup = () => {
   const { groupId } = useParams();
   const navigate = useNavigate();
 
+  
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); 
       try {
-        setLoading(true); 
         const dataReports = await getReportGroupReports(groupId, token);
         setReports(dataReports);
         const numberOfReports = dataReports.length;
-        const userReportGroup = await getUserReportGroup(groupId, token);3
+        const userReportGroup = await getUserReportGroup(groupId, token);
         const progressReports = userReportGroup.progressReports || 0;
         const individualReportProgress = 100 / numberOfReports;
         const reportDetailsObject = {};

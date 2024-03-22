@@ -56,7 +56,7 @@ function Admin() {
   const handleCreateUserReportGroup = async (reportGroupId, userIds) => {
     try {
       setLoading(true);
-      const response = await createUserReportGroups(reportGroupId, userIds, token);
+      await createUserReportGroups(reportGroupId, userIds, token);
       //console.log('user report group created:', response);
 
     } catch (error) {
@@ -70,6 +70,7 @@ function Admin() {
   useEffect(() => {
     // Redirect if the user is not an admin
     if (user && user.role !== 'Admin') {
+      console.log("rol de user:  ", user.role)
       navigate("/access-denied");
     }
   }, [user, navigate]);
