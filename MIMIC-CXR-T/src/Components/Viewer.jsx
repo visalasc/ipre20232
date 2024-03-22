@@ -328,31 +328,31 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
               const translatedSentenceId = translatedSentences[type][index].id;
               const isChecked = translatedSentencesState[translatedSentenceId] === true;
               const suggestionAvailable = suggestionData[translatedSentenceId] !== undefined;
-              const isCrossed = suggestionAvailable && !isChecked;
+              const isCrossed = suggestionAvailable && (isChecked === false);
+              const notReviewed = translatedSentencesState[translatedSentenceId] === null;
         
               return (
                 <tr key={index}>
                   <td>{sentence.text}</td>
+               
                   <td>
-                    {isCrossed ? (
-                      <p style={{ textDecoration: 'line-through', color: 'red' }}>
-                        {nonEmptyTranslatedSentences[index]?.text || ''}
-                      </p>
+                    {notReviewed ? (
+                      <p>{nonEmptyTranslatedSentences[index]?.text}</p>
                     ) : (
-                      nonEmptyTranslatedSentences[index]?.text || ''
+                      <>
+                        {isCrossed ? (
+                          <p style={{ textDecoration: 'line-through', color: 'red' }}>
+                            {nonEmptyTranslatedSentences[index]?.text || ''}
+                          </p>
+                        ) : (
+                          nonEmptyTranslatedSentences[index]?.text || ''
+                        )}
+                        <br />
+                        <p style={{ color: 'green' }}>
+                          {isCrossed && suggestionAvailable ? suggestionData[translatedSentenceId] : ''}
+                        </p>
+                      </>
                     )}
-                    <br />
-                    <td>
-                    {isCrossed ? (
-                     <p style={{ color: 'green' }}>
-                     {suggestionAvailable ? suggestionData[translatedSentenceId] : ''}
-                      </p>
-                    ) : (
-                       ''
-                    )}
-                    <br />
-                  </td>
-                  
                   </td>
                   <td className="button-row">
                     <ToggleButton
