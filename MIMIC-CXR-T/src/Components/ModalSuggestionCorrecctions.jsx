@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
-import { Button, Modal, Form, Row, Card, Tab, Tabs, OverlayTrigger, Tooltip, Alert, Badge } from 'react-bootstrap';
+import { Button, Modal, Form, Row, Card, Col, 
+  Alert, Badge, Accordion } from 'react-bootstrap';
 import { AuthContext } from '../auth/AuthContext';
 import {
   getPreviousUserSuggestion,
@@ -10,11 +11,11 @@ import {
   getPreviousUserCorrections,
   deleteUserCorrectionsTranslatedSentence,
 } from '../utils/api';
+import '../utils/modalScripts';
 import WordSelector from './WordSelector';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import './modal.css';
 
-function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
+function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId, onCloseWithoutSave, onSave }) {
   const [modalText, setModalText] = useState('');
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [previousSuggestion, setPreviousSuggestion] = useState(null);
@@ -27,6 +28,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
   const [selectedOptionsByType, setSelectedOptionsByType] = useState({});
   const [selectedWords, setSelectedWords] = useState([]);
   const [showNoChangesAlert, setShowNoChangesAlert] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(0); // Estado para almacenar la altura del encabezado
 
   const loadSentenceAndTranslation = async (selectedTranslatedSentenceId) => {
     try {
@@ -44,6 +46,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
   };
 
   const loadPreviousSuggestionData = async (selectedTranslatedSentenceId) => {
+    console.log("loadPreviousSuggestionData from modal")
     try {
       const previousSuggestionResponse = await getPreviousUserSuggestion(selectedTranslatedSentenceId, token);
       if (previousSuggestionResponse) {
@@ -108,8 +111,8 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
 
   const handleModalSave = async (event) => {
     event.preventDefault();
-  
     try {
+      console.log("se guarda desde modal")
       // Check if any field has been modified, including editedTranslatedSentence
       const isModified =
         editedTranslatedSentence !== translatedSentence && selectedOptions.length > 0 
@@ -174,13 +177,16 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
             })
           );
         }
-  
+        onSave();
         onHide();
+        console.log("selectedTranslatedSentenceId: modal, ", selectedTranslatedSentenceId)
+        loadPreviousSuggestionData(selectedTranslatedSentenceId);
       } else {
         // Handle the case when no field has been modified
         // For example, show an alert or set an error state
         setShowNoChangesAlert(true);
         console.warn('No changes have been made. Please make modifications before saving.');
+        
       }
     } catch (error) {
       console.error('Error saving modal:', error);
@@ -188,11 +194,11 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
     }
   };
   
-
   const handleModalClose = () => {
     setSelectedOptions([]);
     setPreviousSuggestion(null);
     onHide();
+    onCloseWithoutSave(); 
   };
 
   useEffect(() => {
@@ -210,192 +216,216 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
         loadSentenceAndTranslation(selectedTranslatedSentenceId);
         loadPreviousSuggestionData(selectedTranslatedSentenceId);
         loadPreviousCorrectionData(selectedTranslatedSentenceId);
-      }} onHide={onHide} size="lg">
-        <Modal.Header closeButton style={{ backgroundColor: '#717F7E', color:'#ffffff' }}>
-          <Modal.Title className="h3">
-           
-             Identificar errores y editar traducción final: 
-              </Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ backgroundColor: '#f7f7f7' }}>
-          <Form>
-            <Form.Group>
-              <div>
-                <Row>
-                  <Card border="light" style={{ width: 'auto', padding: '6px', margin: '3px', backgroundColor: '#f7f7f7' }}>
-                    <Form.Label className="h5">
+        // Calculamos la altura del encabezado cuando el modal se muestra
+        const header = document.querySelector(".modal-header");
+        if (header) {
+          const headerHeight = header.clientHeight;
+          setHeaderHeight(headerHeight);
+        }
+      }} onHide={{}} className="fixed-modal" size="xl" >
+        <Modal.Header className="modal-header">
+          <Modal.Title>
+    
+            Identificar errores y editar traducción final: 
+            <Row className="mx-2 my-2">
+                  <Card border="secondary" >
+                    <Card.Header className="h5">
                       Frase original a revisar:
-                    </Form.Label>
-                    <Form.Label className="h7">{originalSentence}</Form.Label>
+                    </Card.Header>
+                    <Row>
+                      <Col>
+                        <Form.Label className="sentence-font">
+                          {originalSentence}
+                        </Form.Label>
+                      </Col>
+                      <Col>
+                        <Form.Label className="sentence-font">
+                         {translatedSentence}
+                        </Form.Label>
+                      </Col>
+                    </Row>
                   </Card>
                 </Row>
-                <Row>
-                  <Tabs
-                    defaultActiveKey="grammatical"
-                    onSelect={(key) => handleOptionClick(key)}
-                    id="fill-tab-example"
-                    className="mb-3"
-                    fill
-                  >
-                    <Tab eventKey="grammatical" title={
-                      <OverlayTrigger
-                        key="grammatical-tooltip"
-                        placement="top"
-                        overlay={
-                          <Tooltip id={`tooltip-grammatical`}>
-                            Descripción de errores gramaticales.
-                          </Tooltip>
-                        }
-                      >
-                        <div>
-                          <span>Gramatical</span>
-                          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginLeft: '5px' }} />
-                        </div>
-                      </OverlayTrigger>
-                    }>
-                      <Form.Label className="h5 " >Seleccionar errores gramaticales encontrados en la traducción:</Form.Label>
+              </Modal.Title>
+      
+        </Modal.Header>
+        <Modal.Body className="modal-body" style={{ marginTop: headerHeight }}>
+          <div className="form-container">
+            <Form>
+              <Form.Group>
+                <Card border="secondary" className="accordion-container" >      
+                    <Accordion defaultActiveKey="0">
+                      <Accordion.Item eventKey="0">
+                        <Accordion.Header>Terminológico</Accordion.Header>
+                        <Accordion.Body>
+                        Este tipo de error se produce cuando la traducción no refleja con precisión los términos o conceptos médicos específicos, lo que puede afectar la comprensión adecuada del informe médico o dando información plenamente equivocada.<br/>
+                        <br/><strong>Ejemplo:</strong><br/>
+                        Original (inglés): The patient has <u>type II</u> diabetes mellitus<br/>
+                        Traducción incorrecta (español): El paciente tiene diabetes mellitus <u>tipo I</u><br/>
+                        Traducción correcta (español): El paciente tiene diabetes mellitus <u>tipo II</u><br/>
+                        </Accordion.Body>
+                      </Accordion.Item>
+                     
+                        <Card.Header className="card-header">
+                          Seleccionar errores terminológicos encontrados en la traducción:
+                        </Card.Header>
+                      
+                          <Card border="light" className="card-accordion">
+                            <WordSelector
+                              sentence={translatedSentence}
+                              disabled={false}
+                              variant="primary"
+                              selectedOptions={selectedOptionsByType['terminological']}
+                              initialSelectedWords={selectedWords}
+                              onOptionClick={(option) => handleOptionClick(option, 'terminological')}
+                            />
+                          </Card>
+                     
+                    </Accordion>
+                 </Card>
+                 
+                  <Card border="secondary" className="accordion-container">      
+                    <Accordion defaultActiveKey="0">
+                        <Accordion.Item eventKey="0">
+                          <Accordion.Header>Gramatical</Accordion.Header>
+                          <Accordion.Body>
+                          Este tipo de error se refiere a todos los tipos de error gramaticales, semánticos, léxicos, etc. que no representen correctamente el significado de la oración original al estar mal escritas o cambiando el significado original.<br/>
+                          <br/><strong>Ejemplo:</strong><br/>
+                          Original (inglés): The patient <u>explained</u> his complications to the doctor.<br/>
+                          Traducción incorrecta (español): El paciente <u>explicado</u> sus complicaciones al médico.<br/>
+                          Traducción correcta (español): El paciente <u>explicó</u> sus complicaciones al médico.
+                          </Accordion.Body>
+                        </Accordion.Item>
+                        
+                        <Card.Header className="card-header">
+                          Seleccionar errores gramaticales encontrados en la traducción:
+                        </Card.Header>
+                        <Card border="light" className="card-accordion">
+                            <WordSelector
+                              sentence={translatedSentence}
+                              disabled={false}
+                              variant="success"
+                              selectedOptions={selectedOptionsByType['grammatical']}
+                              initialSelectedWords={selectedWords}
+                              onOptionClick={(option) => handleOptionClick(option, 'grammatical')}
+
+                            />
+                        
+                      </Card>
+                      </Accordion>
+                    </Card>
+                    
+                  
+                  <Card border="secondary" className="accordion-container">      
+                    <Accordion defaultActiveKey="0">
+                      <Accordion.Item eventKey="0">
+                        <Accordion.Header>Funcional</Accordion.Header>
+                        <Accordion.Body>
+                        Ocurren cuando la traducción, si bien transmite el significado general del texto de origen, carece del flujo natural. Este tipo de error puede hacer parecer forzada la traducción y no representan como un nativo en el idioma diría la frase correspondiente.<br/>
+                        <br/><strong>Ejemplo:</strong><br/>
+                        Original (inglés): The patient received <u>oral</u> medication.<br/>
+                        Traducción incorrecta (español): El paciente recibió medicación <u>por boca</u>. <br/>
+                        Traducción correcta (español): El paciente recibió medicación <u>oral</u>.<br/>
+                        </Accordion.Body>
+                      </Accordion.Item>
+                   
+                        <Card.Header className="card-header">
+                          Seleccionar errores funcionales encontrados en la traducción:
+                        </Card.Header>
+                          <Card border="light" className="card-accordion">
+                            <WordSelector
+                              sentence={translatedSentence}
+                              disabled={false}
+                              variant="warning"
+                              selectedOptions={selectedOptionsByType['functional']}
+                              initialSelectedWords={selectedWords}
+                              onOptionClick={(option) => handleOptionClick(option, 'functional')}
+                            
+                            />
+                          </Card>
                        
-                      <Card border="light" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
-                         <WordSelector
-                          sentence={translatedSentence}
-                          disabled={false}
-                          variant="success"
-                          selectedOptions={selectedOptionsByType['grammatical']}
-                          initialSelectedWords={selectedWords}
-                          onOptionClick={(option) => handleOptionClick(option, 'grammatical')}
-
-                        />
-                      </Card>
-                    </Tab>
-
-                    <Tab eventKey="terminological" title={
-                      <OverlayTrigger
-                        key="terminological-tooltip"
-                        placement="top"
-                        overlay={
-                          <Tooltip id={`tooltip-terminological`}>
-                            Descripción de errores terminológicos.
-                          </Tooltip>
-                        }
-                      >
-                        <div>
-                          <span>Terminológico</span>
-                          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginLeft: '5px' }} />
-                        </div>
-                      </OverlayTrigger>
-                    }>
-                      <Form.Label className="h5" >Seleccionar errores terminológicos encontrados en la traducción:</Form.Label>
-                       
-                      <Card border="light" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
-                        <WordSelector
-                          sentence={translatedSentence}
-                          disabled={false}
-                          variant="primary"
-                          selectedOptions={selectedOptionsByType['terminological']}
-                          initialSelectedWords={selectedWords}
-                          onOptionClick={(option) => handleOptionClick(option, 'terminological')}
-                         
-                        />
-                      </Card>
-                    </Tab>
-
-                    <Tab eventKey="functional" title={
-                      <OverlayTrigger
-                        key="functional-tooltip"
-                        placement="top"
-                        overlay={
-                          <Tooltip id={`tooltip-functional`}>
-                            Descripción de errores funcionales.
-                          </Tooltip>
-                        }
-                      >
-                        <div >
-                          <span>Funcional</span>
-                          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginLeft: '5px' }} />
-                        </div>
-                      </OverlayTrigger>
-                     } >
-                      <Form.Label className="h5" >Seleccionar errores funcionales encontrados en la traducción:</Form.Label>
-                       
-                      <Card border="light" style={{ width: 'auto', padding: '5px', margin: '2px' }}>
-                        <WordSelector
-                          sentence={translatedSentence}
-                          disabled={false}
-                          variant="warning"
-                          selectedOptions={selectedOptionsByType['functional']}
-                          initialSelectedWords={selectedWords}
-                          onOptionClick={(option) => handleOptionClick(option, 'functional')}
-                         
-                        />
-                      </Card>
-                    </Tab>
-
-                    <Tab eventKey="other" title={
-                      <OverlayTrigger
-                        key="other-tooltip"
-                        placement="top"
-                        overlay={
-                          <Tooltip id={`tooltip-other`}>
-                            Descripción de otros errores.
-                          </Tooltip>
-                        }
-                      >
-                        <div>
-                          <span>Otros</span>
-                          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginLeft: '5px' }} />
-                        </div>
-                      </OverlayTrigger>
-                    }>
-                      <Form.Label className="h5" >Seleccionar errores de otro tipo encontrados en la traducción:</Form.Label>
-                      <Card border="light" 
-                        style={{ width: 'auto', padding: '5px', margin: '2px', fontSize: '5px' }}>
-                        <WordSelector
-                          sentence={translatedSentence}
-                          disabled={false}
-                          variant="danger"
-                          selectedOptions={selectedOptionsByType['other']}
-                          initialSelectedWords={selectedWords}
-                          onOptionClick={(option) => handleOptionClick(option, 'other')}
-                          
-                        />
-                        <Form.Label className="h4" >
-                          <Badge bg="secondary">
-                          Describa el tipo de error encontrado:
-                            </Badge></Form.Label>
-                        <Form.Control
-                          as="textarea"
-                          rows={2}
-                          value={otherErrorDescription}
-                          onChange={(otherErrorEvent) => setOtherErrorDescription(otherErrorEvent.target.value)}
-                        />
-                      </Card>
-                    </Tab>
-                  </Tabs>
+                    </Accordion>
+                  </Card>
+                  <Card border="secondary" className="accordion-container">
+                    <Accordion defaultActiveKey="0">
+                      <Accordion.Item eventKey="0">
+                        <Accordion.Header>Otros errores</Accordion.Header>
+                        <Accordion.Body>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+                          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                          aliquip ex ea commodo consequat. Duis aute irure dolor in
+                          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                          culpa qui officia deserunt mollit anim id est laborum.
+                        </Accordion.Body>
+                      </Accordion.Item>
+                     
+                        <Card.Header className="card-header">
+                          Seleccionar errores de otro tipo encontrados en la traducción:
+                        </Card.Header>
+                    
+                          <Card border="light" 
+                          className="card-accordion">
+                          <WordSelector
+                            sentence={translatedSentence}
+                            disabled={false}
+                            variant="danger"
+                            selectedOptions={selectedOptionsByType['other']}
+                            initialSelectedWords={selectedWords}
+                            onOptionClick={(option) => handleOptionClick(option, 'other')}
+                            
+                          />
+                          <Row>
+                            <Col>
+                              <Form.Label className="h4" >
+                                <Badge bg="secondary">
+                                Describa el tipo de error encontrado:
+                                </Badge>
+                              </Form.Label>
+                            </Col>
+                            <Col sm="7">
+                              <Form.Control
+                                as="textarea"
+                                rows={2}
+                                value={otherErrorDescription}
+                                onChange={(otherErrorEvent) => setOtherErrorDescription(otherErrorEvent.target.value)}
+                              />
+                            </Col>
+                          </Row>                       
+                        </Card>
+                    
+                    </Accordion>        
+                    </Card>
+                 
+              </Form.Group>
+              <Form.Group>
+                <Row className="mx-2 my-2">
+                  <Form.Label className="h5">Editar la traducción final:</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={2}
+                    value={editedTranslatedSentence}
+                    onChange={(evento) => setEditedTranslatedSentence(evento.target.value)}
+                  />
                 </Row>
-              </div>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label className="h5">Editar la traducción final:</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={2}
-                value={editedTranslatedSentence}
-                onChange={(evento) => setEditedTranslatedSentence(evento.target.value)}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label className="h5">Si tienes algún comentario adicional agregar aquí:</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={1}
-                value={modalText}
-                onChange={(change) => setModalText(change.target.value)}
-              />
-            </Form.Group>
-          </Form>
+              </Form.Group>
+              <Form.Group>
+                <Row className="mx-2 my-2">
+                  <Form.Label className="h5">Si tienes algún comentario adicional agregar aquí:</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={1}
+                    value={modalText}
+                    onChange={(change) => setModalText(change.target.value)}
+                  />
+                </Row>
+              </Form.Group>
+            </Form>
+          </div>
         </Modal.Body>
        
-        <Modal.Footer style={{ backgroundColor: '#f7f7f7' }}>
+        <Modal.Footer className="modal-footer">
         <Alert
           variant="warning"
           show={showNoChangesAlert}
@@ -414,16 +444,10 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId }) {
           >
             Guardar
           </Button>
-        
-       
         </Modal.Footer>
       </Modal>
-
-
-
     </>
 
-    
   );
 }
 
