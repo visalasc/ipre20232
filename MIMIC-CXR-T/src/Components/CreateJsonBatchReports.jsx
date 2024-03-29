@@ -9,10 +9,6 @@ const ModalUploadReport = () => {
   const { token } = useContext(AuthContext);
   const [showAlert, setShowAlert] = useState(false);
 
-  const handleShowModal = () => {
-    setShowModal(true);
-  };
-
   const handleCloseModal = () => {
     setShowModal(false);
   };
@@ -41,7 +37,7 @@ const ModalUploadReport = () => {
       try {
         const fileContent = await readFileAsync(file);
         setFileContent(fileContent);
-        handleShowModal();
+        setShowModal(true);
       } catch (error) {
         console.error('Error reading file:', error);
         handleCloseModal();  // Cierra el modal en caso de error
