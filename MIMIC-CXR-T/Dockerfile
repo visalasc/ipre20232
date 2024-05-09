@@ -8,8 +8,6 @@ RUN yarn install
 
 COPY . .
 
-RUN npm run build
-
 EXPOSE 8080
 
-CMD [ "yarn", "run", "preview" ]
+CMD [ "yarn", "dev"]
