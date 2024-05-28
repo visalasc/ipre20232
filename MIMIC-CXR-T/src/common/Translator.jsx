@@ -17,7 +17,7 @@ function Translator() {
   const [reviewedTranslatedSentences, setReviewedTranslatedSentences] = useState(0);
   const [totalTranslatedSentences, setTotalTranslatedSentences] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
-  const dismissDelay = 1400; // 2000 milliseconds = 2 seconds
+  const dismissDelay = 2500; // 2000 milliseconds = 2 seconds
 
   const calculateProgressTranslatedSentences = () => {
     return totalTranslatedSentences ? (reviewedTranslatedSentences / totalTranslatedSentences) * 100 : 0;
