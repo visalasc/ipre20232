@@ -6,9 +6,9 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Alert from 'react-bootstrap/Alert';
 import { AuthContext } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom'; 
-
 
 function ModalLogin() {
   const [show, setShow] = useState(false);
@@ -19,6 +19,7 @@ function ModalLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const [msg, setMsg] = useState('');
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
@@ -37,18 +38,17 @@ function ModalLogin() {
         const access_token = response.data.access_token;
         localStorage.setItem('token', access_token);
         setToken(access_token);
-        //console.log('Se seteo el token: ', token, access_token);
-
         // Cerrar el modal después del login exitoso
         handleClose();
-
-        // Redirige a la vista para seleccionar reportes a traducir 
-        // después del inicio de sesión
         navigate('/reportselection');
       })
       .catch((error) => {
-        console.error('An error occurred while trying to login:', error);
-        setError(true); // aquí puede haber más lógica para tratar los errores
+        console.error('Ha ocurrido un error. Por favor intenta nuevamente', error);
+        setError(true); if (error.response && error.response.data && error.response.data.message) {
+          setErrorMsg(error.response.data.message); 
+        } else {
+          setErrorMsg('Ha ocurrido un error. Por favor intenta nuevamente');
+        }
       });
   };
 
@@ -69,6 +69,11 @@ function ModalLogin() {
           <Modal.Title>Iniciar Sesión</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+        {error && (
+            <Alert variant="danger">
+              {errorMsg}
+            </Alert>
+          )}
           <Form>
             <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
               <Form.Label column sm="3">
