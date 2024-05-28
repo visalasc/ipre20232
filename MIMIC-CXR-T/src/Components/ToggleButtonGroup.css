@@ -1,0 +1,27 @@
+.toggle-btn {
+    /* Estilo para botones no seleccionados */
+    border-width: 2px;
+    border-style: solid;
+    border-color: var(--bs-secondary); /* Usa una variable de Bootstrap para consistencia */
+    background-color: transparent;
+    color: var(--bs-secondary);
+  }
+  
+  .toggle-btn.active {
+    /* Estilo para botones seleccionados */
+    color: white; /* O el color que desees para el texto de los botones seleccionados */
+  }
+    
+  
+  .toggle-btn-success {
+    background-color: green;
+    border-color: green;
+    color: white;
+  }
+  
+  .toggle-btn-danger {
+    background-color: red;
+    border-color: red;
+    color: white;
+  }
+
