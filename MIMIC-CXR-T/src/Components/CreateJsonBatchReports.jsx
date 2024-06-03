@@ -3,7 +3,7 @@ import { Button, Modal, Alert } from 'react-bootstrap';
 import { AuthContext } from '../auth/AuthContext';
 import { createReportBatch } from '../utils/api';
 
-const ModalUploadReport = () => {
+const ModalUploadReport = ({getReportGroupReports}) => {
   const [showModal, setShowModal] = useState(false);
   const [fileContent, setFileContent] = useState('');
   const { token } = useContext(AuthContext);
@@ -14,7 +14,6 @@ const ModalUploadReport = () => {
   };
 
   const handleLoadFile = () => {
-    // Lógica para activar la entrada de archivos
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = '.json';
@@ -40,7 +39,7 @@ const ModalUploadReport = () => {
         setShowModal(true);
       } catch (error) {
         console.error('Error reading file:', error);
-        handleCloseModal();  // Cierra el modal en caso de error
+        handleCloseModal();
       }
     }
   };
@@ -51,20 +50,21 @@ const handleAccept = async (event) => {
     await createReportBatch(fileContent, token);
     handleCloseModal(); 
     setShowAlert(true);   
+    getReportGroupReports();
   } catch (error) {
     console.error('Error saving file content:', error);
-    console.error('Error details:', error.response.data); // Imprime detalles específicos del error
-    
-    // Puedes mostrar un mensaje de error al usuario si lo deseas
+    console.error('Error details:', error.response.data); 
   }
 };
 
   return (
     <>
+      <Alert show={showAlert} variant="success" onClose={() => setShowAlert(false)} dismissible>
+          Batch creado exitosamente
+      </Alert>
       <Button variant="primary" onClick={handleLoadFile}>
         Cargar Reporte
       </Button>
-
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Nuevo Reporte</Modal.Title>
@@ -82,10 +82,6 @@ const handleAccept = async (event) => {
           </Button>
         </Modal.Footer>
       </Modal>
-        {/* Alerta para mostrar que la operación fue exitosa */}
-        <Alert show={showAlert} variant="success" onClose={() => setShowAlert(false)} dismissible>
-          Batch creado exitosamente
-        </Alert>
     </>
   );
 };

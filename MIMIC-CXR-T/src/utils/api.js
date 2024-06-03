@@ -218,9 +218,15 @@ export async function getAllUsers(token){
 }
 
 export async function deleteUser(userId, token){
-  const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/users/delete/${userId}`, config(token),
+  try{
+    const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/users/delete/${userId}`, config(token),
   );
   return response.data;
+  } catch (error) {
+    console.error('Error deleting user:', error);
+  }
+  
+  
 }
 
 export async function deleteReportGroupReport(reportGroupReportId, token){

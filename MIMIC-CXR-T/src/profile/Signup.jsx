@@ -1,91 +1,109 @@
 import { useState } from 'react';
 import axios from 'axios';
 import './Login.css'; 
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 
-function Signup() {
+function Signup({getUsers}) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState("");
-
+  const [passwordError, setPasswordError] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    axios.post(`${import.meta.env.VITE_BACKEND_URL}/signup`, {
-        firstName: firstName,
-        lastName: lastName,
-        role: "User",
-        email: email,
-        password: password
-      }).then((response) => {
-        console.log(response, 'Registro exitoso! Ahora puedes volver y loguearte');
-        setError(false);
-        setMsg('Registro exitoso! Ahora puedes volver y loguearte');
-      }).catch((error) => {      
-      console.error('Ocurrió un error:', error);
-      setError(true); // aquí puede haber más lógica para tratar los errores
-      });
+    if (password !== confirmPassword) {
+      setPasswordError("Las contraseñas no coinciden");
+      return;
     }
+
+    axios.post(`${import.meta.env.VITE_BACKEND_URL}/signup`, {
+      firstName: firstName,
+      lastName: lastName,
+      role: "User",
+      email: email,
+      password: password
+    }).then((response) => {
+      setError(false);
+      setMsg('Usuario registrado correctamente');
+      setPasswordError("");
+      getUsers();
+    }).catch((error) => {      
+      console.error('Ocurrió un error:', error);
+      setError(true);
+    });
+  }
 
   return (
     <Container>
-    
-    <div className="Login">
-      {msg.length > 0 && <div className="successMsg"> {msg} </div>}
+      <div className="Login">
+        {msg.length > 0 && <div className="successMsg"> {msg} </div>}
+        {error && <div className="error">Hubo un error con el Registro, por favor trata nuevamente.</div>}
+        {passwordError && <div className="error">{passwordError}</div>}
 
-      {error && <div className="error">Hubo un error con el Registro, por favor trata nuevamente.</div>}
-      
-      <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
+          <label>
+            Nombre:
+            <input 
+              type="text" 
+              name="firstName"
+              value={firstName}
+              onChange={e => setFirstName(e.target.value)}
+              required
+            />
+          </label>
 
-        <label>
-          Nombre:
-          <input 
-            type="text" 
-            name="firstName"
-            value={firstName}
-            onChange={e => setFirstName(e.target.value)}
-            required
-          />
-        </label>
+          <label>
+            Apellido:
+            <input 
+              type="text" 
+              name="lastName"
+              value={lastName}
+              onChange={e => setLastName(e.target.value)}
+              required
+            />
+          </label>
 
-        <label>
-          Apellido:
-          <input 
-            type="text" 
-            name="lastName"
-            value={lastName}
-            onChange={e => setLastName(e.target.value)}
-            required
-          />
-        </label>
+          <label>
+            Email:
+            <input 
+              type="email" 
+              name="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+            />
+          </label>
 
-        <label>
-          Email:
-          <input 
-            type="email" 
-            name="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Contraseña:
-          <input 
-            type="password" 
-            name="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-          />
-        </label>
-        <input type="submit" value="Registrarse" />
-      </form>
-    </div>
+          <label>
+            Contraseña:
+            <input 
+              type="password" 
+              name="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+          </label>
+
+          <label>
+            Confirmar contraseña:
+            <input 
+              type="password" 
+              name="confirmPassword"
+              value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)}
+              required
+            />
+          </label>
+          
+          <input type="submit" value="Registrarse" />
+        </form>
+      </div>
     </Container>
   );
 }

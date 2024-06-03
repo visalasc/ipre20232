@@ -1,53 +1,61 @@
 import { useState, useContext, useEffect } from 'react';
-import { Table, Modal, Button, Col, Alert} from 'react-bootstrap';
+import { Table, Button, Col, Alert} from 'react-bootstrap';
 import './tabledisplayreportgroup.css';
 import { deleteReportGroupReport } from '../utils/api';
 import { AuthContext } from '../auth/AuthContext';
+import ModalReport from './ModalReport';
+import ModalConfirmDelete from './ModalConfirmDelete';
 
-const TableDisplayReports = ({ reportGroupReports }) => {
+
+const TableDisplayReports = ({ reportGroupReports, onDeleteReportGroup }) => {
   const { token } = useContext(AuthContext);
   const [showModal, setShowModal] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
-  const [updatedReports, setUpdatedReports] = useState(reportGroupReports);
   const [showAlert, setShowAlert] = useState(false);
-
-  useEffect(() => {
-    setUpdatedReports(reportGroupReports);
-  }, [reportGroupReports]);
+  const updatedReports = reportGroupReports;
+  
 
   const handleShowModal = (report) => {
     setSelectedReport(report);
     setShowModal(true);
   };
-
-  const handleCloseModal = () => {
+  const handleCloseModalViewReport = () => {
     setShowModal(false);
   };
+  const handleShowModalDelete = (report) => {
+    setSelectedReport(report);
+    setShowModalDelete(true);
+  };
 
-  const handleDeleteReportGroup = async (reportGroupReport) => {
+  const handleCloseModalDeleteReport = () => {
+    setShowModalDelete(false);
+  };
+
+  const handleDeleteReportGroup = async () => {
     try {
-      // Llamar a la función delete user de la API
-      await deleteReportGroupReport(reportGroupReport.id, token);
-      // Actualizar el estado local después de la eliminación
-      setUpdatedReports(updatedReports.filter(report => report.id !== reportGroupReport.id));
+      await deleteReportGroupReport(selectedReport.id, token);
+      onDeleteReportGroup(selectedReport.id);
       setShowAlert(true);
     } catch (error) {
       console.error('Error deleting report group report:', error);
+    } finally {
+      setShowModalDelete(false);
     }
   };
 
+
   return (
     <> 
-      <Col>
       <Alert show={showAlert} variant="success" onClose={() => setShowAlert(false)} dismissible>
         Batch eliminado exitosamente 
       </Alert>
-        <Table striped bordered hover>
+      
+      <Table striped bordered hover>
           <thead>
             <tr>
-              <th>ReportGroupReport ID</th>
-              <th>Report IDs</th>
-              <th>Ver reporte</th>
+              <th>Batch Id</th>
+              <th>Reportes</th>
               <th>Eliminar Grupo</th>
             </tr>
           </thead>
@@ -56,29 +64,21 @@ const TableDisplayReports = ({ reportGroupReports }) => {
               <tr key={reportGroupReport.id}>
                 <td>{reportGroupReport.id}</td>
                 <td>
-                  {reportGroupReport.reports && reportGroupReport.reports.length > 0 ? (
-                    reportGroupReport.reports.map((report) => (
-                      <div key={report.id}>{report.id}</div>
-                    ))
-                  ) : (
-                    'No reports'
-                  )}
+                  <Button onClick={() => handleShowModal(reportGroupReport)}>Ver detalles</Button>
                 </td>
                 <td>
-                  <Button onClick={() => handleShowModal(reportGroupReport)}>View Report</Button>
-                </td>
-                <td>
-                  <Button onClick={() => handleDeleteReportGroup(reportGroupReport)}>Eliminar</Button>
+                  <Button variant="danger" onClick={() => handleShowModalDelete(reportGroupReport)}>Eliminar</Button>
                 </td>
               </tr>
             ))}
           </tbody>
         </Table>
-      </Col>
-      <Modal show={showModal} onHide={handleCloseModal}/>
-     
+      
+      <ModalReport show={showModal} handleCloseModal={handleCloseModalViewReport} selectedGroup={selectedReport}/>
+      <ModalConfirmDelete show={showModalDelete} handleClose={handleCloseModalDeleteReport} handleConfirm={handleDeleteReportGroup} msg={"reporte"}/>
     </>
   );
 };
 
 export default TableDisplayReports;
+
