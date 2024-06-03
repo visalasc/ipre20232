@@ -1,11 +1,26 @@
-import { useState } from 'react';
-import { Form, Button, Container } from 'react-bootstrap';
+import { useState, useContext, useEffect } from 'react';
+import { Form, Button, Container, Alert} from 'react-bootstrap';
+import {createReportGroups, getAllReportGroupReports} from '../utils/api';
+import { AuthContext } from '../auth/AuthContext';
 
-const CreateReportGroup = ({ onCreateReportGroup }) => {
+const CreateReportGroup = ({ setReportGroupReports, reportGroupReports, setCurrentView}) => {
+
+  const { token } = useContext(AuthContext);
+  const [showAlert, setShowAlert] = useState(false);
   const [reportGroupData, setReportGroupData] = useState({
     name: '',
     reportIds: [],
   });
+
+  const handleCreateReportGroup = async (reportGroupData) => {
+    try {
+      const response = await createReportGroups(reportGroupData, token);
+      setReportGroupReports([...reportGroupReports, response.reportgroup]);
+    } catch (error) {
+      console.error('Error creating report group:', error);
+      setShowAlert(true);
+    } 
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,7 +37,7 @@ const CreateReportGroup = ({ onCreateReportGroup }) => {
         name: reportGroupData.name,
         reportIds: reportIdsArray,
       };
-      onCreateReportGroup(requestBody);
+      handleCreateReportGroup(requestBody);
     } catch (error) {
      
       console.error('Error al enviar el formulario:', error);
@@ -31,6 +46,10 @@ const CreateReportGroup = ({ onCreateReportGroup }) => {
 
   return (
     <Container>
+       <Alert show={showAlert} variant="success" onClose={() => setShowAlert(false)} dismissible>
+        Error al enviar el formulario, ingresa ids correctos y separados por coma
+      </Alert>
+
       <Form>
         <Form.Group controlId="formGroupName">
           <Form.Label>Report Group Name</Form.Label>

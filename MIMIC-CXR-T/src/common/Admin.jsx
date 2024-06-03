@@ -8,73 +8,65 @@ import NavAdmin from '../Components/NavAdmin';
 import CreateUserReportGroup from '../Components/CreateUserReportGroup';
 import DisplayUsers from '../Components/TableDisplayUsers';
 import ModalUploadReports from '../Components/CreateJsonBatchReports';
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import { useNavigate } from 'react-router-dom';
 import Signup from '../profile/Signup';
 import './admin.css';
+import { getAllUsers} from '../utils/api';
 
 function Admin() {
   const { token } = useContext(AuthContext);
   const [reportGroupReports, setReportGroupReports] = useState([]);
-  const [currentView, setCurrentView] = useState('view1');
-  const [loading, setLoading] = useState(false);
-
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate(); // Usa useNavigate para gestionar la navegación
+  const navigate = useNavigate();
+  const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    const getReportGroupReports = async () => {
-      try {
-        setLoading(true);
-        const response = await getAllReportGroupReports(token);
-        setReportGroupReports(response);
-      } catch (error) {
-        console.error('Error fetching reportGroupReports:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getReportGroupReports();
-  }, [token]);
-
-  const handleCreateReportGroup = async (reportGroupData) => {
+  const getReportGroupReports = async () => {
     try {
-      setLoading(true);
-      const response = await createReportGroups(reportGroupData, token);
-      //('Report group created:', response);
-      setReportGroupReports([...reportGroupReports, response.reportgroup]);
-      setCurrentView('view1');
-      // Muestra notificación Toast de éxito
+      const response = await getAllReportGroupReports(token);
+      setReportGroupReports(response);
+      console.log(response);
     } catch (error) {
-      console.error('Error creating report group:', error);
-      // Muestra notificación Toast de error
-    } finally {
-      setLoading(false);
-    }
+      console.error('Error fetching reportGroupReports:', error);
+    } 
+  };
+
+  const handleDeleteReportGroup = (deletedReportId) => {
+    setReportGroupReports(prevReports => prevReports.filter(report => report.id !== deletedReportId));
+  };
+  
+  const handleDeleteUser = (deletedUserId) => {
+    setUsers(prevUsers => prevUsers.filter(user => user.id !== deletedUserId));
   };
 
   const handleCreateUserReportGroup = async (reportGroupId, userIds) => {
     try {
-      setLoading(true);
       await createUserReportGroups(reportGroupId, userIds, token);
-      //console.log('user report group created:', response);
-
     } catch (error) {
       console.error('Error creating user report groups:', error);
-      // Muestra notificación Toast de error
-    } finally {
-      setLoading(false);
+    } 
+  };
+
+  const getUsers = async () => {
+    try {
+      const usersData = await getAllUsers(token);
+      setUsers(usersData);
+      console.log(usersData);
+    } catch (error) {
+      console.error('Error fetching users:', error);
     }
   };
 
   useEffect(() => {
-    // Redirect if the user is not an admin
+    getReportGroupReports();
+    getUsers();
+  }, [token]);
+
+
+  useEffect(() => {
     if (user && user.role !== 'Admin') {
-      console.log("rol de user:  ", user.role)
       navigate("/access-denied");
     }
   }, [user, navigate]);
-
 
   return (
     <>
@@ -90,35 +82,40 @@ function Admin() {
                 <Nav.Link eventKey="first">Ver o eliminar grupos de reportes</Nav.Link>
               </Nav.Item>
               <Nav.Item>
-                <Nav.Link eventKey="second">Crear nuevos grupos de reportes</Nav.Link>
+                <Nav.Link eventKey="second">Asociar usuario a grupo de reportes</Nav.Link>
               </Nav.Item>
               <Nav.Item>
-                <Nav.Link eventKey="third">Asociar usuario a grupo de reportes</Nav.Link>
+                <Nav.Link eventKey="third">Ver lista de usuarios registrados</Nav.Link>
               </Nav.Item>
               <Nav.Item>
-                <Nav.Link eventKey="fourth">Ver lista de usuarios registrados</Nav.Link>
+                <Nav.Link eventKey="fourth">Cargar json con batch de reportes</Nav.Link>
               </Nav.Item>
               <Nav.Item>
-                <Nav.Link eventKey="fifth">Cargar json con batch de reportes</Nav.Link>
+                <Nav.Link eventKey="fifth">Registro de usuarios</Nav.Link>
               </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="sixth">Registro de usuarios</Nav.Link>
-              </Nav.Item>
-          
             </Nav>
           </Col>
-          <Col sm={9} >
+
+          <Col sm={9}>
             <Tab.Content>
-              <Tab.Pane eventKey="first"><TableDisplayReports reportGroupReports={reportGroupReports} /></Tab.Pane>
-              <Tab.Pane eventKey="second"><CreateReportGroup onCreateReportGroup={handleCreateReportGroup} /></Tab.Pane>
-              <Tab.Pane eventKey="third"> 
-                <CreateUserReportGroup onCreateUserReportGroup={handleCreateUserReportGroup} reportGroupReports={reportGroupReports}/>
+              <Tab.Pane eventKey="first" unmountOnExit mountOnEnter>
+                <TableDisplayReports reportGroupReports={reportGroupReports} onDeleteReportGroup={handleDeleteReportGroup}/>
               </Tab.Pane>
-              <Tab.Pane eventKey="fourth"><DisplayUsers /></Tab.Pane>
-              <Tab.Pane eventKey="fifth"><ModalUploadReports /></Tab.Pane>
-              <Tab.Pane eventKey="sixth"><Signup /></Tab.Pane>
+              <Tab.Pane eventKey="second" unmountOnExit mountOnEnter> 
+                <CreateUserReportGroup onCreateUserReportGroup={handleCreateUserReportGroup} allUsers={users} reportGroupReports={reportGroupReports} getReportGroupReports={getReportGroupReports} />
+              </Tab.Pane>
+              <Tab.Pane eventKey="third" unmountOnExit mountOnEnter>
+                <DisplayUsers allUsers={users} onDeleteUser={handleDeleteUser}/>
+              </Tab.Pane>
+              <Tab.Pane eventKey="fourth" unmountOnExit mountOnEnter>
+                <ModalUploadReports getReportGroupReports={getReportGroupReports} />
+              </Tab.Pane>
+              <Tab.Pane eventKey="fifth" unmountOnExit mountOnEnter>
+                <Signup getUsers={getUsers}/>
+              </Tab.Pane>
             </Tab.Content>
           </Col>
+
         </Row>
       </Tab.Container>
     </>

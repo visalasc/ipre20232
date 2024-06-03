@@ -1,27 +1,17 @@
 import { useState, useEffect, useContext } from 'react';
 import { Table, Modal, Button, Col, Alert } from 'react-bootstrap';
-import { getAllUsers, deleteUser } from '../utils/api';
+import { deleteUser } from '../utils/api';
 import { AuthContext } from '../auth/AuthContext';
+import ModalConfirmDelete from './ModalConfirmDelete';
 
-const DisplayUsers = () => {
-  const [users, setUsers] = useState([]);
+const DisplayUsers = ({allUsers, onDeleteUser}) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false);
   const { token } = useContext(AuthContext);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const usersData = await getAllUsers(token);
-        setUsers(usersData);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
-
-    fetchUsers();
-  }, []);
+  const users = allUsers;
 
   const handleShowModal = (user) => {
     setSelectedUser(user);
@@ -32,22 +22,28 @@ const DisplayUsers = () => {
     setShowModal(false);
   };
 
-  const handleDeleteUser = async (userId) => {
+  const handleDeleteUser = async () => {
     try {
-      // Llamar a la función delete user de la API
-      await deleteUser(userId, token);
-      showAlert(true);
-      // Actualizar la lista de usuarios después de eliminar
-      const updatedUsers = users.filter((user) => user.id !== userId);
-      setUsers(updatedUsers);
-
+      await deleteUser(selectedUser.id, token);
+      setShowAlert(true);
+      onDeleteUser(selectedUser.id);
+      setShowModalDelete(false);
     } catch (error) {
       console.error('Error deleting user:', error);
     }
   };
 
+  const handleCloseModalDeleteReport = () => {
+    setShowModalDelete(false);
+  };
+
+  const handleShowModalDelete = (user) => {
+    setSelectedUser(user);
+    setShowModalDelete(true);
+  };
+
   return (
-    <Col md={{ span: 3, offset: 3 }}>
+    <Col md={{ span: 10 }}>
       <Alert show={showAlert} variant="success" onClose={() => setShowAlert(false)} dismissible>
         Usuario eliminado exitosamente
       </Alert>
@@ -55,8 +51,7 @@ const DisplayUsers = () => {
         <thead>
           <tr>
             <th>User ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
+            <th>Name</th>
             <th>Role</th>
             <th>View Details</th>
             <th>Delete User</th>
@@ -67,14 +62,13 @@ const DisplayUsers = () => {
           {users.map((user) => (
             <tr key={user.id}>
               <td>{user.id}</td>
-              <td>{user.firstName}</td>
-              <td>{user.lastName}</td>
+              <td>{user.firstName} {user.lastName}</td>
               <td>{user.role}</td>
               <td>
                 <Button onClick={() => handleShowModal(user)}>View Details</Button>
               </td>
               <td>
-                <Button variant="danger" onClick={() => handleDeleteUser(user.id)}>
+                <Button variant="danger" onClick={() => handleShowModalDelete(user)}>
                   Borrar Usuario
                 </Button>
               </td>
@@ -117,7 +111,11 @@ const DisplayUsers = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <ModalConfirmDelete show={showModalDelete} handleClose={handleCloseModalDeleteReport} handleConfirm={handleDeleteUser} msg="usuario"/>
     </Col>
+
+    
   );
 };
 

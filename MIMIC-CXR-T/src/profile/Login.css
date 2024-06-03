@@ -49,7 +49,7 @@
     padding: 10px;
     border: 1px solid #ff9696; /* red */
     border-radius: 5px;
-    color: #f99595; /* red */
+    color: #000000; /* red */
     background-color: #ffe6e6; /* light red */
     text-align: center;
   }
@@ -60,7 +60,7 @@
     padding: 10px;
     border: 1px solid #acffa4; /* green */
     border-radius: 5px;
-    color: #93ffc2; /* green */
+    color: #000000; /* green */
     background-color: #e9ffe6; /* light green */
     text-align: center;
   }
