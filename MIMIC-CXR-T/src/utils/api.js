@@ -201,7 +201,7 @@ export async function createUserReportGroups(userReportGroupData, token){
     userIds: userReportGroupData.userIds,
   }, config(token),
   );
-  return response.data;
+  return response;
 }
 
 export async function getUser(token){

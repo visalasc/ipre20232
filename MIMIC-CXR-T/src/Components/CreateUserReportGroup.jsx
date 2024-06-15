@@ -5,10 +5,12 @@ import { AuthContext } from '../auth/AuthContext';
 
 import './CreateUserReportGroup.css';
 
-const CreateUserReportGroup = ({ onCreateUserReportGroup, allUsers, reportGroupReports, getReportGroupReports}) => {
+const CreateUserReportGroup = ({ handleCreateUserReportGroup, allUsers, reportGroupReports, getReportGroupReports}) => {
 
   const { token } = useContext(AuthContext);
   const [showAlert, setShowAlert] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const [userReportGroupData, setUserReportGroupData] = useState({
     reportGroupId: '',
     userIds: [],
@@ -42,24 +44,52 @@ const CreateUserReportGroup = ({ onCreateUserReportGroup, allUsers, reportGroupR
   };
 
   const handleSendClick = async () => {
+
+    if (!userReportGroupData.reportGroupId) {
+      setErrorMsg('Debe ingresar un ID de grupo de reporte.');
+      setShowError(true);
+      setShowAlert(false);
+      return;
+    }
+
+    if (userReportGroupData.userIds.length === 0) {
+      setErrorMsg('Debe seleccionar al menos un usuario.');
+      setShowError(true);
+      setShowAlert(false);
+      return;
+    }
+
     try {
       const reportGroupId = Number(userReportGroupData.reportGroupId);
       const requestBody = {
         reportGroupId,
         userIds: userReportGroupData.userIds.map((id) => Number(id)),
       };
-      onCreateUserReportGroup(requestBody, token);
-      getReportGroupReports();
-      setShowAlert(true);
+      const response = await handleCreateUserReportGroup(requestBody, token);
+      console.log("La respuesta de la creación de usuario en grupo de reportes es:", response);
+      if (response.status === 201) {
+        getReportGroupReports();
+        setShowAlert(true);
+        setShowError(false);
+      } else {
+        setErrorMsg(response.data.error);
+        setShowError(true);
+        setShowAlert(false);
+      }
     } catch (error) {
-      console.error('Error sending the form:', error);
+      console.log('Error creating user report group:', error);
+      setErrorMsg(error.response.data.error);
+      setShowError(true);
+      setShowAlert(false);
     }
   };
 
+  
   return (
     <div>
       <Row>
-      <Alert show={showAlert} variant="success" onClose={() => setShowAlert(false)} dismissible>UserReportGroup generado con éxito.</Alert>
+      <Alert show={showError} variant="danger" onClose={() => setShowError(false)} dismissible>{errorMsg}</Alert>
+      <Alert show={showAlert} variant="success" onClose={() => setShowAlert(false)} dismissible>Asociación generada con éxito.</Alert>
       <div className='form-batch-users'> 
         <Form.Group controlId="formGroupReportGroupId">
               <Form.Label>Asociar usuarios a grupo de reportes</Form.Label>

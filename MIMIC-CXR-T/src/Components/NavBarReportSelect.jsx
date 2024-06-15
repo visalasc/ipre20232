@@ -29,11 +29,11 @@ const NavBarReportSelection = () => {
     <Navbar bg="dark" data-bs-theme="dark" expand="lg">
       <Navbar.Brand>MIMIC-CXR</Navbar.Brand>
       <Nav className="ml-auto">
-        <Nav.Link href="/reportselection">
+        <Nav.Link href="/mimix-cxr-tr/reportselection">
           <Button variant="success">Home</Button>
         </Nav.Link>
-        {user && user.role === 'Admin' && ( // Mostrar solo si el usuario tiene rol de admin
-          <Nav.Link href="/admin">
+        {user && user.role === 'Admin' && (
+          <Nav.Link href="/mimix-cxr-tr/admin">
             <Button variant="primary">Vista Admin</Button>
           </Nav.Link>
         )}

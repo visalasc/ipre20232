@@ -10,8 +10,9 @@ function MyNavBar() {
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="me-auto">
+          {/*
           <Nav.Link href="">Acerca de</Nav.Link>
-          <Nav.Link href="/translator">Traductor</Nav.Link>
+          <Nav.Link href="/mimix-cxr-tr/translator">Traductor</Nav.Link>
           <NavDropdown title="Dropdown" id="collapsible-nav-dropdown">
             <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
             <NavDropdown.Item href="#action/3.2">
@@ -23,6 +24,7 @@ function MyNavBar() {
               Separated link
             </NavDropdown.Item>
           </NavDropdown>
+          */}
         </Nav>
         <Nav>
           <ModalLogin/>
@@ -32,6 +34,5 @@ function MyNavBar() {
   </Navbar>
   );
 }
-
 export default MyNavBar;
 

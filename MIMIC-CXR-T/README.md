@@ -2,11 +2,17 @@
 ## IPre 2023-2 MIMIC-CXR-translator frontend
 # React + Vite
 
-### Instalación de las dependencias
-``yarn install`
-Para correr el servidor: `yarn dev`
+Para ejecutar el proyecto deben tener instalado docker "https://docs.docker.com/manuals/"
 
-### Deploy del Frontend
+### Dev
+
+1. docker compose --profile dev build
+2. docker compose --profile dev up
+3. docker compose --profile dev down
 
 
-### Deploy del Backend
+### Prod
+
+1. docker compose --profile prod build
+2. docker compose --profile prod up
+3. docker compose --profile prod down

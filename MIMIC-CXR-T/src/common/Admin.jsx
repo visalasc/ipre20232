@@ -38,13 +38,17 @@ function Admin() {
     setUsers(prevUsers => prevUsers.filter(user => user.id !== deletedUserId));
   };
 
-  const handleCreateUserReportGroup = async (reportGroupId, userIds) => {
+  const handleCreateUserReportGroup = async (userReportGroupData) => {
     try {
-      await createUserReportGroups(reportGroupId, userIds, token);
+      const response = await createUserReportGroups(userReportGroupData, token);
+      console.log("La respuesta de la creación de usuario en grupo de reportes es:", response);
+      return response;
     } catch (error) {
-      console.error('Error creating user report groups:', error);
-    } 
+      console.error('Error creating user report group:', error);
+      return error.response;
+    }
   };
+  
 
   const getUsers = async () => {
     try {
@@ -102,7 +106,7 @@ function Admin() {
                 <TableDisplayReports reportGroupReports={reportGroupReports} onDeleteReportGroup={handleDeleteReportGroup}/>
               </Tab.Pane>
               <Tab.Pane eventKey="second" unmountOnExit mountOnEnter> 
-                <CreateUserReportGroup onCreateUserReportGroup={handleCreateUserReportGroup} allUsers={users} reportGroupReports={reportGroupReports} getReportGroupReports={getReportGroupReports} />
+                <CreateUserReportGroup handleCreateUserReportGroup={handleCreateUserReportGroup} allUsers={users} reportGroupReports={reportGroupReports} getReportGroupReports={getReportGroupReports} />
               </Tab.Pane>
               <Tab.Pane eventKey="third" unmountOnExit mountOnEnter>
                 <DisplayUsers allUsers={users} onDeleteUser={handleDeleteUser}/>

@@ -5,7 +5,7 @@ import { AuthContext } from '../auth/AuthContext';
 import ModalConfirmDelete from './ModalConfirmDelete';
 
 const DisplayUsers = ({allUsers, onDeleteUser}) => {
-  const [showModal, setShowModal] = useState(false);
+ 
   const [selectedUser, setSelectedUser] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
@@ -13,14 +13,6 @@ const DisplayUsers = ({allUsers, onDeleteUser}) => {
 
   const users = allUsers;
 
-  const handleShowModal = (user) => {
-    setSelectedUser(user);
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
 
   const handleDeleteUser = async () => {
     try {
@@ -43,18 +35,19 @@ const DisplayUsers = ({allUsers, onDeleteUser}) => {
   };
 
   return (
-    <Col md={{ span: 10 }}>
+    <>
       <Alert show={showAlert} variant="success" onClose={() => setShowAlert(false)} dismissible>
         Usuario eliminado exitosamente
       </Alert>
-      <Table striped bordered hover>
+
+      <table class="table">
         <thead>
           <tr>
-            <th>User ID</th>
-            <th>Name</th>
-            <th>Role</th>
-            <th>View Details</th>
-            <th>Delete User</th>
+            <th scope="col">User ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Role</th>
+            <th scope="col">View Details</th>
+            <th scope="col">Delete User</th>
           
           </tr>
         </thead>
@@ -64,9 +57,8 @@ const DisplayUsers = ({allUsers, onDeleteUser}) => {
               <td>{user.id}</td>
               <td>{user.firstName} {user.lastName}</td>
               <td>{user.role}</td>
-              <td>
-                <Button onClick={() => handleShowModal(user)}>View Details</Button>
-              </td>
+              <td>{user.email}</td>
+              
               <td>
                 <Button variant="danger" onClick={() => handleShowModalDelete(user)}>
                   Borrar Usuario
@@ -76,44 +68,10 @@ const DisplayUsers = ({allUsers, onDeleteUser}) => {
             </tr>
           ))}
         </tbody>
-      </Table>
-
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>User Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedUser ? (
-            <div>
-              <p>
-                <strong>User ID:</strong> {selectedUser.id}
-              </p>
-              <p>
-                <strong>First Name:</strong> {selectedUser.firstName}
-              </p>
-              <p>
-                <strong>Last Name:</strong> {selectedUser.lastName}
-              </p>
-              <p>
-                <strong>Role:</strong> {selectedUser.role}
-              </p>
-              <p>
-                <strong>Email:</strong> {selectedUser.email}
-              </p>
-            </div>
-          ) : (
-            'No user selected'
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        </table>
 
       <ModalConfirmDelete show={showModalDelete} handleClose={handleCloseModalDeleteReport} handleConfirm={handleDeleteUser} msg="usuario"/>
-    </Col>
+    </>
 
     
   );

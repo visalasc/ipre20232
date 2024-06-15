@@ -10,7 +10,7 @@ import AccessDenied from '../Components/AccessDenied';
 
 function Routing() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/mimix-cxr-tr">
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/translator/:groupId/" element={<Translator />} />

@@ -8,7 +8,7 @@ RUN yarn run build
 
 FROM node:18-alpine as PRODUCTION_IMAGE
 WORKDIR /app
-COPY --from=BUILD_IMAGE /app/dist /app/dist
+COPY --from=BUILD_IMAGE /app /app
 EXPOSE 8080
 COPY package.json .
 COPY vite.config.js .

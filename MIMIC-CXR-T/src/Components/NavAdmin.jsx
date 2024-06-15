@@ -5,12 +5,12 @@ function NavAdmin() {
   return (
     <Navbar className="justify-content-end" bg="dark" data-bs-theme="dark" expand="lg">
     <Nav className="ml-auto"> 
-      <Nav.Link href="/admin">
+      <Nav.Link href="/mimix-cxr-tr/admin">
         <Button variant="info">
           vista admin
         </Button>
       </Nav.Link>
-      <Nav.Link href="/reportselection">
+      <Nav.Link href="/mimix-cxr-tr/reportselection">
         <Button variant="success">
             Vista usuario
         </Button>
