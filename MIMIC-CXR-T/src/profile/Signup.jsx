@@ -12,6 +12,7 @@ function Signup({getUsers}) {
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [role, setRole] = useState("User");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -24,7 +25,7 @@ function Signup({getUsers}) {
     axios.post(`${import.meta.env.VITE_BACKEND_URL}/signup`, {
       firstName: firstName,
       lastName: lastName,
-      role: "User",
+      role: role,
       email: email,
       password: password
     }).then((response) => {
@@ -46,6 +47,19 @@ function Signup({getUsers}) {
         {passwordError && <div className="error">{passwordError}</div>}
 
         <form onSubmit={handleSubmit}>
+        <label>
+            Rol:
+            <select 
+              name="role" 
+              value={role}
+              onChange={e => setRole(e.target.value)}
+              required
+            >
+              <option value="User">User</option>
+              <option value="Admin">Admin</option>
+            </select>
+          </label>
+          
           <label>
             Nombre:
             <input 
@@ -100,7 +114,7 @@ function Signup({getUsers}) {
               required
             />
           </label>
-          
+        
           <input type="submit" value="Registrarse" />
         </form>
       </div>

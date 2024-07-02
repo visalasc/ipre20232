@@ -4,7 +4,8 @@ import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Table, ToggleButton, Form, Container, Row, Col ,
 OverlayTrigger, Tooltip, ProgressBar, Badge, Button, ButtonGroup} from 'react-bootstrap';
 import './viewer.css';
-import ModalSuggestions from './ModalSuggestionCorrecctions';
+import ModalSuggestions from './ModalSuggestionCorrecction/ModalSuggestionCorrecctions2';
+
 import { createUserTranslatedSentence, getPreviousUserTranslatedSentence, 
   updateUserTranslatedSentence, updateReportProgress, 
   deleteUserCorrectionsTranslatedSentence, deleteSuggestion, getPreviousUserSuggestion,

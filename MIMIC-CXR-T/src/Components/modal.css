@@ -1,32 +1,15 @@
-/* modal.css */
+.modal-header {
+    background-color: #f7f7f7;
+    justify-content: center;
+    align-items: center;
+}
+
 
 .sentence-font {
-    background-color: rgb(50, 50, 75);
-    color: white;
-    font-size: 18px;
-    font-family: Arial, Helvetica, sans-serif;
+    color: black;
+    font-size: 16px;
 }
 
-.modal-header {
-    background-color: #717f7e;
-    color: #ffffff;
-    padding: 20px; /* Añadido padding */
-}
-
-.modal-body .modal-footer {
-    background-color: #f7f7f7;
-}
-
-.form-container {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.card-accordion {
-    width: auto;
-    padding: 5px;
-    margin-left: 9px;
-}
 
 .card-header {
     background-color: rgb(204, 210, 238);
@@ -34,24 +17,32 @@
     font-size: 20px;
 }
 
-.accordion-container {
-    margin-bottom: 5px;
+.examples-text {
+    font-size: 14px; 
+  }
+
+  
+.scrollable-container {
+max-height: 351px; 
+overflow-y: auto;
 }
 
-.fixed-modal .modal-header {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1050;
-    background-color: #fff;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    width: 79%; 
+.title-correcctions {
+    display: flex;
+    font-size: 20px;
+    color: #000000;
+    margin-bottom: 20px;
+    justify-content: center;
 }
 
-.fixed-modal .modal-body {
-    position: relative; /* Establece la posición relativa */
-    padding-top: calc(80px + 20px); /* Ajusta este valor según la altura del encabezado */
-
+.edit-frase {
+    margin-top: 8px;
+    margin-bottom: 30px;
+    background-color: #f7f7f7;
+    padding: 10px; 
+    border-radius: 5px; 
+  }
+  
+.container-header{
+    width: 100%;
 }
-

@@ -166,8 +166,8 @@ const TableUserDisplayReportGroup = () => {
                 <tr>
                   <th>Report IDs</th>
                   <th>Contenido</th>
-                  <th>Progreso reportes</th>
-                  <th>Progreso oraciones traducidas</th>
+                  {/* <th>Progreso reportes</th>
+                  <th>Progreso oraciones traducidas</th> */}
                   <th>Ver reporte</th>
                 </tr>
               </thead>
@@ -180,7 +180,7 @@ const TableUserDisplayReportGroup = () => {
                     <tr key={report.report.index}>
                       <td>{reportId}</td>
                       <td>{reportDetail.content || ''}</td>
-                      <td>
+                      {/* <td>
                         <ProgressBar
                           striped
                           animated
@@ -207,7 +207,7 @@ const TableUserDisplayReportGroup = () => {
                             'success'
                           }
                         />
-                      </td>
+                      </td> */}
                       <td>
                         <Button onClick={() => startTranslationReport(groupId, reportId)}>Traducir</Button>
                       </td>
