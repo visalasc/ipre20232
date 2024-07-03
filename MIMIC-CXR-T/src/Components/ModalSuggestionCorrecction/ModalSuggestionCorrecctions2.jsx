@@ -28,7 +28,8 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId, onCloseW
   const { token } = useContext(AuthContext);
   const [selectedOptionsByType, setSelectedOptionsByType] = useState({});
   const [selectedWords, setSelectedWords] = useState([]);
-  const [showNoChangesAlert, setShowNoChangesAlert] = useState(false);
+  const [showNoChangesAlert, setShowNoChangesAlert] = useState({ show: false, message: '' });
+
 
   const loadSentenceAndTranslation = async (selectedTranslatedSentenceId) => {
     try {
@@ -112,16 +113,50 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId, onCloseW
   const handleModalSave = async (event) => {
     event.preventDefault();
     try {
-      console.log("se guarda desde modal")
-      // Check if any field has been modified, including editedTranslatedSentence
       const isModified =
         editedTranslatedSentence !== translatedSentence && selectedOptions.length > 0 
+
+      const hasSelectedErrors = Object.values(selectedOptionsByType).some(
+        (options) => options.length > 0
+      );
+
+    
+      if (!hasSelectedErrors) {
+        setShowNoChangesAlert({ show: true, message: "Por favor haga click en al menos una palabra de los errores mostrados" });
+        return;
+      }
   
-      if (isModified) {
-      
-        if (previousSuggestion === null) {
-          // Your existing logic for creating a new suggestion and corrections
-          await createSuggestion(
+      if (!isModified) {
+        setShowNoChangesAlert({ show: true, message: "Por favor modifique la traducción final antes de guardar." });
+        return;
+      }
+
+      if (previousSuggestion === null) {
+        // Your existing logic for creating a new suggestion and corrections
+        await createSuggestion(
+          selectedTranslatedSentenceId,
+          modalText,
+          editedTranslatedSentence,
+          otherErrorDescription,
+          token
+        );
+
+        await Promise.all(
+          selectedOptions.map(async (option) => {
+            const word = option.word;
+            const instanceData = {
+              translatedSentenceId: selectedTranslatedSentenceId,
+              wordSelected: word.text,
+              wordIndex: word.index,
+              errorType: option.type,
+            };
+            return createCorrection(instanceData, token);
+          })
+        );
+      } else {
+        // Your existing logic for updating suggestion and corrections
+        if (previousSuggestion.translatedSentenceId === selectedTranslatedSentenceId) {
+          await updateSuggestion(
             selectedTranslatedSentenceId,
             modalText,
             editedTranslatedSentence,
@@ -129,65 +164,35 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId, onCloseW
             token
           );
   
-          await Promise.all(
-            selectedOptions.map(async (option) => {
-              const word = option.word;
-              const instanceData = {
-                translatedSentenceId: selectedTranslatedSentenceId,
-                wordSelected: word.text,
-                wordIndex: word.index,
-                errorType: option.type,
-              };
-              return createCorrection(instanceData, token);
-            })
-          );
         } else {
-          // Your existing logic for updating suggestion and corrections
-          if (previousSuggestion.translatedSentenceId === selectedTranslatedSentenceId) {
-            await updateSuggestion(
-              selectedTranslatedSentenceId,
-              modalText,
-              editedTranslatedSentence,
-              otherErrorDescription,
-              token
-            );
-    
-          } else {
-            await createSuggestion(
-              selectedTranslatedSentenceId,
-              modalText,
-              editedTranslatedSentence,
-              otherErrorDescription,
-              token
-            );
-          }
-          if (previousCorrection !== null) {
-            await deleteUserCorrectionsTranslatedSentence(selectedTranslatedSentenceId, token);
-          }
-          await Promise.all(
-            selectedOptions.map(async (option) => {
-              const word = option.word;
-              const instanceData = {
-                translatedSentenceId: selectedTranslatedSentenceId,
-                wordSelected: word.text,
-                wordIndex: word.index,
-                errorType: option.type,
-              };
-              return createCorrection(instanceData, token);
-            })
+          await createSuggestion(
+            selectedTranslatedSentenceId,
+            modalText,
+            editedTranslatedSentence,
+            otherErrorDescription,
+            token
           );
         }
-        onSave();
-        onHide();
-        console.log("selectedTranslatedSentenceId: modal, ", selectedTranslatedSentenceId)
-        loadPreviousSuggestionData(selectedTranslatedSentenceId);
-      } else {
-        // Handle the case when no field has been modified
-        // For example, show an alert or set an error state
-        setShowNoChangesAlert(true);
-        console.warn('No changes have been made. Please make modifications before saving.');
-        
+        if (previousCorrection !== null) {
+          await deleteUserCorrectionsTranslatedSentence(selectedTranslatedSentenceId, token);
+        }
+        await Promise.all(
+          selectedOptions.map(async (option) => {
+            const word = option.word;
+            const instanceData = {
+              translatedSentenceId: selectedTranslatedSentenceId,
+              wordSelected: word.text,
+              wordIndex: word.index,
+              errorType: option.type,
+            };
+            return createCorrection(instanceData, token);
+          })
+        );
       }
+      onSave();
+      onHide();
+      console.log("selectedTranslatedSentenceId: modal, ", selectedTranslatedSentenceId)
+      loadPreviousSuggestionData(selectedTranslatedSentenceId);
     } catch (error) {
       console.error('Error saving modal:', error);
       // Handle errors appropriately
@@ -224,17 +229,13 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId, onCloseW
         <Modal.Body className="modal-body">
             <Form>
               <Form.Group>
-                <div className='title-correcctions'>
-                  <h3>Haga click sobre las palabras que contienen errores</h3>
-                  
-                </div>
                 
-                <div className="scrollable-container">
-                    <Card className="mb-4" >      
+                
+                <div className="">
+                    <Card className="mb-4 border-primary " >      
                         <Accordion>
                             <Accordion.Item eventKey="0">
-                            <Accordion.Header>Errores terminológicos</Accordion.Header>
-
+                            <Accordion.Header>Si encuentra, <strong>&nbsp;haga click&nbsp;</strong>sobre palabras con <strong>&nbsp;errores terminológicos</strong></Accordion.Header>
                             <Accordion.Body className="examples-text">
                                 Este tipo de error se produce cuando la traducción no refleja con precisión los términos o conceptos médicos específicos, lo que puede afectar 
                                 la comprensión adecuada del informe médico o dando información plenamente equivocada.<br/>
@@ -257,10 +258,10 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId, onCloseW
                         </Accordion>
                     </Card>
 
-                    <Card className="mb-4">      
+                    <Card className="mb-4 border-success">      
                         <Accordion>
                             <Accordion.Item eventKey="0">
-                                <Accordion.Header>Errores gramaticales</Accordion.Header>
+                                <Accordion.Header>Si encuentra, <strong>&nbsp;haga click&nbsp;</strong> sobre palabras con <strong>&nbsp;errores gramaticales</strong></Accordion.Header>
                                 <Accordion.Body className="examples-text">
                                     Este tipo de error se refiere a todos los tipos de error gramaticales, semánticos, léxicos, etc. que no representen correctamente el significado
                                     de la oración original al estar mal escritas o cambiando el significado original.<br/>
@@ -271,22 +272,22 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId, onCloseW
                                 </Accordion.Body>
                             </Accordion.Item>
                             <Card border="light" className="card-accordion">
-                            <WordSelector
-                                sentence={translatedSentence}
-                                disabled={false}
-                                variant="success"
-                                selectedOptions={selectedOptionsByType['grammatical']}
-                                initialSelectedWords={selectedWords}
-                                onOptionClick={(option) => handleOptionClick(option, 'grammatical')}
-                                />
+                              <WordSelector
+                                  sentence={translatedSentence}
+                                  disabled={false}
+                                  variant="success"
+                                  selectedOptions={selectedOptionsByType['grammatical']}
+                                  initialSelectedWords={selectedWords}
+                                  onOptionClick={(option) => handleOptionClick(option, 'grammatical')}
+                                  />
                             </Card>
                         </Accordion>
                     </Card>  
 
-                    <Card  className="mb-1">      
+                    <Card className="mb-1 border border-warning" >      
                         <Accordion>
                             <Accordion.Item eventKey="0">
-                                <Accordion.Header>Errores funcionales</Accordion.Header>
+                                <Accordion.Header>Si encuentra, <strong>&nbsp;haga click&nbsp;</strong> sobre palabras con <strong>&nbsp;errores funcionales</strong></Accordion.Header>
                                 <Accordion.Body className="examples-text">
                                     Ocurren cuando la traducción, si bien transmite el significado general del texto de origen, carece del flujo natural.
                                     Este tipo de error puede hacer parecer forzada la traducción y no representan como un nativo en el idioma diría la frase correspondiente.<br/>
@@ -317,7 +318,7 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId, onCloseW
           <Row className="mx-2 my-2" >
               <Form.Label className="h4" >
                 <Badge  bg="danger" >
-                    Escriba la oración corregida
+                    Escriba la traducción corregida
                 </Badge>
               </Form.Label> 
             <Form.Control
@@ -336,12 +337,13 @@ function ModalSuggestions({ show, onHide, selectedTranslatedSentenceId, onCloseW
         <Modal.Footer className="modal-footer">
         <Alert
           variant="warning"
-          show={showNoChangesAlert}
-          onClose={() => setShowNoChangesAlert(false)}
+          show={showNoChangesAlert.show}
+          onClose={() => setShowNoChangesAlert({ show: false, message: '' })}
           dismissible
         >
-          Por favor modifique la traducción final antes de guardar.
+          {showNoChangesAlert.message || 'Por favor modifique la traducción final antes de guardar.'}
         </Alert>
+
           <Button variant="secondary" onClick={handleModalClose}>
             Cerrar
           </Button>

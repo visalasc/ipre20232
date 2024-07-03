@@ -1,6 +1,7 @@
 /* WordSelector.css */
 .word-selector-button {
-  border: none !important;
+  border: 1px solid rgb(190, 188, 188); 
+  border-radius: 3px;
   padding: 2px 5px;
   margin: 2px;
   line-height: 1;
@@ -10,8 +11,8 @@
 }
 
 .word-selector-button-selected {
-background-color: lightblue;
-color: white;
+  background-color: lightblue;
+  color: white;
 }
 
 .word-selector-button-selected.primary {

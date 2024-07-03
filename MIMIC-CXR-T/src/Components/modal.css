@@ -22,9 +22,9 @@
   }
 
   
-.scrollable-container {
-max-height: 351px; 
-overflow-y: auto;
+.card-accordion{
+    margin-top: 10px;
+    margin-left: 10px;
 }
 
 .title-correcctions {
