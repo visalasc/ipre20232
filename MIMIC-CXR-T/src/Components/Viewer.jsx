@@ -22,6 +22,7 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
   const { token } = useContext(AuthContext);
 
   const [uniqueTranslatedSentenceIds, setUniqueTranslatedSentenceIds] = useState(new Set());
+  
   const [totalReviewedSentences, setTotalReviewedSentences] = useState(0);
   const [totalSentencesByReport, setTotalSentencesByReport] = useState({});
 
@@ -103,13 +104,6 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
   const calculateProgressByReports = () => {
     return reports.length ? (completedReports / reports.length) * 100 : 0;
   };
-
-  const calculateProgressCurrentReport = () => {
-    const translatedSentencesCount = Object.values(translatedSentencesState).filter((value) => value !== null).length;
-    setTotalReviewedSentences(translatedSentencesCount); // Actualiza totalReviewedSentences
-    return totalSentencesByReport[report.reportId] ? (translatedSentencesCount / totalSentencesByReport[report.reportId]) * 100 : 0;
-  };
-  
   
   const updateProgressForCurrentReport = () => {
     const translatedSentencesCount = Object.values(translatedSentencesState).filter((value) => value !== null).length;
@@ -285,12 +279,6 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
     updateProgressForCurrentReport(); // Update the totalReviewedSentences
   };
 
-  const renderTooltipProgressBarTranslatedSentences = (props) => (
-    <Tooltip id="button-tooltip" {...props}>
-      Progreso de oraciones traducidas del reporte actual
-    </Tooltip>
-  );
-  
   useEffect(() => {
     setTotalSentencesByReport((prev) => ({
       ...prev,
@@ -426,33 +414,13 @@ function Viewer({ groupId, report, triggerProgressTranslatedSentencesRecalculati
             </Button>
           </ButtonGroup>
         </Row>
+
         <Row>
           <Col>
             <h3><Badge bg="secondary" className="badge-report" >ID Reporte: {report.reportId}</Badge> </h3>
           </Col>
         </Row>
-        <Row>
-          <Col>
-            <OverlayTrigger
-              placement="bottom"
-              delay={{ show: 250, hide: 400 }}
-              overlay={renderTooltipProgressBarTranslatedSentences}
-              >
-            <ProgressBar
-              striped
-              animated
-              className="reports-progress-bar"
-              now={calculateProgressCurrentReport()}
-              label={`(${totalReviewedSentences}/${uniqueTranslatedSentenceIds.size})  ${Math.round(calculateProgressCurrentReport())}%`}
-              variant={
-                Math.round(calculateProgressCurrentReport()) <= 33 ? 'danger' :
-                  Math.round(calculateProgressCurrentReport()) < 99 ? 'warning' :
-                    'success'
-              }
-            />
-            </OverlayTrigger>
-          </Col>
-        </Row>
+        
         <Row>
           <Col xs={4}>
           <Form>
